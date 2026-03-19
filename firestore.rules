@@ -7,13 +7,10 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      return isSignedIn() && (
-        (request.auth.token.email != null && request.auth.token.email.lower().matches('.*admin.*')) ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-      );
+      return isSignedIn() && request.auth.token.email.lower().matches('.*admin.*');
     }
 
-    // COLLECTION GROUP RULES - MUST BE AT THE TOP
+    // 1. COLLECTION GROUP RULES - MUST BE AT THE TOP
     // These allow recursive queries like collectionGroup(db, 'modules')
     
     match /{path=**}/modules/{moduleId} {
@@ -26,11 +23,11 @@ service cloud.firestore {
     
     match /{path=**}/progress/{progressId} {
       // Admins can see everything. 
-      // Students can only see their own progress (requires .where("userId", "==", auth.uid) in the client query)
+      // Students can only see their own progress (requires .where("userId", "==", auth.uid) in the client query if they were to use group queries)
       allow read, list: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
     }
 
-    // STANDARD PATH RULES
+    // 2. STANDARD PATH RULES
     match /subjects/{subjectId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();

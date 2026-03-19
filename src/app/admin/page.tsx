@@ -53,7 +53,12 @@ export default function AdminPortal() {
   // This query will only ever be defined if the user is a confirmed administrator
   const globalProgressQuery = useMemoFirebase(() => {
     if (!db || isUserLoading || !isAdmin || !user) return null;
-    return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
+    try {
+      return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
+    } catch (e) {
+      console.error("Failed to initialize metrics query:", e);
+      return null;
+    }
   }, [db, isAdmin, isUserLoading, user]);
 
   const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
