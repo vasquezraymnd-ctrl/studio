@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,13 +43,17 @@ export default function AdminPortal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Robust client-side check for admin status
-  const isAdmin = !!(user && user.email?.toLowerCase().includes('admin'));
+  const isAdmin = useMemo(() => {
+    if (!user || isUserLoading) return false;
+    return !!user.email?.toLowerCase().includes('admin');
+  }, [user, isUserLoading]);
 
   // Query for global student progress - STRICTLY guarded by isAdmin
   const globalProgressQuery = useMemoFirebase(() => {
-    if (!db || !isAdmin || isUserLoading) return null;
+    // Crucial: Only create this query if we are 100% sure the user is an admin
+    if (!db || !isAdmin) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
-  }, [db, isAdmin, isUserLoading]);
+  }, [db, isAdmin]);
 
   const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
 

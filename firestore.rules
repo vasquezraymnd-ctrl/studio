@@ -13,18 +13,19 @@ service cloud.firestore {
       );
     }
 
-    // COLLECTION GROUP RULES (Must be defined broadly for collectionGroup() queries)
+    // COLLECTION GROUP RULES - MUST BE AT TOP
+    // These allow recursive queries like collectionGroup(db, 'modules')
     match /{path=**}/modules/{moduleId} {
-      allow read: if isSignedIn();
+      allow read, list: if isSignedIn();
     }
     
     match /{path=**}/assessments/{assessmentId} {
-      allow read: if isSignedIn();
+      allow read, list: if isSignedIn();
     }
     
     match /{path=**}/progress/{progressId} {
-      // Admins see all; students see their own based on field check
-      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
+      // Admins can list all progress; students can only list their own (requires query filter)
+      allow read, list: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
     }
 
     // STANDARD PATH RULES
@@ -48,9 +49,7 @@ service cloud.firestore {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
       
       match /progress/{progressId} {
-        allow read: if isSignedIn() && request.auth.uid == userId;
-        // Allow create/write if they are the owner
-        allow write: if isSignedIn() && request.auth.uid == userId;
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
       }
     }
 
