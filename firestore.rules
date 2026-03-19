@@ -13,7 +13,7 @@ service cloud.firestore {
       );
     }
 
-    // COLLECTION GROUP RULES - MUST BE AT TOP
+    // COLLECTION GROUP RULES - MUST BE AT THE TOP
     // These allow recursive queries like collectionGroup(db, 'modules')
     match /{path=**}/modules/{moduleId} {
       allow read, list: if isSignedIn();
@@ -24,7 +24,8 @@ service cloud.firestore {
     }
     
     match /{path=**}/progress/{progressId} {
-      // Admins can list all progress; students can only list their own (requires query filter)
+      // Admins can see everything. 
+      // Students can only see their own progress (requires .where("userId", "==", auth.uid) in the query)
       allow read, list: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
     }
 
