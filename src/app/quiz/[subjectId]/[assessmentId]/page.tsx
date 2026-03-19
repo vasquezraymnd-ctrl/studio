@@ -17,7 +17,8 @@ import {
   Award, 
   CheckCircle2,
   AlertCircle,
-  X
+  X,
+  Lock
 } from "lucide-react";
 import { useMemoFirebase } from "@/firebase/provider";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -67,7 +68,7 @@ export default function AssessmentEngine() {
 
   // Save progress when finished
   useEffect(() => {
-    if (isFinished && user && db && assessment) {
+    if (isFinished && user && db && assessment && !analysisMode) {
       const score = assessment.questions.reduce((acc: number, q: any, idx: number) => acc + (answers[idx] === q.a ? 1 : 0), 0);
       const progressRef = doc(db, "users", user.uid, "progress", assessmentId as string);
       
@@ -82,7 +83,7 @@ export default function AssessmentEngine() {
 
       setDocumentNonBlocking(progressRef, progressData, { merge: true });
     }
-  }, [isFinished, user, db, assessment, assessmentId, subjectId, answers]);
+  }, [isFinished, user, db, assessment, assessmentId, subjectId, answers, analysisMode]);
 
   if (isLoading) return <LoadingState />;
 
@@ -95,6 +96,13 @@ export default function AssessmentEngine() {
     if (tempSelection === null) return;
     setAnswers({ ...answers, [currentIndex]: tempSelection });
     setValidated({ ...validated, [currentIndex]: true });
+    
+    // Automatically move to next after a short delay for better UX if not in analysis mode
+    if (!analysisMode) {
+      setTimeout(() => {
+        handleNext();
+      }, 300);
+    }
   };
 
   const handleNext = () => {
@@ -113,13 +121,13 @@ export default function AssessmentEngine() {
     setShowExplorer(false);
   };
 
-  if (isFinished) {
+  if (isFinished && !analysisMode) {
     const score = assessment.questions.reduce((acc: number, q: any, idx: number) => acc + (answers[idx] === q.a ? 1 : 0), 0);
     return (
       <ResultScreen 
         score={score} 
         total={assessment.questions.length} 
-        onReview={() => { setIsFinished(false); setAnalysisMode(true); setCurrentIndex(0); }}
+        onReview={() => { setAnalysisMode(true); setCurrentIndex(0); setIsFinished(false); }}
         onBack={() => router.push(`/subject/${subjectId}`)} 
       />
     );
@@ -138,7 +146,7 @@ export default function AssessmentEngine() {
             </AlertDialogTrigger>
             <AlertDialogContent className="spotify-glass border-none rounded-[2.5rem] p-10">
               <AlertDialogHeader>
-                <AlertDialogTitle className="text-2xl font-black text-white tracking-tighter">TERMINATE SESSION?</AlertDialogTitle>
+                <AlertDialogTitle className="text-2xl font-black text-white tracking-tighter uppercase">Terminate Session?</AlertDialogTitle>
                 <AlertDialogDescription className="text-muted-foreground font-bold">
                   Exiting now will erase your current progress. This action cannot be undone.
                 </AlertDialogDescription>
@@ -154,19 +162,23 @@ export default function AssessmentEngine() {
           
           <div className="hidden sm:block ml-2">
             <h3 className="font-black text-white truncate max-w-[150px] uppercase leading-none">{assessment.title}</h3>
-            <p className="text-[8px] font-black uppercase text-primary tracking-widest mt-1">Synapse Engine</p>
+            <p className="text-[8px] font-black uppercase text-primary tracking-widest mt-1">
+              {analysisMode ? "Analysis Mode" : "Synapse Engine"}
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setShowTimer(!showTimer)}
-            className={cn("h-12 w-12 rounded-2xl transition-all", showTimer ? "bg-primary/10 text-primary" : "bg-white/5 text-muted-foreground")}
-          >
-            {showTimer ? <Timer className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-          </Button>
+          {!analysisMode && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setShowTimer(!showTimer)}
+              className={cn("h-12 w-12 rounded-2xl transition-all", showTimer ? "bg-primary/10 text-primary" : "bg-white/5 text-muted-foreground")}
+            >
+              {showTimer ? <Timer className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+            </Button>
+          )}
 
           <Button 
             variant="ghost" 
@@ -177,7 +189,7 @@ export default function AssessmentEngine() {
             <LayoutGrid className="w-5 h-5" />
           </Button>
 
-          {showTimer && (
+          {showTimer && !analysisMode && (
             <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 font-black text-primary text-lg tabular-nums shadow-inner">
               {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
             </div>
@@ -195,6 +207,8 @@ export default function AssessmentEngine() {
                 {assessment.questions.map((_: any, i: number) => {
                   const isCurrent = currentIndex === i;
                   const isAnsweredItem = validated[i];
+                  const isCorrect = analysisMode && answers[i] === assessment.questions[i].a;
+                  
                   return (
                     <button
                       key={i}
@@ -202,7 +216,11 @@ export default function AssessmentEngine() {
                       className={cn(
                         "aspect-square rounded-2xl flex items-center justify-center text-xs font-black border transition-all duration-300",
                         isCurrent ? "bg-primary text-primary-foreground border-primary scale-110 shadow-xl" :
-                        isAnsweredItem ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]" : "bg-white/5 text-white/20 border-white/5 hover:border-white/20"
+                        analysisMode ? (
+                          isCorrect ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : 
+                          answers[i] !== undefined ? "bg-destructive/20 text-destructive border-destructive/30" : "bg-white/5 text-white/20 border-white/5"
+                        ) :
+                        isAnsweredItem ? "bg-primary/20 text-primary border-primary/30" : "bg-white/5 text-white/20 border-white/5 hover:border-white/20"
                       )}
                     >
                       {i + 1}
@@ -219,7 +237,17 @@ export default function AssessmentEngine() {
       <main className="flex-1 overflow-auto p-6 md:p-12 scrollbar-hide">
         <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="space-y-4">
-            <span className="text-[10px] font-black uppercase text-primary tracking-[0.6em] ml-1">ITEM {currentIndex + 1} OF {assessment.questions.length}</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase text-primary tracking-[0.6em] ml-1">ITEM {currentIndex + 1} OF {assessment.questions.length}</span>
+              {analysisMode && (
+                <span className={cn(
+                  "text-[8px] font-black uppercase px-2 py-0.5 rounded-full",
+                  answers[currentIndex] === currentQ.a ? "bg-emerald-500/10 text-emerald-400" : "bg-destructive/10 text-destructive"
+                )}>
+                  {answers[currentIndex] === currentQ.a ? "Correct" : "Incorrect"}
+                </span>
+              )}
+            </div>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.1] tracking-tighter">
               {currentQ.q}
             </h2>
@@ -229,9 +257,13 @@ export default function AssessmentEngine() {
             {currentQ.options.map((option: string, idx: number) => {
               let stateStyle = "bg-white/5 border-white/5 text-white/70 hover:bg-white/10 hover:scale-[1.01]";
               
-              if (isAnswered || analysisMode) {
+              if (analysisMode) {
                 if (idx === currentQ.a) stateStyle = "bg-primary text-primary-foreground border-primary shadow-xl font-bold scale-[1.03]";
                 else if (idx === answers[currentIndex]) stateStyle = "bg-destructive/20 border-destructive/40 text-destructive line-through";
+                else stateStyle = "opacity-30 border-transparent grayscale";
+              } else if (isAnswered) {
+                // In testing mode, show the selection but no colors
+                if (idx === answers[currentIndex]) stateStyle = "bg-white/10 border-white/30 text-white font-bold ring-2 ring-white/10 scale-[1.02]";
                 else stateStyle = "opacity-30 border-transparent grayscale";
               } else if (tempSelection === idx) {
                 stateStyle = "bg-primary/20 border-primary shadow-[0_0_40px_rgba(0,229,255,0.1)] ring-2 ring-primary/20 scale-[1.02] text-white";
@@ -246,17 +278,20 @@ export default function AssessmentEngine() {
                 >
                   <span className={cn(
                     "w-12 h-12 rounded-full flex items-center justify-center text-sm font-black shrink-0 transition-colors shadow-inner",
-                    (isAnswered || analysisMode) && idx === currentQ.a ? "bg-primary-foreground/20" : "bg-black/30"
+                    analysisMode && idx === currentQ.a ? "bg-primary-foreground/20" : "bg-black/30"
                   )}>
                     {String.fromCharCode(65 + idx)}
                   </span>
                   <span className="text-lg md:text-xl font-bold leading-tight">{option}</span>
+                  {isAnswered && !analysisMode && idx === answers[currentIndex] && (
+                    <Lock className="w-5 h-5 ml-auto text-white/20" />
+                  )}
                 </button>
               );
             })}
           </div>
 
-          {(isAnswered || analysisMode) && currentQ.rationale && (
+          {analysisMode && currentQ.rationale && (
             <div className="p-10 rounded-[3rem] bg-white/5 border border-white/10 animate-in zoom-in-95 shadow-2xl">
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle2 className="w-5 h-5 text-primary" />
@@ -292,7 +327,7 @@ export default function AssessmentEngine() {
             <Progress value={(Object.keys(answers).length / assessment.questions.length) * 100} className="h-2 bg-white/5" />
           </div>
 
-          {!isAnswered && !analysisMode ? (
+          {(!isAnswered && !analysisMode) ? (
             <Button 
               onClick={handleConfirm} 
               disabled={tempSelection === null}
@@ -301,8 +336,11 @@ export default function AssessmentEngine() {
               Confirm
             </Button>
           ) : (
-            <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-xl shadow-[0_20px_50px_rgba(0,229,255,0.2)] transition-all active:scale-95">
-              {currentIndex === assessment.questions.length - 1 ? "Results" : "Next Item"} <ChevronRight className="w-5 h-5 ml-2" />
+            <Button 
+              onClick={handleNext} 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-xl shadow-[0_20px_50px_rgba(0,229,255,0.2)] transition-all active:scale-95"
+            >
+              {currentIndex === assessment.questions.length - 1 ? (analysisMode ? "Finish Review" : "Results") : "Next Item"} <ChevronRight className="w-5 h-5 ml-2" />
             </Button>
           )}
         </div>
