@@ -73,7 +73,7 @@ export default function LoginPage() {
         </div>
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-black tracking-[0.3em] text-white animate-pulse">SYNAPSE</h1>
-          <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">Initializing Center</p>
+          <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">WELCOME FUTURE RMT</p>
         </div>
       </div>
     );
@@ -81,7 +81,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="w-full max-w-sm space-y-10">
+      <div className="w-full max-sm:max-w-xs max-w-sm space-y-10">
         <div className="flex flex-col items-center space-y-6">
           {/* Pulsing Dot above the card */}
           <div className="relative mb-2">
