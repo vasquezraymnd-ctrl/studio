@@ -4,11 +4,11 @@ A high-performance "Spotify-style" review application for Clinical Laboratory Sc
 
 ## 🚀 How to Publish for Free
 
-You can host this entire platform for free using **Firebase App Hosting** and **GitHub**.
+You can host this entire platform for free using **Firebase App Hosting** (Spark Plan) and **GitHub**.
 
 ### 1. Create a GitHub Repository
-- Go to [GitHub](https://github.com) and create a new repository (Public or Private).
-- Push this code to your repository:
+- Log in to [GitHub](https://github.com) and create a new repository (Public or Private).
+- Push this code from your workstation to your new repository:
   ```bash
   git init
   git add .
@@ -23,26 +23,26 @@ You can host this entire platform for free using **Firebase App Hosting** and **
 - Navigate to **Build > App Hosting** in the left sidebar.
 - Click **Get Started** and connect your GitHub account.
 - Select your repository and the `main` branch.
-- Firebase will automatically detect the Next.js setup and the `apphosting.yaml` file.
+- Firebase App Hosting will automatically detect the Next.js framework and use your `apphosting.yaml` configuration.
 
-### 3. Deploy
+### 3. Deploy & Monitor
 - Click **Finish and Deploy**.
-- Firebase will provide you with a unique `web.app` or `firebaseapp.com` domain (e.g., `synapse-rmt.web.app`).
-- Every time you push new code to GitHub, your app will automatically update.
+- Firebase will provide you with a secure `web.app` or `firebaseapp.com` domain.
+- **Automatic Updates**: Every time you push changes to your GitHub `main` branch, Firebase will automatically build and re-deploy your app.
 
-## 🛠 Features
-- **Synapse Engine**: 100-item skippable assessments with instant rationalization.
-- **Reviewee Profile**: Track scores, institutions, and progress.
-- **Global Library**: Searchable database of all deployed study modules.
-- **Admin Portal**: Deploy new materials and flash test banks via JSON.
+## 🛠 Core Systems
+- **Synapse Engine**: 100-item skippable assessments with a confirm-to-submit workflow and instant rationalization.
+- **Reviewee Profile**: Personalized identity tracking for names, institutions, and historical assessment scores.
+- **Global Library**: A searchable, centralized hub for all deployed study modules.
+- **Command Center**: Admin-only portal for deploying study materials and flashing JSON-based test banks.
 
-## 🩺 Subject Navigation
-The dashboard is optimized for the 6 core CLS subjects:
-- Clinical Chemistry
-- Microbiology & Parasitology
-- Hematology
-- Blood Banking & Serology
-- Clinical Microscopy
-- MT Laws & Histopath
+## 🩺 Subject Specializations
+The platform is optimized for the 6 core Board Exam subjects:
+- **Clinical Chemistry**
+- **Microbiology & Parasitology**
+- **Hematology**
+- **Blood Banking & Serology**
+- **Clinical Microscopy**
+- **MT Laws & Histopath**
 
 Good day, Future RMT!
