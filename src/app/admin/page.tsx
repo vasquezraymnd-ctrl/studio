@@ -44,17 +44,17 @@ export default function AdminPortal() {
 
   // Robust client-side check for admin status
   const isAdmin = useMemo(() => {
-    if (!user || isUserLoading) return false;
-    return !!user.email?.toLowerCase().includes('admin');
+    if (isUserLoading || !user) return false;
+    const email = user.email?.toLowerCase() || "";
+    return email.includes('admin');
   }, [user, isUserLoading]);
 
   // Query for global student progress - STRICTLY guarded by isAdmin
+  // This query will only ever be defined if the user is a confirmed administrator
   const globalProgressQuery = useMemoFirebase(() => {
-    // Only create this query if we are 100% sure the user is an admin
-    // AND we have finished loading the user state
-    if (!db || isUserLoading || !isAdmin) return null;
+    if (!db || isUserLoading || !isAdmin || !user) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
-  }, [db, isAdmin, isUserLoading]);
+  }, [db, isAdmin, isUserLoading, user]);
 
   const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
 
