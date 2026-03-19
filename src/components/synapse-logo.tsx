@@ -1,4 +1,3 @@
-
 "use client"
 
 import { cn } from "@/lib/utils";
@@ -8,23 +7,48 @@ export function SynapseLogo({ className }: { className?: string }) {
     <div className={cn("relative flex items-center justify-center", className)}>
       <svg 
         viewBox="0 0 100 100" 
-        className="w-full h-full text-primary"
+        className="w-full h-full text-primary animate-in fade-in duration-1000"
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
-        {/* Medical 'N' Design */}
+        {/* Syringe Body/Barrel */}
         <path 
-          d="M30 80V20L70 80V20" 
+          d="M35 30 L65 30 L65 70 L50 85 L35 70 Z" 
           stroke="currentColor" 
-          strokeWidth="12" 
+          strokeWidth="6" 
           strokeLinecap="round" 
           strokeLinejoin="round"
         />
-        {/* Pulse Dot in the center */}
-        <circle cx="50" cy="50" r="8" fill="currentColor" className="heartbeat shadow-lg" />
+        {/* Plunger */}
+        <path 
+          d="M50 30 L50 15 M40 15 L60 15" 
+          stroke="currentColor" 
+          strokeWidth="6" 
+          strokeLinecap="round"
+        />
+        {/* Needle */}
+        <path 
+          d="M50 85 L50 95" 
+          stroke="currentColor" 
+          strokeWidth="4" 
+          strokeLinecap="round"
+        />
+        {/* Pulse Dot at the needle tip/base */}
+        <circle 
+          cx="50" 
+          cy="85" 
+          r="6" 
+          fill="currentColor" 
+          className="heartbeat shadow-lg shadow-primary/50" 
+        />
+        
+        {/* Measurement Marks */}
+        <line x1="42" y1="40" x2="50" y2="40" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <line x1="42" y1="50" x2="50" y2="50" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+        <line x1="42" y1="60" x2="50" y2="60" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       </svg>
       {/* Glow Effect */}
-      <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full -z-10 animate-pulse" />
+      <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full -z-10 animate-pulse" />
     </div>
   );
 }
