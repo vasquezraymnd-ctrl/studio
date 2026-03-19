@@ -1,4 +1,3 @@
-
 "use client"
 
 export const runtime = 'edge';
@@ -74,12 +73,13 @@ export default function AssessmentEngine() {
       const progressRef = doc(db, "users", user.uid, "progress", assessmentId as string);
       
       const progressData = {
+        userId: user.uid, // Explicit field for collection group queries
         assessmentId,
         assessmentTitle: assessment.title,
         subjectId,
         score,
         total: assessment.questions.length,
-        userEmail: user.email, // Added for admin monitoring
+        userEmail: user.email,
         completedAt: new Date().toISOString()
       };
 

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -43,9 +42,10 @@ export default function AdminPortal() {
   const [visibleAt, setVisibleAt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isAdmin = user?.email?.toLowerCase().includes('admin');
+  // Robust client-side check for admin status
+  const isAdmin = !!(user && user.email?.toLowerCase().includes('admin'));
 
-  // Query for global student progress - only active if user is confirmed admin
+  // Query for global student progress - STRICTLY guarded by isAdmin
   const globalProgressQuery = useMemoFirebase(() => {
     if (!db || !isAdmin || isUserLoading) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));

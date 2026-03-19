@@ -1,19 +1,19 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Utility functions
-    function isSignedIn() { return request.auth != null; }
+    // Basic auth checks
+    function isSignedIn() {
+      return request.auth != null;
+    }
     
-    // Admin check: either exists in admins collection or has 'admin' in their email
-    function isAdmin() { 
+    function isAdmin() {
       return isSignedIn() && (
         (request.auth.token.email != null && request.auth.token.email.lower().matches('.*admin.*')) ||
         exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-      ); 
+      );
     }
 
-    // COLLECTION GROUP RULES
-    // These must be defined at the root to allow collectionGroup() queries
+    // COLLECTION GROUP RULES (Must be defined broadly for collectionGroup() queries)
     match /{path=**}/modules/{moduleId} {
       allow read: if isSignedIn();
     }
@@ -23,7 +23,7 @@ service cloud.firestore {
     }
     
     match /{path=**}/progress/{progressId} {
-      // Admins can see all progress; students can see their own
+      // Admins see all; students see their own based on field check
       allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
     }
 
@@ -43,12 +43,14 @@ service cloud.firestore {
       }
     }
 
-    // User personal data rules
+    // User personal data
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
       
       match /progress/{progressId} {
-        allow read, write: if isSignedIn() && request.auth.uid == userId;
+        allow read: if isSignedIn() && request.auth.uid == userId;
+        // Allow create/write if they are the owner
+        allow write: if isSignedIn() && request.auth.uid == userId;
       }
     }
 
