@@ -95,13 +95,17 @@ export default function LoginPage() {
   if (isSplashLoading || isUserLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-10 animate-in fade-in duration-500">
-        <div className="relative">
-          <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
-          <SynapseLogo className="w-24 h-24 relative" />
-        </div>
-        <div className="text-center space-y-4 max-w-md w-full">
-          <h1 className="text-7xl font-black tracking-tighter animate-pulse leading-none w-full">SYNAPSE</h1>
-          <p className="text-primary font-bold text-[10px] uppercase tracking-[0.2em] w-full text-center">Next-Gen review for Next-Gen RMTs</p>
+        <div className="flex flex-col items-center space-y-6 text-center w-full max-w-md">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full bg-primary/20 animate-ping absolute" />
+            <SynapseLogo className="w-20 h-20 relative" />
+          </div>
+          <div className="space-y-1 w-full text-center">
+            <h1 className="text-7xl font-black tracking-tighter animate-pulse uppercase leading-none w-full">SYNAPSE</h1>
+            <p className="font-bold uppercase tracking-[0.22em] text-[10px] text-primary w-full text-center whitespace-nowrap">
+              Next-Gen review for Next-Gen RMTs
+            </p>
+          </div>
         </div>
       </div>
     );
