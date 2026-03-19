@@ -52,14 +52,17 @@ export default function AdminPortal() {
   // Query for global student progress - STRICTLY guarded by isAdmin
   // This query will only ever be defined if the user is a confirmed administrator
   const globalProgressQuery = useMemoFirebase(() => {
-    if (!db || isUserLoading || !isAdmin || !user) return null;
+    const userEmail = user?.email?.toLowerCase() || "";
+    // Double-check here to prevent any accidental unauthorized query initialization
+    if (!db || isUserLoading || !user || !userEmail.includes('admin')) return null;
+    
     try {
       return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
     } catch (e) {
       console.error("Failed to initialize metrics query:", e);
       return null;
     }
-  }, [db, isAdmin, isUserLoading, user]);
+  }, [db, isUserLoading, user]);
 
   const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
 

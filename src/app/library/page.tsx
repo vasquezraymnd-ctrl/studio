@@ -24,9 +24,10 @@ export default function GlobalLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const allModulesQuery = useMemoFirebase(() => {
-    if (!db || !user) return null;
+    // Wait for auth to be fully ready before querying a collection group
+    if (!db || isUserLoading || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"));
-  }, [db, user]);
+  }, [db, user, isUserLoading]);
 
   const { data: rawModules, isLoading } = useCollection(allModulesQuery);
 
