@@ -97,11 +97,11 @@ export default function LoginPage() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-10 animate-in fade-in duration-500">
         <div className="w-full max-w-md flex flex-col items-center space-y-10 text-center">
           <div className="relative">
-            <div className="w-36 h-36 rounded-full bg-primary/20 animate-ping absolute" />
-            <SynapseLogo className="w-36 h-36 relative" />
+            <div className="w-44 h-44 rounded-full bg-primary/20 animate-ping absolute" />
+            <SynapseLogo className="w-44 h-44 relative" />
           </div>
           <div className="space-y-4 w-full px-2">
-            <h1 className="text-[clamp(4rem,16vw,6rem)] font-black tracking-tighter animate-pulse uppercase leading-none w-full text-center">
+            <h1 className="text-[clamp(4.5rem,18vw,7rem)] font-black tracking-tighter animate-pulse uppercase leading-none w-full text-center">
               SYNAPSE
             </h1>
             <p className="font-bold uppercase tracking-[0.25em] text-[12px] text-primary w-full text-center whitespace-nowrap">
@@ -121,15 +121,15 @@ export default function LoginPage() {
         </div>
       </div>
       
-      <div className="w-full max-w-md space-y-10">
+      <div className="w-full max-w-md space-y-12">
         <div className="flex flex-col items-center space-y-10 text-center w-full px-2">
           <div className="relative">
-            <div className="w-36 h-36 rounded-full bg-primary/20 animate-ping absolute" />
-            <SynapseLogo className="w-36 h-36 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
+            <div className="w-44 h-44 rounded-full bg-primary/20 animate-ping absolute" />
+            <SynapseLogo className="w-44 h-44 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
           </div>
           
           <div className="space-y-4 w-full text-center">
-            <h1 className="text-[clamp(4rem,16vw,6rem)] font-black tracking-tighter uppercase leading-none w-full">
+            <h1 className="text-[clamp(4.5rem,18vw,7rem)] font-black tracking-tighter uppercase leading-none w-full">
               SYNAPSE
             </h1>
             <p className="font-bold uppercase tracking-[0.25em] text-[12px] text-primary w-full text-center whitespace-nowrap">

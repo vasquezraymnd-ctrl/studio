@@ -5,18 +5,21 @@ A high-performance "Spotify-style" review application for Clinical Laboratory Sc
 
 ## 🚀 How to Publish for $0 (Startup Alternatives)
 
-If you are a startup in a region where phone verification or credit card requirements are a barrier, use these **truly free** alternatives to host your Next.js application:
+If you are a startup in a region where phone verification or credit card requirements are a barrier for Google Cloud or Vercel, use these **truly free** alternatives to host your Next.js application:
 
 ### 1. Cloudflare Pages (Highly Recommended)
 - **Cost**: $0 (Free Plan).
 - **Setup Steps**:
     1. Go to **Workers & Pages** in your Cloudflare dashboard.
     2. Click **Create** > **Pages** > **Connect to Git**.
-    3. Select your repository.
-    4. In **Build settings**, select **Next.js** from the **Framework preset** dropdown.
-    5. Add an Environment Variable: `NODE_VERSION` = `20`.
-    6. Click **Save and Deploy**.
-- **Why?**: Unlimited bandwidth and no phone verification required in most regions.
+    3. Select your GitHub repository.
+    4. **The "Set up builds and deployments" page will now appear automatically.**
+    5. In **Build settings**, find the **Framework preset** dropdown and select **Next.js**.
+    6. **Important**: Add an Environment Variable in the "Environment variables (advanced)" section: 
+       - Key: `NODE_VERSION`
+       - Value: `20`
+    7. Click **Save and Deploy**.
+- **Why?**: No phone verification required in most regions and unlimited bandwidth.
 
 ### 2. Netlify
 - **Cost**: $0 (Starter Plan).
