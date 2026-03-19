@@ -79,6 +79,7 @@ export default function AssessmentEngine() {
         subjectId,
         score,
         total: assessment.questions.length,
+        userEmail: user.email, // Added for admin monitoring
         completedAt: new Date().toISOString()
       };
 

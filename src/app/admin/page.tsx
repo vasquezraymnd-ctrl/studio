@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -5,13 +6,27 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useFirestore, useUser } from "@/firebase";
-import { collection, doc } from "firebase/firestore";
+import { useFirestore, useUser, useCollection } from "@/firebase";
+import { collection, doc, query, collectionGroup, orderBy, limit } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock, FlaskConical } from "lucide-react";
+import { 
+  ChevronLeft, 
+  Database, 
+  PlusCircle, 
+  Lock, 
+  Loader2, 
+  CalendarClock, 
+  BarChart3,
+  Users,
+  Trophy,
+  Calendar
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { useMemoFirebase } from "@/firebase/provider";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function AdminPortal() {
   const router = useRouter();
@@ -19,7 +34,7 @@ export default function AdminPortal() {
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
 
-  const [mode, setMode] = useState<'module' | 'quiz'>('module');
+  const [mode, setMode] = useState<'module' | 'quiz' | 'metrics'>('module');
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -29,6 +44,14 @@ export default function AdminPortal() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
+
+  // Query for global student progress
+  const globalProgressQuery = useMemoFirebase(() => {
+    if (!db || !isAdmin) return null;
+    return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
+  }, [db, isAdmin]);
+
+  const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
 
   useEffect(() => {
     if (!isUserLoading && !isAdmin && user) {
@@ -105,7 +128,7 @@ export default function AdminPortal() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="px-6 pt-12 pb-8 flex items-center justify-between">
+      <header className="px-6 pt-12 pb-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-0 text-muted-foreground hover:text-white">
           <ChevronLeft className="w-6 h-6 mr-1" /> Dashboard
         </Button>
@@ -129,72 +152,129 @@ export default function AdminPortal() {
           >
             <Database className="mr-2 w-4 h-4" /> Bulk Upload
           </Button>
+          <Button 
+            onClick={() => setMode('metrics')} 
+            className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'metrics' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
+          >
+            <BarChart3 className="mr-2 w-4 h-4" /> Metrics
+          </Button>
         </div>
 
-        <div className="spotify-glass rounded-[3rem] p-10 space-y-8">
-          <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Target Subject</label>
-            <Select onValueChange={setSubject} value={subject}>
-              <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl">
-                <SelectValue placeholder="Select Subject..." />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-white/10">
-                <SelectItem value="clinical-chemistry">Clinical Chemistry</SelectItem>
-                <SelectItem value="microbiology">Microbiology</SelectItem>
-                <SelectItem value="hematology">Hematology</SelectItem>
-                <SelectItem value="blood-banking">Blood Banking</SelectItem>
-                <SelectItem value="clinical-microscopy">Clinical Microscopy</SelectItem>
-                <SelectItem value="mt-laws">MT Laws</SelectItem>
-              </SelectContent>
-            </Select>
+        {mode !== 'metrics' ? (
+          <div className="spotify-glass rounded-[3rem] p-10 space-y-8">
+            <div className="space-y-4">
+              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Target Subject</label>
+              <Select onValueChange={setSubject} value={subject}>
+                <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl">
+                  <SelectValue placeholder="Select Subject..." />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-white/10">
+                  <SelectItem value="clinical-chemistry">Clinical Chemistry</SelectItem>
+                  <SelectItem value="microbiology">Microbiology</SelectItem>
+                  <SelectItem value="hematology">Hematology</SelectItem>
+                  <SelectItem value="blood-banking">Blood Banking</SelectItem>
+                  <SelectItem value="clinical-microscopy">Clinical Microscopy</SelectItem>
+                  <SelectItem value="mt-laws">MT Laws</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-4">
+              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2">
+                <CalendarClock className="w-3 h-3 text-primary" /> Visibility Schedule (Optional)
+              </label>
+              <input 
+                type="datetime-local" 
+                value={visibleAt} 
+                onChange={e => setVisibleAt(e.target.value)} 
+                className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-4 text-sm text-white focus:outline-none focus:border-primary" 
+              />
+            </div>
+
+            {mode === 'module' && (
+              <form onSubmit={handleModuleSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Module Title</label>
+                  <Input value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., CBC & Morphology" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
+                </div>
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Resource Link</label>
+                  <Input value={url} onChange={e => setUrl(e.target.value)} required placeholder="Direct URL" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
+                </div>
+                <Button type="submit" disabled={isSubmitting || !subject} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl transition-all active:scale-95">
+                  {isSubmitting ? <Loader2 className="animate-spin" /> : "Deploy Module"}
+                </Button>
+              </form>
+            )}
+
+            {mode === 'quiz' && (
+              <form onSubmit={handleQuizSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">JSON Payload (Manual Upload)</label>
+                  <Textarea 
+                    value={jsonInput} 
+                    onChange={e => setJsonInput(e.target.value)} 
+                    required 
+                    placeholder='{ "title": "Hematology Quiz", "questions": [...] }'
+                    className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs"
+                  />
+                </div>
+                <Button type="submit" disabled={isSubmitting || !subject || !jsonInput} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl transition-all active:scale-95">
+                  {isSubmitting ? <Loader2 className="animate-spin" /> : "Flash to Test Bank"}
+                </Button>
+              </form>
+            )}
           </div>
+        ) : (
+          <section className="space-y-6">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground flex items-center gap-2">
+                <Users className="w-4 h-4" /> Global Student Performance
+              </h3>
+              <span className="text-[10px] font-black text-primary uppercase tracking-widest">{globalProgress?.length || 0} Recent Attempts</span>
+            </div>
 
-          <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2">
-              <CalendarClock className="w-3 h-3 text-primary" /> Visibility Schedule (Optional)
-            </label>
-            <Input 
-              type="datetime-local" 
-              value={visibleAt} 
-              onChange={e => setVisibleAt(e.target.value)} 
-              className="h-14 bg-white/5 border-white/10 rounded-2xl" 
-            />
-          </div>
-
-          {mode === 'module' && (
-            <form onSubmit={handleModuleSubmit} className="space-y-6">
+            <ScrollArea className="h-[600px] pr-4">
               <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Module Title</label>
-                <Input value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., CBC & Morphology" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
+                {metricsLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="h-28 w-full rounded-[2rem] bg-white/5 animate-pulse" />
+                  ))
+                ) : globalProgress?.length === 0 ? (
+                  <div className="text-center py-20 bg-white/5 rounded-[3rem] border-2 border-dashed border-white/10">
+                    <Trophy className="w-12 h-12 mx-auto text-muted-foreground mb-4 opacity-20" />
+                    <p className="text-muted-foreground font-black text-[10px] uppercase tracking-widest">No activity recorded yet.</p>
+                  </div>
+                ) : (
+                  globalProgress?.map((item) => (
+                    <Card key={item.id} className="spotify-glass border-none rounded-[2rem] overflow-hidden group hover:bg-white/5 transition-colors shadow-lg">
+                      <CardContent className="p-6 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                              <Users className="w-6 h-6 text-primary" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="font-black text-white text-lg tracking-tight uppercase leading-none truncate">{item.assessmentTitle}</h4>
+                              <p className="text-[10px] font-black text-primary truncate mt-1">{item.userEmail || 'Anonymous Student'}</p>
+                              <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest mt-1 flex items-center gap-1">
+                                <Calendar className="w-3 h-3" /> {new Date(item.completedAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className="text-2xl font-black text-primary leading-none">{item.score}</span>
+                            <span className="text-xs font-black text-muted-foreground uppercase ml-1">/ {item.total}</span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
-              <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Resource Link</label>
-                <Input value={url} onChange={e => setUrl(e.target.value)} required placeholder="Direct URL" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
-              </div>
-              <Button type="submit" disabled={isSubmitting || !subject} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl">
-                {isSubmitting ? <Loader2 className="animate-spin" /> : "Deploy Module"}
-              </Button>
-            </form>
-          )}
-
-          {mode === 'quiz' && (
-            <form onSubmit={handleQuizSubmit} className="space-y-6">
-              <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">JSON Payload (Manual Upload)</label>
-                <Textarea 
-                  value={jsonInput} 
-                  onChange={e => setJsonInput(e.target.value)} 
-                  required 
-                  placeholder='{ "title": "Hematology Quiz", "questions": [...] }'
-                  className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs"
-                />
-              </div>
-              <Button type="submit" disabled={isSubmitting || !subject || !jsonInput} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl">
-                {isSubmitting ? <Loader2 className="animate-spin" /> : "Flash to Test Bank"}
-              </Button>
-            </form>
-          )}
-        </div>
+            </ScrollArea>
+          </section>
+        )}
       </main>
     </div>
   );

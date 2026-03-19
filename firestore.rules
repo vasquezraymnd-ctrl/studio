@@ -12,9 +12,13 @@ service cloud.firestore {
       ); 
     }
 
-    // Collection Group rules (Crucial for the Global Library page)
+    // Collection Group rules (Crucial for the Global Library and Admin Metrics)
     match /{path=**}/modules/{moduleId} {
       allow read: if isSignedIn();
+    }
+    
+    match /{path=**}/progress/{progressId} {
+      allow read: if isAdmin();
     }
 
     // Standard subject-based path rules
