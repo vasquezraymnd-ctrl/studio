@@ -27,7 +27,7 @@ The terminal is **NOT** inside the running prototype. It is inside the **Editor*
 Whenever you click "Apply Changes" from the AI, you must run these in the Editor terminal:
 ```bash
 git add .
-git commit -m "Apply latest updates"
+git commit -m "Add AI Quiz Generator and Edge Runtime fixes"
 git push origin main
 ```
 Cloudflare will automatically detect the push and rebuild your site in ~1 minute.
@@ -37,4 +37,4 @@ Cloudflare will automatically detect the push and rebuild your site in ~1 minute
 ### 🚀 POST-DEPLOYMENT STEPS
 1. **Access the Portal**: Go to your live URL.
 2. **Admin Access**: Sign in with an email containing "admin" (e.g., `admin@synapse.edu`) to unlock the **Command Center**.
-3. **Add Content**: Use the Command Center to upload real study modules and bulk JSON test banks.
+3. **AI Assistant**: Use the new "AI Magic" tab in the Command Center to generate high-yield test banks instantly.

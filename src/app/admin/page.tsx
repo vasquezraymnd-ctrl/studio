@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -10,46 +9,10 @@ import { useFirestore, useUser } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock, FlaskConical } from "lucide-react";
+import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock, FlaskConical, Sparkles, Wand2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-
-const SAMPLE_CHEMISTRY_QUIZ = {
-  "title": "Clinical Chemistry 101 - Preliminary Review",
-  "difficulty": "Moderate",
-  "questions": [
-    {
-      "q": "What is the primary indicator used in the Jaffe reaction for the measurement of creatinine?",
-      "options": ["Sodium hydroxide", "Alkaline picrate", "Phosphotungstic acid", "Diacetyl monoxime"],
-      "a": 1,
-      "rationale": "The Jaffe reaction uses alkaline picrate to react with creatinine, forming a red-orange complex (creatinine picrate)."
-    },
-    {
-      "q": "Which enzyme is considered the most sensitive marker for identifying chronic alcoholic liver disease?",
-      "options": ["ALT", "AST", "ALP", "GGT"],
-      "a": 3,
-      "rationale": "Gamma-glutamyl transferase (GGT) is highly sensitive to alcohol consumption and is the primary marker used to detect chronic alcohol abuse."
-    },
-    {
-      "q": "A patient with a fasting blood glucose of 115 mg/dL would be classified as having:",
-      "options": ["Normal glucose", "Impaired fasting glucose", "Diabetes mellitus", "Hypoglycemia"],
-      "a": 1,
-      "rationale": "According to ADA criteria, a fasting blood glucose between 100 and 125 mg/dL is classified as Impaired Fasting Glucose (Pre-diabetes)."
-    },
-    {
-      "q": "Which lipoprotein is responsible for 'Reverse Cholesterol Transport', moving cholesterol back to the liver?",
-      "options": ["Chylomicrons", "VLDL", "LDL", "HDL"],
-      "a": 3,
-      "rationale": "HDL is known as 'good cholesterol' because it performs reverse cholesterol transport, removing excess cholesterol from peripheral tissues."
-    },
-    {
-      "q": "The primary electrolyte found in the intracellular fluid (ICF) is:",
-      "options": ["Sodium", "Chloride", "Potassium", "Bicarbonate"],
-      "a": 2,
-      "rationale": "Potassium is the major intracellular cation, while Sodium is the major extracellular cation."
-    }
-  ]
-};
+import { generateQuiz } from "@/ai/flows/generate-quiz-flow";
 
 export default function AdminPortal() {
   const router = useRouter();
@@ -57,14 +20,16 @@ export default function AdminPortal() {
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
 
-  const [mode, setMode] = useState<'module' | 'quiz'>('module');
+  const [mode, setMode] = useState<'module' | 'quiz' | 'ai'>('module');
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [jsonInput, setJsonInput] = useState("");
   const [visibleAt, setVisibleAt] = useState("");
+  const [aiPrompt, setAiPrompt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
@@ -116,16 +81,26 @@ export default function AdminPortal() {
       
       toast({ title: "Quiz Scheduled", description: "Test bank has been queued for sync." });
       setJsonInput(""); setVisibleAt("");
+      setMode('quiz'); // Reset view if in AI mode
     } catch (e: any) {
       toast({ variant: "destructive", title: "JSON Syntax Error", description: "Please verify the question object structure." });
     }
     setIsSubmitting(false);
   };
 
-  const loadSampleQuiz = () => {
-    setJsonInput(JSON.stringify(SAMPLE_CHEMISTRY_QUIZ, null, 2));
-    setSubject("clinical-chemistry");
-    toast({ title: "Sample Loaded", description: "Chemistry quiz template populated." });
+  const handleAiGeneration = async () => {
+    if (!aiPrompt) return;
+    setIsAiGenerating(true);
+    try {
+      const result = await generateQuiz({ topic: aiPrompt });
+      setJsonInput(JSON.stringify(result, null, 2));
+      setMode('quiz');
+      toast({ title: "AI Generation Success", description: "Structured JSON has been loaded into the editor." });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "AI Error", description: error.message || "Failed to generate quiz." });
+    } finally {
+      setIsAiGenerating(false);
+    }
   };
 
   if (isUserLoading) {
@@ -160,18 +135,24 @@ export default function AdminPortal() {
       </header>
 
       <main className="px-6 max-w-2xl mx-auto space-y-10 pb-20">
-        <div className="flex gap-4">
+        <div className="flex gap-2">
           <Button 
             onClick={() => setMode('module')} 
-            className={cn("flex-1 h-16 rounded-3xl font-black transition-all", mode === 'module' ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "spotify-glass border-none text-white")}
+            className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'module' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
           >
-            <PlusCircle className="mr-2 w-5 h-5" /> Add Module
+            <PlusCircle className="mr-2 w-4 h-4" /> Module
           </Button>
           <Button 
             onClick={() => setMode('quiz')} 
-            className={cn("flex-1 h-16 rounded-3xl font-black transition-all", mode === 'quiz' ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "spotify-glass border-none text-white")}
+            className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'quiz' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
           >
-            <Database className="mr-2 w-5 h-5" /> Bulk Quiz
+            <Database className="mr-2 w-4 h-4" /> Bulk
+          </Button>
+          <Button 
+            onClick={() => setMode('ai')} 
+            className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'ai' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
+          >
+            <Sparkles className="mr-2 w-4 h-4" /> AI Magic
           </Button>
         </div>
 
@@ -203,67 +184,65 @@ export default function AdminPortal() {
               onChange={e => setVisibleAt(e.target.value)} 
               className="h-14 bg-white/5 border-white/10 rounded-2xl" 
             />
-            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest ml-1">If empty, item will be visible immediately.</p>
           </div>
 
-          {mode === 'module' ? (
+          {mode === 'module' && (
             <form onSubmit={handleModuleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Module Title</label>
                 <Input value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., CBC & Morphology" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
               </div>
               <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Brief Description</label>
-                <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Summary of material content" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Resource Link</label>
+                <Input value={url} onChange={e => setUrl(e.target.value)} required placeholder="Direct URL" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
               </div>
-              <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Resource Link (PDF/Video)</label>
-                <div className="relative">
-                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/40" />
-                  <Input value={url} onChange={e => setUrl(e.target.value)} required placeholder="Direct Download URL" className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl" />
-                </div>
-              </div>
-              <Button type="submit" disabled={isSubmitting || !subject} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl disabled:opacity-30">
+              <Button type="submit" disabled={isSubmitting || !subject} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl">
                 {isSubmitting ? <Loader2 className="animate-spin" /> : "Deploy Module"}
               </Button>
             </form>
-          ) : (
+          )}
+
+          {mode === 'quiz' && (
             <form onSubmit={handleQuizSubmit} className="space-y-6">
               <div className="space-y-4">
-                <div className="flex items-center justify-between ml-1">
-                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
-                    <FileJson className="w-4 h-4" /> JSON Payload (Test Bank Format)
-                  </label>
-                  <Button 
-                    type="button" 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={loadSampleQuiz}
-                    className="h-8 text-[9px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors"
-                  >
-                    <FlaskConical className="w-3 h-3 mr-1" /> Load Chemistry Sample
-                  </Button>
-                </div>
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">JSON Payload</label>
                 <Textarea 
                   value={jsonInput} 
                   onChange={e => setJsonInput(e.target.value)} 
                   required 
-                  placeholder='{ "title": "Prelim Exam", "questions": [{"q": "Question here?", "options": ["A", "B"], "a": 0}] }'
-                  className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs focus:ring-primary"
+                  className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs"
                 />
               </div>
-              <div className="p-6 rounded-2xl bg-destructive/10 border border-destructive/20 flex gap-4 items-center">
-                <ShieldAlert className="w-8 h-8 text-destructive shrink-0" />
-                <p className="text-[10px] text-destructive font-black uppercase tracking-widest">Verify the JSON structure before flashing. This cannot be undone.</p>
-              </div>
-              <Button type="submit" disabled={isSubmitting || !subject || !jsonInput} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl disabled:opacity-30">
+              <Button type="submit" disabled={isSubmitting || !subject || !jsonInput} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl">
                 {isSubmitting ? <Loader2 className="animate-spin" /> : "Flash to Test Bank"}
               </Button>
             </form>
+          )}
+
+          {mode === 'ai' && (
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Quiz Topic (AI Assistant)</label>
+                <Input 
+                  value={aiPrompt} 
+                  onChange={e => setAiPrompt(e.target.value)} 
+                  placeholder="e.g. Gram Positive Cocci" 
+                  className="h-14 bg-white/5 border-white/10 rounded-2xl" 
+                />
+                <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest ml-1 italic">Gemini will generate high-yield board questions.</p>
+              </div>
+              <Button 
+                onClick={handleAiGeneration} 
+                disabled={isAiGenerating || !aiPrompt} 
+                className="w-full h-16 bg-white/10 text-white font-black rounded-full text-lg border border-white/10 hover:bg-primary hover:text-primary-foreground transition-all"
+              >
+                {isAiGenerating ? <Loader2 className="animate-spin mr-2" /> : <Wand2 className="mr-2 w-5 h-5" />}
+                {isAiGenerating ? "Synthesizing..." : "Generate Test Bank"}
+              </Button>
+            </div>
           )}
         </div>
       </main>
     </div>
   );
 }
-
