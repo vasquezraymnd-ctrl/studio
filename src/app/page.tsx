@@ -71,7 +71,7 @@ export default function LoginPage() {
         </div>
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-black tracking-[0.3em] animate-pulse">SYNAPSE</h1>
-          <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">WELCOME FUTURE RMT</p>
+          <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">Good day!</p>
         </div>
       </div>
     );

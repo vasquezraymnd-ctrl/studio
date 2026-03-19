@@ -50,7 +50,6 @@ export default function DiscoveryDashboard() {
       <header className="px-6 pt-12 pb-6 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div>
           <h1 className="text-3xl font-black tracking-tighter uppercase">Synapse</h1>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Clinical Excellence</p>
         </div>
         <div className="flex items-center gap-2">
           <ModeToggle />
@@ -63,7 +62,7 @@ export default function DiscoveryDashboard() {
       <main className="px-6 space-y-10">
         <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl h-44 bg-gradient-to-br from-card to-background border border-white/5 flex items-center px-10">
           <div className="space-y-2 relative z-10">
-            <p className="text-primary font-black text-[10px] uppercase tracking-[0.4em]">Future Medical Technologist</p>
+            <p className="text-primary font-black text-[10px] uppercase tracking-[0.4em]">Good day!</p>
             <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">
               {displayName} RMT
             </h2>
