@@ -130,10 +130,10 @@ export default function AdminPortal() {
 
         <div className="spotify-glass rounded-[3rem] p-10 space-y-8">
           <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Target Subject Pillar</label>
+            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Target Subject</label>
             <Select onValueChange={setSubject} value={subject}>
               <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl">
-                <SelectValue placeholder="Select Pillar..." />
+                <SelectValue placeholder="Select Subject..." />
               </SelectTrigger>
               <SelectContent className="bg-card border-white/10">
                 <SelectItem value="clinical-chemistry">Clinical Chemistry</SelectItem>

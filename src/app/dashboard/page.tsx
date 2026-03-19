@@ -66,13 +66,13 @@ export default function DiscoveryDashboard() {
             <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">
               {displayName} RMT
             </h2>
-            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-2">Select a pillar to begin your session</p>
+            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-2">Select a subject to begin your session</p>
           </div>
           <Library className="w-32 h-32 text-primary/5 absolute -right-6 -bottom-6 rotate-12" />
         </div>
 
         <section className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">The 6 Pillars</h3>
+          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">The 6 Subjects</h3>
           <div className="grid grid-cols-2 gap-4">
             {SUBJECTS.map((sub) => (
               <button 
