@@ -22,10 +22,40 @@ If you are facing hurdles with credit cards or phone verification on other platf
     - Value: `20`
 7.  **Save and Deploy**: Your site will be live at a `*.pages.dev` address.
 
+### 📦 How to Push to GitHub (The "HOW DO I PUSH" Guide)
+
+If Cloudflare says there are "No Branches", you must push your code from your computer to GitHub using these commands in your terminal:
+
+1.  **Initialize Git** (if not already done):
+    ```bash
+    git init
+    ```
+2.  **Add your files**:
+    ```bash
+    git add .
+    ```
+3.  **Commit your changes**:
+    ```bash
+    git commit -m "Initial Synapse Startup Deploy"
+    ```
+4.  **Rename branch to main**:
+    ```bash
+    git branch -M main
+    ```
+5.  **Connect to your GitHub repo**:
+    (Replace `YOUR_URL` with the link GitHub gives you, e.g., `https://github.com/username/repo.git`)
+    ```bash
+    git remote add origin YOUR_URL
+    ```
+6.  **Push the code**:
+    ```bash
+    git push -u origin main
+    ```
+
 ### ⚠️ Troubleshooting: "No Production Branch"
 If the branch dropdown is empty:
-- **Push your code first**: You must push your code from your local machine to your GitHub repository before Cloudflare can see any branches.
-- **Check the branch name**: Ensure you have a branch named `main` or `master`.
+- **Push your code first**: You must follow the "How to Push" steps above before Cloudflare can see any branches.
+- **Check the branch name**: Ensure you have a branch named `main`.
 - **Refresh**: Once you push your code, refresh the Cloudflare setup page.
 
 ## 👥 How to Manage Students & Content
