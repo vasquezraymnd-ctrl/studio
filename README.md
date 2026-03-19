@@ -22,41 +22,42 @@ If you are facing hurdles with credit cards or phone verification on other platf
     - Value: `20`
 7.  **Save and Deploy**: Your site will be live at a `*.pages.dev` address.
 
-### 📦 How to Push to GitHub (The "HOW DO I PUSH" Guide)
+### 📦 WHERE AND HOW TO PUSH (The "Where" Guide)
 
-If Cloudflare says there are "No Branches", you must push your code from your computer to GitHub using these commands in your terminal:
+You push your code to **GitHub**. Think of GitHub as the "Cloud storage" for your code that Cloudflare "reads" from.
 
-1.  **Initialize Git** (if not already done):
+1.  **Create a GitHub Repo**: Go to [github.com/new](https://github.com/new) and create a repository named `synapse-rmt`.
+2.  **Initialize Git** (in your terminal):
     ```bash
     git init
     ```
-2.  **Add your files**:
+3.  **Add your files**:
     ```bash
     git add .
     ```
-3.  **Commit your changes**:
+4.  **Commit your changes**:
     ```bash
     git commit -m "Initial Synapse Startup Deploy"
     ```
-4.  **Rename branch to main**:
+5.  **Rename branch to main**:
     ```bash
     git branch -M main
     ```
-5.  **Connect to your GitHub repo**:
-    (Replace `YOUR_URL` with the link GitHub gives you, e.g., `https://github.com/username/repo.git`)
+6.  **Connect to your GitHub repo**:
+    (Replace `YOUR_URL` with the link GitHub gives you, e.g., `https://github.com/username/synapse-rmt.git`)
     ```bash
     git remote add origin YOUR_URL
     ```
-6.  **Push the code**:
+7.  **Push the code**:
     ```bash
     git push -u origin main
     ```
 
 ### ⚠️ Troubleshooting: "No Production Branch"
-If the branch dropdown is empty:
-- **Push your code first**: You must follow the "How to Push" steps above before Cloudflare can see any branches.
-- **Check the branch name**: Ensure you have a branch named `main`.
-- **Refresh**: Once you push your code, refresh the Cloudflare setup page.
+If the branch dropdown is empty in Cloudflare:
+- **Push your code first**: Cloudflare cannot see a branch if there is no code on GitHub.
+- **Check the branch name**: Ensure you ran `git branch -M main`.
+- **Refresh**: Once you push, Cloudflare will automatically see the `main` branch.
 
 ## 👥 How to Manage Students & Content
 
