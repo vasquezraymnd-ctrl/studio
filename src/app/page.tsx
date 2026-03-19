@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -95,12 +96,12 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-16 animate-in fade-in duration-500">
         <div className="relative">
-          <div className="w-56 h-56 rounded-full bg-primary/20 animate-ping absolute" />
-          <SynapseLogo className="w-56 h-56 relative" />
+          <div className="w-64 h-64 rounded-full bg-primary/20 animate-ping absolute" />
+          <SynapseLogo className="w-64 h-64 relative" />
         </div>
         <div className="text-center space-y-6">
-          <h1 className="text-9xl font-black tracking-[0.4em] animate-pulse">SYNAPSE</h1>
-          <p className="text-primary font-black text-sm uppercase tracking-[0.4em]">Next-Gen review for Next-Gen RMTs</p>
+          <h1 className="text-[10rem] font-black tracking-[0.4em] animate-pulse leading-none">SYNAPSE</h1>
+          <p className="text-primary font-black text-lg uppercase tracking-[0.5em]">Next-Gen review for Next-Gen RMTs</p>
         </div>
       </div>
     );
@@ -114,24 +115,24 @@ export default function LoginPage() {
         </div>
       </div>
       
-      <div className="w-full max-sm:max-w-sm max-w-md">
-        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden">
-          <CardContent className="pt-16 px-10 pb-12 space-y-12">
-            {/* Logo and Slogan INSIDE the Card */}
-            <div className="flex flex-col items-center space-y-6 text-center">
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full bg-primary animate-ping absolute" />
-                <div className="w-12 h-12 rounded-full bg-primary shadow-[0_0_20px_rgba(0,229,255,1)]" />
-              </div>
-              
-              <div className="space-y-2">
-                <h1 className="text-7xl font-black tracking-tighter uppercase leading-none">SYNAPSE</h1>
-                <p className="font-bold uppercase tracking-[0.15em] text-[11px] text-primary max-w-[250px] mx-auto">
-                  Next-Gen review for Next-Gen RMTs
-                </p>
-              </div>
-            </div>
+      <div className="w-full max-sm:max-w-sm max-w-md space-y-10">
+        {/* Logo and Slogan OUTSIDE the Card, constrained to card width */}
+        <div className="flex flex-col items-center space-y-6 text-center w-full">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full bg-primary animate-ping absolute" />
+            <div className="w-16 h-16 rounded-full bg-primary shadow-[0_0_30px_rgba(0,229,255,1)]" />
+          </div>
+          
+          <div className="space-y-2 w-full">
+            <h1 className="text-8xl font-black tracking-tighter uppercase leading-none w-full">SYNAPSE</h1>
+            <p className="font-bold uppercase tracking-[0.2em] text-[12px] text-primary whitespace-nowrap">
+              Next-Gen review for Next-Gen RMTs
+            </p>
+          </div>
+        </div>
 
+        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden">
+          <CardContent className="pt-16 px-10 pb-12 space-y-8">
             <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
