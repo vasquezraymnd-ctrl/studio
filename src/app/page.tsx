@@ -93,17 +93,17 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full max-w-md flex flex-col items-center space-y-6 text-center">
+    <div className="w-full max-w-md flex flex-col items-center space-y-4 text-center">
       <div className="relative">
-        <div className="w-28 h-28 rounded-full bg-primary/20 animate-ping absolute" />
-        <SynapseLogo className="w-28 h-28 relative filter drop-shadow-[0_0_30px_rgba(0,229,255,0.9)]" />
+        <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
+        <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_30px_rgba(0,229,255,0.9)]" />
       </div>
       
-      <div className="space-y-2 w-full">
-        <h1 className="text-5xl font-black tracking-tighter uppercase leading-none w-full text-white">
+      <div className="space-y-1 w-full">
+        <h1 className="text-4xl font-black tracking-tighter uppercase leading-none w-full text-white">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.4em] text-[10px] text-primary w-full text-center whitespace-nowrap">
+        <p className="font-black uppercase tracking-[0.4em] text-[9px] text-primary w-full text-center whitespace-nowrap opacity-90">
           NEXT-GEN REVIEW FOR NEXT-GEN RMTS
         </p>
       </div>
@@ -124,12 +124,12 @@ export default function LoginPage() {
         <ModeToggle />
       </div>
       
-      <div className="w-full max-w-md space-y-12 flex flex-col items-center">
+      <div className="w-full max-w-md space-y-8 flex flex-col items-center">
         <BrandingHeader />
 
-        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden w-full transition-all duration-500 hover:shadow-primary/5">
-          <CardContent className="pt-16 px-10 pb-12 space-y-8">
-            <form onSubmit={handleAuth} className="space-y-6">
+        <Card className="spotify-glass border-none rounded-[3rem] shadow-2xl overflow-hidden w-full transition-all duration-500 hover:shadow-primary/5">
+          <CardContent className="pt-12 px-8 pb-10 space-y-6">
+            <form onSubmit={handleAuth} className="space-y-5">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
                 <Input 
@@ -163,12 +163,12 @@ export default function LoginPage() {
                   className="h-14 bg-background/50 border-border rounded-2xl focus:border-primary px-6"
                 />
               </div>
-              <Button type="submit" className="w-full h-18 py-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
+              <Button type="submit" className="w-full h-16 py-6 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-lg mt-2 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
                 {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register Account" : "Access Portal")}
               </Button>
             </form>
 
-            <div className="text-center pt-4">
+            <div className="text-center pt-2">
               <button 
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.3em]"

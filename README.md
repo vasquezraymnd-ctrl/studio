@@ -8,13 +8,15 @@ A high-performance "Spotify-style" review application for Clinical Laboratory Sc
 To host your app for free without phone verification issues, use **Cloudflare Pages**.
 
 ### 💻 WHERE IS MY TERMINAL?
-Look at the **bottom of your screen** in Firebase Studio. You should see a tab labeled "Terminal". 
-- **If you don't see it:** Look for a small horizontal bar at the very bottom and drag it up.
-- **Keyboard Shortcut:** Press **`Ctrl + `** (the key next to '1') to toggle it.
-- **Top Menu:** Go to **Terminal > New Terminal** in the top navigation bar.
+The terminal is **NOT** inside the running app (the prototype). It is inside the **Editor**.
+1. **Switch to Editor:** Look for the "Editor" tab or button in your Firebase Studio interface to see your code.
+2. **Look at the bottom:** Once in the Editor, look at the very bottom of the screen for a tab labeled "Terminal".
+3. **If you don't see it:** Look for a small horizontal bar at the very bottom and drag it up.
+4. **Shortcut:** Press **`Ctrl + `** (the key next to '1') to toggle it.
+5. **Top Menu:** Go to **Terminal > New Terminal** in the top navigation bar.
 
 ### 📦 HOW TO PUSH YOUR CODE (The Commands)
-Once the terminal is open, copy and paste these commands one by one and press Enter:
+Once the terminal is open in the **Editor**, copy and paste these commands one by one:
 
 ```bash
 # 1. Initialize git
@@ -30,7 +32,7 @@ git commit -m "Initial Synapse Startup Deploy"
 git branch -M main
 
 # 5. Connect to your specific GitHub repo
-# Replace the URL with your actual GitHub repo URL from your browser
+# Replace the URL below with your actual GitHub repo URL
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 
 # 6. Push the code
@@ -54,11 +56,3 @@ git push -u origin main
 If Cloudflare doesn't see a branch:
 - **Push first**: Cloudflare cannot see a branch if the repository is empty. Run the Terminal commands above first.
 - **Refresh**: Once the push is successful, the `main` branch will appear in Cloudflare.
-
-## 👥 How to Manage Students
-
-### Admin Access
-Any email containing the word "admin" (e.g., `admin.user@gmail.com`) automatically gains access to the **Command Center**.
-
-### Student Access
-Manage users via the **Firebase Console** under **Authentication > Users**.
