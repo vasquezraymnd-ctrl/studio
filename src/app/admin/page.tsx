@@ -50,13 +50,14 @@ export default function AdminPortal() {
 
   // Query for global student progress - STRICTLY guarded by isAdmin
   const globalProgressQuery = useMemoFirebase(() => {
+    // CRITICAL: Prevent query initialization if not authenticated or not an admin
     if (!db || isUserLoading || !user || !user.email) return null;
     
-    // Final check for admin in the email string
     const email = user.email.toLowerCase();
     if (!email.includes('admin')) return null;
     
     try {
+      // Admins are allowed to read the collection group without a specific userId filter
       return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
     } catch (e) {
       console.error("Failed to initialize metrics query:", e);
@@ -67,7 +68,8 @@ export default function AdminPortal() {
   const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
 
   useEffect(() => {
-    if (!isUserLoading && !isAdmin && user) {
+    // Immediate redirect if it's definitely not an admin
+    if (!isUserLoading && user && !isAdmin) {
       router.push('/dashboard');
     }
   }, [isAdmin, isUserLoading, router, user]);
