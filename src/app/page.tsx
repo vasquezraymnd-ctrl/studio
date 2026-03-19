@@ -99,9 +99,9 @@ export default function LoginPage() {
           <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
           <SynapseLogo className="w-24 h-24 relative" />
         </div>
-        <div className="text-center space-y-4">
-          <h1 className="text-7xl font-black tracking-tighter animate-pulse leading-none">SYNAPSE</h1>
-          <p className="text-primary font-bold text-[10px] uppercase tracking-[0.2em]">Next-Gen review for Next-Gen RMTs</p>
+        <div className="text-center space-y-4 max-w-md w-full">
+          <h1 className="text-7xl font-black tracking-tighter animate-pulse leading-none w-full">SYNAPSE</h1>
+          <p className="text-primary font-bold text-[10px] uppercase tracking-[0.2em] w-full text-center">Next-Gen review for Next-Gen RMTs</p>
         </div>
       </div>
     );
@@ -118,13 +118,13 @@ export default function LoginPage() {
       <div className="w-full max-sm:max-w-sm max-w-md space-y-10">
         <div className="flex flex-col items-center space-y-6 text-center w-full">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full bg-primary animate-ping absolute" />
-            <SynapseLogo className="w-16 h-16 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
+            <div className="w-20 h-20 rounded-full bg-primary animate-ping absolute" />
+            <SynapseLogo className="w-20 h-20 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
           </div>
           
-          <div className="space-y-2 w-full">
+          <div className="space-y-1 w-full text-center">
             <h1 className="text-7xl font-black tracking-tighter uppercase leading-none w-full">SYNAPSE</h1>
-            <p className="font-bold uppercase tracking-[0.2em] text-[10px] text-primary whitespace-nowrap">
+            <p className="font-bold uppercase tracking-[0.22em] text-[10px] text-primary w-full text-center whitespace-nowrap">
               Next-Gen review for Next-Gen RMTs
             </p>
           </div>
