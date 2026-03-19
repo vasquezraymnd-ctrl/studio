@@ -1,10 +1,11 @@
+
 "use client"
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useUser, useAuth, useDoc, useFirestore } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { useUser, useAuth, useDoc, useFirestore, useCollection } from "@/firebase";
+import { doc, collectionGroup, query, orderBy, limit } from "firebase/firestore";
 import { 
   BookOpen, 
   LogOut, 
@@ -18,11 +19,14 @@ import {
   HeartPulse,
   TestTube2,
   Gavel,
-  Library
+  Library,
+  Clock,
+  ChevronRight
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useMemoFirebase } from "@/firebase/provider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SUBJECTS = [
   { id: 'clinical-chemistry', name: 'Clinical Chemistry', icon: FlaskConical, color: 'from-blue-600' },
@@ -32,6 +36,30 @@ const SUBJECTS = [
   { id: 'clinical-microscopy', name: 'Clinical Microscopy', icon: TestTube2, color: 'from-cyan-600' },
   { id: 'mt-laws', name: 'MT Laws & Histopath', icon: Gavel, color: 'from-amber-600' },
 ];
+
+function CountdownTimer() {
+  const [daysLeft, setDaysLeft] = useState(0);
+
+  useEffect(() => {
+    // Target: Approximate next Board Exam date (e.g., August 2024)
+    const targetDate = new Date('2024-08-12T00:00:00');
+    const now = new Date();
+    const diff = targetDate.getTime() - now.getTime();
+    setDaysLeft(Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24))));
+  }, []);
+
+  return (
+    <div className="spotify-glass rounded-[2rem] p-6 flex items-center justify-between overflow-hidden relative group">
+      <div className="relative z-10">
+        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary mb-1">Board Exam Countdown</p>
+        <h4 className="text-4xl font-black tracking-tighter text-white leading-none">
+          {daysLeft} <span className="text-sm uppercase tracking-widest text-muted-foreground ml-1">Days to RMT</span>
+        </h4>
+      </div>
+      <Clock className="w-16 h-16 text-primary/10 absolute -right-2 -bottom-2 group-hover:rotate-12 transition-transform" />
+    </div>
+  );
+}
 
 export default function DiscoveryDashboard() {
   const router = useRouter();
@@ -47,6 +75,13 @@ export default function DiscoveryDashboard() {
   }, [user, db]);
 
   const { data: profile } = useDoc(profileRef);
+
+  const latestModulesQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
+  }, [db]);
+
+  const { data: latestModules, isLoading: modulesLoading } = useCollection(latestModulesQuery);
 
   useEffect(() => {
     if (!isUserLoading && !user) router.push('/');
@@ -70,17 +105,19 @@ export default function DiscoveryDashboard() {
         </div>
       </header>
 
-      <main className="px-6 space-y-10">
+      <main className="px-6 space-y-8">
         <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl h-44 bg-gradient-to-br from-card to-background border border-white/5 flex items-center px-10">
           <div className="space-y-2 relative z-10">
             <p className="text-primary font-black text-[9px] uppercase tracking-[0.2em]">Next-Gen review for Next-Gen RMTs</p>
             <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">
               {displayName} RMT
             </h2>
-            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-2">Select a subject to begin your session</p>
+            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-2">Active Clinical Session</p>
           </div>
           <Library className="w-32 h-32 text-primary/5 absolute -right-6 -bottom-6 rotate-12" />
         </div>
+
+        <CountdownTimer />
 
         <section className="space-y-4">
           <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">The 6 Subjects</h3>
@@ -100,21 +137,42 @@ export default function DiscoveryDashboard() {
         </section>
 
         <section className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">Latest Releases</h3>
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Latest Releases</h3>
+            <Button variant="ghost" onClick={() => router.push('/library')} className="h-auto p-0 text-[9px] font-black uppercase text-primary tracking-widest hover:bg-transparent">
+              View All <ChevronRight className="w-3 h-3 ml-1" />
+            </Button>
+          </div>
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex gap-4 pb-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-64 h-32 rounded-[2rem] spotify-glass p-5 shrink-0 flex flex-col justify-between">
-                  <div className="flex justify-between items-start">
-                    <BookOpen className="w-6 h-6 text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
-                    <span className="text-[8px] font-black uppercase text-primary/50 tracking-widest">Board Ready</span>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black truncate">Review Module {i}</h4>
-                    <p className="text-[10px] text-muted-foreground font-bold">Standard Reference</p>
-                  </div>
+              {modulesLoading ? (
+                [1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="w-64 h-32 rounded-[2rem] bg-white/5 shrink-0" />
+                ))
+              ) : latestModules?.length === 0 ? (
+                <div className="w-full h-32 rounded-[2rem] border-2 border-dashed border-white/10 flex items-center justify-center">
+                  <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">No modules deployed yet</p>
                 </div>
-              ))}
+              ) : (
+                latestModules?.map((mod) => (
+                  <div 
+                    key={mod.id} 
+                    onClick={() => window.open(mod.url, '_blank')}
+                    className="w-64 h-32 rounded-[2rem] spotify-glass p-5 shrink-0 flex flex-col justify-between cursor-pointer group active:scale-95 transition-all"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <BookOpen className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-[8px] font-black uppercase text-primary tracking-widest bg-primary/10 px-2 py-1 rounded-md">New</span>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black truncate text-white">{mod.title}</h4>
+                      <p className="text-[10px] text-muted-foreground font-bold truncate">Clinical Reference</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
             <ScrollBar orientation="horizontal" className="hidden" />
           </ScrollArea>
