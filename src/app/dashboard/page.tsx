@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect } from "react";
@@ -74,7 +73,7 @@ export default function DiscoveryDashboard() {
       <main className="px-6 space-y-10">
         <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl h-44 bg-gradient-to-br from-card to-background border border-white/5 flex items-center px-10">
           <div className="space-y-2 relative z-10">
-            <p className="text-primary font-black text-[10px] uppercase tracking-[0.4em]">Good day!</p>
+            <p className="text-primary font-black text-[9px] uppercase tracking-[0.2em]">Next-Gen review for Next-Gen RMTs</p>
             <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">
               {displayName} RMT
             </h2>

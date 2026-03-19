@@ -95,12 +95,12 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-12 animate-in fade-in duration-500">
         <div className="relative">
-          <div className="w-32 h-32 rounded-full bg-primary/20 animate-ping absolute" />
-          <SynapseLogo className="w-32 h-32 relative" />
+          <div className="w-44 h-44 rounded-full bg-primary/20 animate-ping absolute" />
+          <SynapseLogo className="w-44 h-44 relative" />
         </div>
         <div className="text-center space-y-4">
-          <h1 className="text-6xl font-black tracking-[0.4em] animate-pulse">SYNAPSE</h1>
-          <p className="text-primary font-black text-sm uppercase tracking-[0.5em]">Good day!</p>
+          <h1 className="text-8xl font-black tracking-[0.4em] animate-pulse">SYNAPSE</h1>
+          <p className="text-primary font-black text-xs uppercase tracking-[0.3em]">Next-Gen review for Next-Gen RMTs</p>
         </div>
       </div>
     );
@@ -117,13 +117,13 @@ export default function LoginPage() {
       <div className="w-full max-sm:max-w-sm max-w-md space-y-12">
         <div className="flex flex-col items-center space-y-8">
           <div className="relative mb-2">
-            <div className="w-6 h-6 rounded-full bg-primary animate-ping absolute" />
-            <div className="w-6 h-6 rounded-full bg-primary shadow-[0_0_20px_rgba(0,229,255,1)]" />
+            <div className="w-10 h-10 rounded-full bg-primary animate-ping absolute" />
+            <div className="w-10 h-10 rounded-full bg-primary shadow-[0_0_20px_rgba(0,229,255,1)]" />
           </div>
           
           <div className="text-center space-y-3">
-            <h1 className="text-7xl font-black tracking-tighter">SYNAPSE</h1>
-            <p className="font-bold uppercase tracking-[0.2em] text-[11px] text-primary">
+            <h1 className="text-9xl font-black tracking-tighter">SYNAPSE</h1>
+            <p className="font-bold uppercase tracking-[0.2em] text-[14px] text-primary">
               Next-Gen review for Next-Gen RMTs
             </p>
           </div>
