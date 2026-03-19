@@ -3,47 +3,35 @@
 
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
 
-## 🚀 How to Publish for Free (Zero-Cost Startup Guide)
+## 🚀 How to Publish for $0 (The True Startup Guide)
 
-You can host this entire platform for **$0/month** using **Firebase App Hosting (Spark Plan)** and **GitHub**. This is the ideal setup for a startup.
+To keep this platform **completely free** without needing a credit card for a billing account, follow this hybrid setup:
 
-### 1. Create a GitHub Repository
-- Log in to [GitHub](https://github.com) and create a new repository (Public or Private).
-- Push this code from your workstation to your new repository:
-  ```bash
-  git init
-  git add .
-  git commit -m "initial commit"
-  git remote add origin <your-repo-url>
-  git push -u origin main
-  ```
-
-### 2. Connect to Firebase (The Spark Plan)
+### 1. The Backend (Firebase Spark Plan)
 - Go to the [Firebase Console](https://console.firebase.google.com/).
-- Select your project (`studio-7922254713-4e326`).
-- **Important**: Ensure your project is on the **Spark Plan** (Free). You can check this in the "Usage and Billing" section.
-- Navigate to **Build > App Hosting** in the left sidebar.
-- Click **Get Started** and connect your GitHub account.
-- Select your repository and the `main` branch.
-- Firebase App Hosting will automatically detect the Next.js framework.
+- Select your project.
+- Ensure you are on the **Spark Plan** (Free). 
+- Use Firebase for **Authentication** and **Firestore**. These have huge free tiers that will likely never cost you a cent during your startup phase.
 
-### 3. Deploy & Scale
-- Click **Finish and Deploy**.
-- Firebase will provide you with a secure `web.app` or `firebaseapp.com` domain.
-- **Continuous Deployment**: Every time you push a change to GitHub, your site will automatically update for free.
+### 2. The Frontend (Vercel - Recommended for $0)
+- Create a free account on [Vercel](https://vercel.com).
+- Connect your GitHub repository.
+- Vercel will automatically detect the Next.js project and deploy it.
+- **Why Vercel?**: Unlike "Firebase App Hosting," Vercel's hobby tier is truly $0 and does not require a billing account or credit card to get started.
+
+### 3. Deployment Steps
+1. Push your code to a GitHub repository.
+2. Import the project into Vercel.
+3. Add your Firebase configuration (from `src/firebase/config.ts`) as Environment Variables in Vercel if you want extra security, though the public config is safe to keep in code.
+4. Every time you push to GitHub, your site updates automatically.
 
 ## 👥 How to Manage Students
 
 As the administrator, you manage your users via the **Firebase Console**:
 
-1. **View Enrollments**: Go to **Authentication > Users** to see a list of every registered student.
-2. **Password Resets**: If a student forgets their access key, you can trigger a reset email or manually change it from the console.
-3. **Revoking Access**: To stop a student from accessing the platform, you can "Disable" or "Delete" their account in the Authentication tab.
-4. **Admin Privileges**: To grant Admin access to another user, ensure their email contains the word "admin" (e.g., `admin.staff@synapse.com`).
-
-## 🛠 Core Systems
-- **Synapse Engine**: "Blind" assessments where rationales are only shown in **Analysis Mode** after completion.
-- **Scheduling**: Admins can set "Visibility Schedules" for modules and quizzes so they only appear at specific times.
-- **Reviewee Profile**: Professional identity tracking for names, institutions, and historical scores.
+1. **View Enrollments**: Go to **Authentication > Users**. You can see every student who has registered.
+2. **Revoking Access**: To stop a student from using the platform, select their user record and click "Disable account" or "Delete account."
+3. **Password Resets**: If a student forgets their key, you can send them a reset email manually from the "Users" tab, though the "Forgot Key?" button on the login screen handles this automatically.
+4. **Admin Privileges**: The platform automatically grants Admin access to any email containing the word "admin" (e.g., `admin.synapse@gmail.com`).
 
 Good day, Future RMT!
