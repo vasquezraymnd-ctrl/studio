@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useFirestore, useUser } from "@/firebase";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock } from "lucide-react";
+import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 export default function AdminPortal() {
   const router = useRouter();
@@ -31,51 +32,64 @@ export default function AdminPortal() {
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
   useEffect(() => {
-    if (!isUserLoading && !isAdmin) {
+    if (!isUserLoading && !isAdmin && user) {
       router.push('/dashboard');
     }
-  }, [isAdmin, isUserLoading, router]);
+  }, [isAdmin, isUserLoading, router, user]);
 
-  const handleModuleSubmit = async (e: React.FormEvent) => {
+  const handleModuleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject || !db || !isAdmin) return;
     setIsSubmitting(true);
-    try {
-      await addDoc(collection(db, "subjects", subject, "modules"), {
-        title,
-        description,
-        url,
-        dateAdded: new Date().toISOString()
-      });
-      toast({ title: "Module Deployed", description: "Successfully added to subject library." });
-      setTitle(""); setDescription(""); setUrl("");
-    } catch (e: any) {
-      toast({ variant: "destructive", title: "Deployment Failed", description: e.message });
-    }
-    setIsSubmitting(false);
+    
+    const colRef = collection(db, "subjects", subject, "modules");
+    const data = {
+      title,
+      description,
+      url,
+      dateAdded: new Date().toISOString()
+    };
+
+    addDocumentNonBlocking(colRef, data)
+      .then(() => {
+        toast({ title: "Module Deployed", description: "The study material has been queued for sync." });
+        setTitle(""); setDescription(""); setUrl("");
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
-  const handleQuizSubmit = async (e: React.FormEvent) => {
+  const handleQuizSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!subject || !jsonInput || !db || !isAdmin) return;
     setIsSubmitting(true);
+    
     try {
       const parsed = JSON.parse(jsonInput);
       const assessmentRef = doc(collection(db, "subjects", subject, "assessments"));
-      await setDoc(assessmentRef, {
+      
+      const data = {
         ...parsed,
         id: assessmentRef.id,
         totalItems: parsed.questions?.length || 0
-      });
-      toast({ title: "Quiz Deployed", description: "Assessment engine updated." });
-      setJsonInput(""); setTitle("");
+      };
+
+      setDocumentNonBlocking(assessmentRef, data, { merge: true });
+      
+      toast({ title: "Quiz Data Sent", description: "Test bank is being updated in the background." });
+      setJsonInput("");
     } catch (e: any) {
-      toast({ variant: "destructive", title: "JSON Syntax Error", description: "Please verify question format." });
+      toast({ variant: "destructive", title: "JSON Syntax Error", description: "Please verify the question object structure." });
     }
     setIsSubmitting(false);
   };
 
-  if (isUserLoading || !user) return null;
+  if (isUserLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   if (!isAdmin) {
     return (
@@ -104,26 +118,26 @@ export default function AdminPortal() {
         <div className="flex gap-4">
           <Button 
             onClick={() => setMode('module')} 
-            className={cn("flex-1 h-16 rounded-3xl font-black", mode === 'module' ? "bg-primary text-primary-foreground" : "spotify-glass border-none text-white")}
+            className={cn("flex-1 h-16 rounded-3xl font-black transition-all", mode === 'module' ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "spotify-glass border-none text-white")}
           >
-            <PlusCircle className="mr-2" /> Add Module
+            <PlusCircle className="mr-2 w-5 h-5" /> Add Module
           </Button>
           <Button 
             onClick={() => setMode('quiz')} 
-            className={cn("flex-1 h-16 rounded-3xl font-black", mode === 'quiz' ? "bg-primary text-primary-foreground" : "spotify-glass border-none text-white")}
+            className={cn("flex-1 h-16 rounded-3xl font-black transition-all", mode === 'quiz' ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "spotify-glass border-none text-white")}
           >
-            <Database className="mr-2" /> Bulk Quiz
+            <Database className="mr-2 w-5 h-5" /> Bulk Quiz
           </Button>
         </div>
 
         <div className="spotify-glass rounded-[3rem] p-10 space-y-8">
           <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Target Subject</label>
+            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Target Subject Pillar</label>
             <Select onValueChange={setSubject} value={subject}>
               <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-2xl">
                 <SelectValue placeholder="Select Pillar..." />
               </SelectTrigger>
-              <SelectContent className="bg-[#0B1F3C] border-white/10">
+              <SelectContent className="bg-card border-white/10">
                 <SelectItem value="clinical-chemistry">Clinical Chemistry</SelectItem>
                 <SelectItem value="microbiology">Microbiology</SelectItem>
                 <SelectItem value="hematology">Hematology</SelectItem>
@@ -151,31 +165,31 @@ export default function AdminPortal() {
                   <Input value={url} onChange={e => setUrl(e.target.value)} required placeholder="Direct Download URL" className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl" />
                 </div>
               </div>
-              <Button type="submit" disabled={isSubmitting} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl">
-                Deploy Module
+              <Button type="submit" disabled={isSubmitting || !subject} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl disabled:opacity-30">
+                {isSubmitting ? <Loader2 className="animate-spin" /> : "Deploy Module"}
               </Button>
             </form>
           ) : (
             <form onSubmit={handleQuizSubmit} className="space-y-6">
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1 flex items-center justify-between">
-                  <span>JSON Payload (100 Items)</span>
+                  <span>JSON Payload (Test Bank Format)</span>
                   <FileJson className="w-4 h-4" />
                 </label>
                 <Textarea 
                   value={jsonInput} 
                   onChange={e => setJsonInput(e.target.value)} 
                   required 
-                  placeholder='{ "title": "Assessment 1", "questions": [...] }'
-                  className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs"
+                  placeholder='{ "title": "Prelim Exam", "questions": [{"q": "Question here?", "options": ["A", "B"], "a": 0}] }'
+                  className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs focus:ring-primary"
                 />
               </div>
               <div className="p-6 rounded-2xl bg-destructive/10 border border-destructive/20 flex gap-4 items-center">
                 <ShieldAlert className="w-8 h-8 text-destructive shrink-0" />
-                <p className="text-[10px] text-destructive font-black uppercase tracking-widest">Deploying will overwrite existing metadata if IDs match.</p>
+                <p className="text-[10px] text-destructive font-black uppercase tracking-widest">Verify the JSON structure before flashing. This cannot be undone.</p>
               </div>
-              <Button type="submit" disabled={isSubmitting} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl">
-                Flash to Test Bank
+              <Button type="submit" disabled={isSubmitting || !subject || !jsonInput} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl disabled:opacity-30">
+                {isSubmitting ? <Loader2 className="animate-spin" /> : "Flash to Test Bank"}
               </Button>
             </form>
           )}
