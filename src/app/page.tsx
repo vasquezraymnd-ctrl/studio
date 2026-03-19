@@ -97,14 +97,14 @@ export default function LoginPage() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-10 animate-in fade-in duration-500">
         <div className="w-full max-w-md flex flex-col items-center space-y-8 text-center">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
-            <SynapseLogo className="w-24 h-24 relative" />
+            <div className="w-32 h-32 rounded-full bg-primary/20 animate-ping absolute" />
+            <SynapseLogo className="w-32 h-32 relative" />
           </div>
-          <div className="space-y-2 w-full">
-            <h1 className="text-[clamp(3rem,12vw,4.5rem)] font-black tracking-tighter animate-pulse uppercase leading-none w-full text-center">
+          <div className="space-y-4 w-full">
+            <h1 className="text-[clamp(3.5rem,14vw,5rem)] font-black tracking-tighter animate-pulse uppercase leading-none w-full text-center">
               SYNAPSE
             </h1>
-            <p className="font-bold uppercase tracking-[0.25em] text-[10px] text-primary w-full text-center whitespace-nowrap">
+            <p className="font-bold uppercase tracking-[0.25em] text-[11px] text-primary w-full text-center whitespace-nowrap">
               Next-Gen review for Next-Gen RMTs
             </p>
           </div>
@@ -121,18 +121,18 @@ export default function LoginPage() {
         </div>
       </div>
       
-      <div className="w-full max-w-md space-y-10">
-        <div className="flex flex-col items-center space-y-8 text-center w-full">
+      <div className="w-full max-w-md space-y-12">
+        <div className="flex flex-col items-center space-y-8 text-center w-full px-2">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
-            <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
+            <div className="w-28 h-28 rounded-full bg-primary/20 animate-ping absolute" />
+            <SynapseLogo className="w-28 h-28 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
           </div>
           
-          <div className="space-y-2 w-full text-center">
-            <h1 className="text-[clamp(3rem,12vw,4.5rem)] font-black tracking-tighter uppercase leading-none w-full">
+          <div className="space-y-3 w-full text-center">
+            <h1 className="text-[clamp(3.5rem,14vw,5rem)] font-black tracking-tighter uppercase leading-none w-full">
               SYNAPSE
             </h1>
-            <p className="font-bold uppercase tracking-[0.25em] text-[10px] text-primary w-full text-center whitespace-nowrap">
+            <p className="font-bold uppercase tracking-[0.25em] text-[11px] text-primary w-full text-center whitespace-nowrap">
               Next-Gen review for Next-Gen RMTs
             </p>
           </div>
