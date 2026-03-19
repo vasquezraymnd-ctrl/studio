@@ -2,14 +2,14 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Admin check based on email
+    // Admin check: Email must contain 'admin' (case-insensitive)
     function isAdmin() {
       return request.auth != null && 
              request.auth.token.email != null && 
              request.auth.token.email.lower().matches('.*admin.*');
     }
 
-    // Allow collection group listing for modules and assessments for all students
+    // Collection Group rules MUST be at the top level for cross-subject queries
     match /{path=**}/modules/{moduleId} {
       allow read: if request.auth != null;
     }
@@ -43,6 +43,7 @@ service cloud.firestore {
       }
     }
 
+    // Admin registry for secure access
     match /admins/{adminId} {
       allow read: if request.auth != null;
       allow write: if isAdmin();
