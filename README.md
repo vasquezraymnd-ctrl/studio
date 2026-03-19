@@ -7,15 +7,21 @@ A high-performance "Spotify-style" review application for Clinical Laboratory Sc
 
 If you are a startup in a region where phone verification or credit card requirements are a barrier, use these **truly free** alternatives to host your Next.js application:
 
-### 1. Netlify (Recommended)
-- **Cost**: $0 (Starter Plan).
-- **Setup**: Connect your GitHub repository. Netlify automatically detects Next.js.
-- **Why?**: Netlify has a very generous free tier and often has fewer verification hurdles than Google Cloud or Vercel in certain regions.
-
-### 2. Cloudflare Pages
+### 1. Cloudflare Pages (Highly Recommended)
 - **Cost**: $0 (Free Plan).
-- **Setup**: Connect GitHub and select "Next.js" as the framework preset.
-- **Why?**: Cloudflare offers unlimited bandwidth on their free tier and is highly accessible globally.
+- **Setup Steps**:
+    1. Go to **Workers & Pages** in your Cloudflare dashboard.
+    2. Click **Create** > **Pages** > **Connect to Git**.
+    3. Select your repository.
+    4. In **Build settings**, select **Next.js** from the **Framework preset** dropdown.
+    5. Add an Environment Variable: `NODE_VERSION` = `20`.
+    6. Click **Save and Deploy**.
+- **Why?**: Unlimited bandwidth and no phone verification required in most regions.
+
+### 2. Netlify
+- **Cost**: $0 (Starter Plan).
+- **Setup**: Connect your GitHub repository. Netlify automatically detects Next.js. Select the default settings.
+- **Why?**: Extremely user-friendly for startups with no credit card requirement on the free tier.
 
 ### 3. The Backend (Firebase Spark Plan)
 - **Cost**: $0 (Spark Plan).
@@ -31,7 +37,7 @@ As the administrator, you manage your users via the **Firebase Console**:
 
 ### Scheduling Content
 In the **Admin Command Center**, you can:
-1. **Deploy Modules**: Add a "Visibility Schedule" to hide materials until a specific date (e.g., the start of a specific review week).
+1. **Deploy Modules**: Add a "Visibility Schedule" to hide materials until a specific date.
 2. **Flash Test Banks**: Schedule 100-item exams to appear only during designated mock board sessions.
 
 Good luck, Future RMT!
