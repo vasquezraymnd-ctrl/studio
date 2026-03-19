@@ -12,7 +12,7 @@ If you see a "Node.JS Compatibility Error" on your live site, follow these steps
 2. Go to **Settings** -> **Functions** -> **Compatibility Flags**.
 3. In the input field, type exactly: **`nodejs_compat`**
 4. Add this flag to both **Production** and **Preview**.
-5. Go to **Deployments** and click **Retry Deployment** on your latest build.
+5. Go to **Deployments** and click **Retry Deployment** on your latest build (or push a new commit).
 
 ---
 

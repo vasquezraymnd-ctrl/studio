@@ -93,7 +93,7 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full max-w-[400px] flex flex-col items-center space-y-6 text-center animate-in fade-in zoom-in-95 duration-1000">
+    <div className="w-full flex flex-col items-center space-y-6 text-center animate-in fade-in zoom-in-95 duration-1000">
       <div className="relative">
         <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute -inset-2" />
         <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_30px_rgba(0,229,255,0.7)]" />
@@ -103,7 +103,7 @@ export default function LoginPage() {
         <h1 className="text-5xl font-black tracking-tighter uppercase leading-none text-white drop-shadow-2xl">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.5em] text-[10px] text-primary w-full text-center whitespace-nowrap opacity-90 drop-shadow-md">
+        <p className="font-black uppercase tracking-[0.4em] text-[9px] text-primary w-full text-center whitespace-nowrap opacity-90 drop-shadow-md">
           NEXT-GEN REVIEW FOR NEXT-GEN RMTS
         </p>
       </div>
@@ -113,7 +113,9 @@ export default function LoginPage() {
   if (isSplashLoading || isUserLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 animate-in fade-in duration-500">
-        <BrandingHeader />
+        <div className="w-full max-w-[400px]">
+          <BrandingHeader />
+        </div>
       </div>
     );
   }
