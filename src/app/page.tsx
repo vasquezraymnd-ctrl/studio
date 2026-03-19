@@ -93,17 +93,17 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full flex flex-col items-center space-y-4 text-center">
+    <div className="w-full max-w-md flex flex-col items-center space-y-4 text-center">
       <div className="relative">
-        <div className="w-40 h-40 rounded-full bg-primary/20 animate-ping absolute" />
-        <SynapseLogo className="w-40 h-40 relative filter drop-shadow-[0_0_20px_rgba(0,229,255,0.8)]" />
+        <div className="w-32 h-32 rounded-full bg-primary/20 animate-ping absolute" />
+        <SynapseLogo className="w-32 h-32 relative filter drop-shadow-[0_0_20px_rgba(0,229,255,0.8)]" />
       </div>
       
       <div className="space-y-2 w-full">
-        <h1 className="text-5xl font-black tracking-tighter uppercase leading-none w-full">
+        <h1 className="text-4xl font-black tracking-tighter uppercase leading-none w-full">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.2em] text-[10px] text-primary w-full text-center whitespace-nowrap">
+        <p className="font-black uppercase tracking-[0.2em] text-[9px] text-primary w-full text-center whitespace-nowrap">
           Next-Gen review for Next-Gen RMTs
         </p>
       </div>
@@ -113,9 +113,7 @@ export default function LoginPage() {
   if (isSplashLoading || isUserLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 animate-in fade-in duration-500">
-        <div className="w-full max-w-md">
-          <BrandingHeader />
-        </div>
+        <BrandingHeader />
       </div>
     );
   }
@@ -126,10 +124,10 @@ export default function LoginPage() {
         <ModeToggle />
       </div>
       
-      <div className="w-full max-w-md space-y-10">
+      <div className="w-full max-w-md space-y-8 flex flex-col items-center">
         <BrandingHeader />
 
-        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden">
+        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden w-full">
           <CardContent className="pt-16 px-10 pb-12 space-y-8">
             <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
