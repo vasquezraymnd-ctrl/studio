@@ -5,14 +5,24 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { FirebaseMock, Question } from "@/lib/firebase-mock";
+import { useFirestore, useCollection } from "@/firebase";
+import { collection, query, limit } from "firebase/firestore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Timer, LayoutGrid, Eye, EyeOff, CheckCircle2, ChevronRight, ChevronLeft, Award } from "lucide-react";
+import { Timer, LayoutGrid, Eye, EyeOff, CheckCircle2, ChevronRight, ChevronLeft, Award, X } from "lucide-react";
+import { useMemoFirebase } from "@/firebase/provider";
 
 export default function QuizScreen() {
   const router = useRouter();
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const db = useFirestore();
+  
+  const questionsQuery = useMemoFirebase(() => {
+    if (!db) return null;
+    return query(collection(db, "questions"), limit(100));
+  }, [db]);
+
+  const { data: questions, isLoading } = useCollection(questionsQuery);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [validated, setValidated] = useState<Record<number, boolean>>({});
@@ -23,10 +33,6 @@ export default function QuizScreen() {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   useEffect(() => {
-    FirebaseMock.db.getQuestions().then(setQuestions);
-  }, []);
-
-  useEffect(() => {
     if (timeLeft > 0 && !isFinished) {
       const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
       return () => clearInterval(timer);
@@ -34,15 +40,9 @@ export default function QuizScreen() {
   }, [timeLeft, isFinished]);
 
   const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
+    const m = Math.floor(seconds / 60);
     const s = seconds % 60;
-    return `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
-  };
-
-  const handleOptionSelect = (idx: number) => {
-    if (validated[currentIndex]) return;
-    setSelectedOption(idx);
+    return `${m}:${s < 10 ? '0' + s : s}`;
   };
 
   const handleSubmitItem = () => {
@@ -52,6 +52,7 @@ export default function QuizScreen() {
   };
 
   const handleNext = () => {
+    if (!questions) return;
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setSelectedOption(answers[currentIndex + 1] ?? null);
@@ -60,156 +61,172 @@ export default function QuizScreen() {
     }
   };
 
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setSelectedOption(answers[currentIndex - 1] ?? null);
-    }
-  };
-
-  if (questions.length === 0) return null;
+  if (isLoading || !questions) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <SynapseLoadingPulse />
+    </div>
+  );
 
   if (isFinished) {
-    return <CelebrationScreen score={Object.values(answers).filter((a, i) => a === questions[i].correctAnswer).length} total={questions.length} onBack={() => router.push('/dashboard')} />;
+    const score = Object.values(answers).filter((a, i) => a === questions[i].correctAnswerIndex).length;
+    return <CelebrationScreen score={score} total={questions.length} onBack={() => router.push('/dashboard')} />;
   }
 
   const currentQ = questions[currentIndex];
-  const isCorrect = answers[currentIndex] === currentQ.correctAnswer;
+  const isCorrect = answers[currentIndex] === currentQ.correctAnswerIndex;
   const isAnswered = validated[currentIndex];
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden font-body">
-      {/* HUD Navigation Sidebar */}
-      {showNav && (
-        <aside className="w-80 border-r border-border bg-card/50 flex flex-col transition-all">
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <h2 className="font-headline font-bold flex items-center gap-2">
-              <LayoutGrid className="w-4 h-4 text-primary" />
-              ITEM NAVIGATOR
-            </h2>
-            <Badge variant="outline" className="text-xs">{Object.keys(answers).length}/100</Badge>
-          </div>
-          <ScrollArea className="flex-1 p-4">
-            <div className="grid grid-cols-5 gap-2">
-              {questions.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setCurrentIndex(i);
-                    setSelectedOption(answers[i] ?? null);
-                  }}
-                  className={cn(
-                    "w-full aspect-square rounded flex items-center justify-center text-xs font-bold transition-all border",
-                    currentIndex === i ? "border-primary scale-110 z-10" : "border-border",
-                    validated[i] ? (answers[i] === questions[i].correctAnswer ? "bg-primary text-white" : "bg-destructive text-white") : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          </ScrollArea>
-        </aside>
-      )}
-
-      {/* Main Assessment Area */}
-      <main className="flex-1 flex flex-col relative">
-        {/* HUD Controls Header */}
-        <header className="h-16 border-b border-border bg-card/30 backdrop-blur-md px-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => setShowNav(!showNav)}>
-              {showNav ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
-              {showNav ? "Hide Nav" : "Show Nav"}
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setShowTimer(!showTimer)}>
-              <Timer className="w-4 h-4 mr-2" />
-              {showTimer ? "Hide Timer" : "Show Timer"}
-            </Button>
-          </div>
-          {showTimer && (
-            <div className={cn(
-              "font-code text-xl font-bold px-4 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary",
-              timeLeft < 300 && "animate-pulse text-destructive border-destructive/20 bg-destructive/5"
-            )}>
-              {formatTime(timeLeft)}
-            </div>
-          )}
-          <Button onClick={() => setIsFinished(true)} variant="outline" className="border-primary text-primary">
-            Submit Assessment
+    <div className="flex h-screen bg-background overflow-hidden font-body relative">
+      {/* HUD Navigation Sidebar (Spotify style) */}
+      <div className={cn(
+        "fixed inset-y-0 left-0 w-72 spotify-glass z-40 transition-transform duration-300 ease-in-out border-r-0",
+        showNav ? "translate-x-0" : "-translate-x-full"
+      )}>
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <h2 className="text-xs font-black tracking-widest uppercase text-muted-foreground">Item Navigator</h2>
+          <Button variant="ghost" size="icon" onClick={() => setShowNav(false)} className="text-muted-foreground">
+            <X className="w-4 h-4" />
           </Button>
+        </div>
+        <ScrollArea className="h-[calc(100vh-80px)] p-4">
+          <div className="grid grid-cols-5 gap-2 pb-24">
+            {questions.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setCurrentIndex(i);
+                  setSelectedOption(answers[i] ?? null);
+                }}
+                className={cn(
+                  "w-full aspect-square rounded-lg flex items-center justify-center text-[10px] font-bold transition-all",
+                  currentIndex === i ? "bg-primary text-primary-foreground scale-110 shadow-[0_0_15px_rgba(0,229,255,0.4)]" : 
+                  validated[i] ? "bg-white/10 text-white/50" : "bg-white/5 text-white/20"
+                )}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
+
+      <main className="flex-1 flex flex-col min-w-0">
+        <header className="h-20 px-6 flex items-center justify-between spotify-glass border-b-0 relative z-30">
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={() => setShowNav(!showNav)} className="text-primary bg-primary/10 rounded-xl">
+              <LayoutGrid className="w-5 h-5" />
+            </Button>
+            <div className="hidden sm:block">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-none">Assessment</p>
+              <h3 className="font-extrabold text-white">THE GAUNTLET</h3>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {showTimer && (
+              <div className={cn(
+                "font-mono text-lg font-black px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary",
+                timeLeft < 300 && "animate-pulse text-destructive border-destructive/20 bg-destructive/5"
+              )}>
+                {formatTime(timeLeft)}
+              </div>
+            )}
+            <Button onClick={() => setIsFinished(true)} variant="ghost" className="text-muted-foreground font-bold text-xs uppercase hover:text-white">
+              Quit
+            </Button>
+          </div>
         </header>
 
-        <div className="flex-1 overflow-auto p-6 md:p-12">
-          <div className="max-w-3xl mx-auto space-y-8">
+        <div className="flex-1 overflow-auto p-6 md:p-12 scrollbar-hide">
+          <div className="max-w-2xl mx-auto space-y-12">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-primary font-headline text-lg tracking-widest uppercase">Question {currentIndex + 1} of 100</span>
-                <Badge variant="secondary" className="bg-secondary/20 text-secondary">Clinical Laboratory Science</Badge>
+                <span className="text-primary font-bold text-xs tracking-[0.3em] uppercase">Item {currentIndex + 1} of {questions.length}</span>
+                <Badge variant="secondary" className="bg-white/5 text-muted-foreground text-[10px] font-bold border-none">{currentQ.category}</Badge>
               </div>
-              <h1 className="text-2xl md:text-3xl font-headline font-bold leading-tight">
+              <h2 className="text-2xl md:text-4xl font-extrabold leading-[1.15] text-white">
                 {currentQ.text}
-              </h1>
+              </h2>
             </div>
 
             <div className="space-y-3">
               {currentQ.options.map((option, idx) => {
-                let optionStyle = "border-border hover:border-primary/50 bg-card/50";
+                let style = "bg-white/5 border-transparent hover:bg-white/10";
                 if (isAnswered) {
-                  if (idx === currentQ.correctAnswer) optionStyle = "border-primary bg-primary/20 text-primary font-bold";
-                  else if (idx === answers[currentIndex] && !isCorrect) optionStyle = "border-destructive bg-destructive/20 text-destructive";
-                  else optionStyle = "opacity-50 border-border bg-card/50";
+                  if (idx === currentQ.correctAnswerIndex) style = "bg-primary text-primary-foreground font-bold shadow-[0_0_20px_rgba(0,229,255,0.3)]";
+                  else if (idx === answers[currentIndex]) style = "bg-destructive/20 border-destructive/30 text-destructive line-through";
+                  else style = "opacity-30";
                 } else if (selectedOption === idx) {
-                  optionStyle = "border-primary bg-primary/10 ring-2 ring-primary ring-offset-2 ring-offset-background";
+                  style = "bg-primary/20 border-primary ring-2 ring-primary/20";
                 }
 
                 return (
                   <button
                     key={idx}
                     disabled={isAnswered}
-                    onClick={() => handleOptionSelect(idx)}
+                    onClick={() => setSelectedOption(idx)}
                     className={cn(
-                      "w-full text-left p-5 rounded-xl border-2 transition-all flex items-center justify-between group",
-                      optionStyle
+                      "w-full text-left p-6 rounded-2xl border transition-all flex items-center gap-4 active:scale-[0.98]",
+                      style
                     )}
                   >
-                    <div className="flex items-center gap-4">
-                      <span className="w-8 h-8 rounded-full border border-current flex items-center justify-center text-sm font-bold">
-                        {String.fromCharCode(65 + idx)}
-                      </span>
-                      <span className="text-lg">{option}</span>
-                    </div>
-                    {isAnswered && idx === currentQ.correctAnswer && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                    <span className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center text-xs font-black shrink-0">
+                      {String.fromCharCode(65 + idx)}
+                    </span>
+                    <span className="text-lg font-medium">{option}</span>
                   </button>
                 );
               })}
             </div>
 
-            <div className="flex items-center justify-between pt-8 border-t border-border">
-              <Button variant="ghost" onClick={handlePrev} disabled={currentIndex === 0}>
-                <ChevronLeft className="mr-2 w-4 h-4" /> Previous Item
-              </Button>
-              
-              {!isAnswered ? (
-                <Button 
-                  onClick={handleSubmitItem} 
-                  disabled={selectedOption === null}
-                  className="bg-primary hover:bg-primary/90 text-white px-8"
-                >
-                  Confirm Choice
-                </Button>
-              ) : (
-                <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-white px-8">
-                  {currentIndex === questions.length - 1 ? "Finish Gauntlet" : "Next Item"} <ChevronRight className="ml-2 w-4 h-4" />
-                </Button>
-              )}
-            </div>
+            {isAnswered && currentQ.explanation && (
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in slide-in-from-bottom-2">
+                <p className="text-xs font-black uppercase text-primary mb-2">Rationale</p>
+                <p className="text-muted-foreground text-sm leading-relaxed">{currentQ.explanation}</p>
+              </div>
+            )}
           </div>
         </div>
         
-        <div className="p-1 px-6 bg-card border-t border-border">
-          <Progress value={(Object.keys(answers).length / questions.length) * 100} className="h-1" />
+        <div className="p-6 spotify-glass border-t-0 rounded-t-3xl">
+          <div className="max-w-2xl mx-auto flex items-center justify-between gap-6">
+            <Button variant="ghost" className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]" onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}>
+              <ChevronLeft className="w-4 h-4 mr-1" /> Back
+            </Button>
+            
+            <div className="flex-1 space-y-2">
+               <Progress value={(Object.keys(answers).length / questions.length) * 100} className="h-1 bg-white/10" />
+            </div>
+
+            {!isAnswered ? (
+              <Button 
+                onClick={handleSubmitItem} 
+                disabled={selectedOption === null}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full px-8 shadow-lg shadow-primary/20"
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full px-8">
+                Next <ChevronRight className="w-4 h-4 ml-1" />
+              </Button>
+            )}
+          </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+function SynapseLoadingPulse() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
+      <div className="w-24 h-24 rounded-full bg-primary/40 animate-pulse flex items-center justify-center relative">
+        <div className="w-12 h-12 bg-primary rounded-full" />
+      </div>
+      <p className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Charging Synapse</p>
     </div>
   );
 }
@@ -218,43 +235,46 @@ function CelebrationScreen({ score, total, onBack }: { score: number, total: num
   const isPass = score >= 75;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center overflow-hidden relative">
+    <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
       {isPass && (
         <div className="absolute inset-0 pointer-events-none">
-          {Array.from({ length: 50 }).map((_, i) => (
+          {Array.from({ length: 40 }).map((_, i) => (
             <div 
               key={i} 
-              className="confetti-piece" 
+              className="confetti-cyan" 
               style={{ 
                 left: `${Math.random() * 100}%`, 
                 animationDelay: `${Math.random() * 3}s`,
-                backgroundColor: i % 2 === 0 ? '#26A95A' : '#B0E0B0'
+                width: `${Math.random() * 10 + 5}px`,
+                height: `${Math.random() * 10 + 5}px`,
               }} 
             />
           ))}
         </div>
       )}
       
-      <div className="max-w-md space-y-8 animate-in fade-in zoom-in duration-500">
+      <div className="max-w-md space-y-12 animate-in fade-in zoom-in duration-700">
         <div className="relative">
-          <Award className={cn("w-32 h-32 mx-auto", isPass ? "text-primary" : "text-muted-foreground")} />
+          <div className="w-48 h-48 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+            <Award className={cn("w-24 h-24", isPass ? "text-primary" : "text-muted-foreground")} />
+          </div>
           {isPass && (
-            <Badge className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-secondary text-primary font-bold px-4 py-1 text-lg whitespace-nowrap">
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white text-primary font-black px-6 py-2 rounded-full text-xl shadow-2xl rotate-[-2deg]">
               FUTURE RMT
-            </Badge>
+            </div>
           )}
         </div>
 
-        <div className="space-y-2">
-          <h2 className="text-4xl font-headline font-bold">{isPass ? "CONGRATULATIONS!" : "KEEP STUDYING!"}</h2>
-          <p className="text-muted-foreground text-lg">
-            You achieved a score of <span className="text-primary font-bold">{score}/{total}</span>
+        <div className="space-y-4">
+          <h2 className="text-5xl font-black tracking-tighter text-white">{isPass ? "HUGE WIN!" : "STAY HUNGRY"}</h2>
+          <p className="text-muted-foreground text-lg font-medium">
+            You secured <span className="text-primary font-bold">{score}/{total}</span> high-yield items.
           </p>
         </div>
 
-        <div className="grid gap-4">
-          <Button onClick={onBack} className="w-full bg-primary hover:bg-primary/90 h-12 text-lg">Return to Dashboard</Button>
-          <Button variant="outline" onClick={() => window.location.reload()} className="w-full h-12 border-primary text-primary">Retake Assessment</Button>
+        <div className="grid gap-3">
+          <Button onClick={onBack} className="w-full bg-primary hover:bg-primary/90 h-14 rounded-full text-primary-foreground font-black text-lg shadow-xl">Back to Dashboard</Button>
+          <Button variant="ghost" onClick={() => window.location.reload()} className="w-full h-14 rounded-full text-muted-foreground font-bold hover:text-white">Retake Gauntlet</Button>
         </div>
       </div>
     </div>

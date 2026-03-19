@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 145 15% 15%;
-    --foreground: 145 20% 98%;
-    --card: 145 15% 18%;
-    --card-foreground: 145 20% 98%;
-    --popover: 145 15% 15%;
-    --popover-foreground: 145 20% 98%;
-    --primary: 147 63% 41%;
-    --primary-foreground: 145 20% 98%;
-    --secondary: 120 40% 78%;
-    --secondary-foreground: 145 15% 15%;
-    --muted: 145 10% 25%;
-    --muted-foreground: 145 10% 70%;
-    --accent: 147 63% 41%;
-    --accent-foreground: 145 20% 98%;
+    --background: 217 69% 14%; /* #0B1F3C */
+    --foreground: 0 0% 100%;
+    --card: 215 56% 23%; /* #1A365D */
+    --card-foreground: 0 0% 100%;
+    --popover: 217 69% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 186 100% 50%; /* #00E5FF */
+    --primary-foreground: 217 69% 14%;
+    --secondary: 215 56% 30%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 215 56% 20%;
+    --muted-foreground: 0 0% 70%; /* Light Grey #B3B3B3 */
+    --accent: 186 100% 50%;
+    --accent-foreground: 217 69% 14%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 145 10% 25%;
-    --input: 145 10% 25%;
-    --ring: 147 63% 41%;
-    --radius: 0.75rem;
+    --border: 215 56% 30%;
+    --input: 215 56% 20%;
+    --ring: 186 100% 50%;
+    --radius: 1rem;
   }
 }
 
@@ -33,31 +33,41 @@
   }
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(180deg, #0B1F3C 0%, #112A4D 100%);
+    min-height: 100vh;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-.synapse-pulse {
-  animation: synapse-pulse 2s infinite ease-in-out;
+.spotify-glass {
+  background: rgba(26, 54, 93, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-@keyframes synapse-pulse {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.8; }
+.heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
 }
 
-.confetti-piece {
+@keyframes heartbeat {
+  0% { transform: scale(1); opacity: 0.8; }
+  14% { transform: scale(1.1); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.1); }
+  70% { transform: scale(1); opacity: 1; }
+}
+
+.confetti-cyan {
   position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #26A95A;
+  width: 8px;
+  height: 8px;
+  background: #00E5FF;
   top: -10px;
   opacity: 0;
-  animation: confetti-fall 3s ease-out infinite;
+  animation: fall 3s ease-out infinite;
 }
 
-@keyframes confetti-fall {
+@keyframes fall {
   0% { transform: translateY(0) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
