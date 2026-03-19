@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -11,6 +10,7 @@ import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function AdminPortal() {
   const router = useRouter();
@@ -75,7 +75,7 @@ export default function AdminPortal() {
   if (isUserLoading || !user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       <header className="px-6 pt-12 pb-8 flex items-center justify-between">
         <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-0 text-muted-foreground hover:text-white">
           <ChevronLeft className="w-6 h-6 mr-1" /> Dashboard
