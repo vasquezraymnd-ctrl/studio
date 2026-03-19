@@ -9,26 +9,36 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth, useUser } from "@/firebase";
 import { initiateEmailSignIn } from "@/firebase/non-blocking-login";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LoginPage() {
   const router = useRouter();
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    if (user && !isLoggingIn) {
+    if (user) {
+      setIsLoggingIn(false);
       router.push('/dashboard');
     }
-  }, [user, router, isLoggingIn]);
+  }, [user, router]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
-    initiateEmailSignIn(auth, email, password);
-    // Note: Redirection is handled by the useEffect watching auth state
+    
+    initiateEmailSignIn(auth, email, password, (error) => {
+      setIsLoggingIn(false);
+      toast({
+        variant: "destructive",
+        title: "Login Failed",
+        description: "Invalid email or password. Please check your credentials and try again.",
+      });
+    });
   };
 
   if (isUserLoading && !isLoggingIn) {
