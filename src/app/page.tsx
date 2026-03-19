@@ -22,12 +22,21 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSplashLoading, setIsSplashLoading] = useState(true);
+
+  // Initial Splash Screen Effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsSplashLoading(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
-    if (user) {
+    if (user && !isSplashLoading) {
       router.push('/dashboard');
     }
-  }, [user, router]);
+  }, [user, router, isSplashLoading]);
 
   const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,56 +63,71 @@ export default function LoginPage() {
     }
   };
 
-  if (isUserLoading) {
+  // Splash Screen Overlay
+  if (isSplashLoading || isUserLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-primary animate-spin" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 space-y-8 animate-in fade-in duration-500">
+        <div className="relative">
+          <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
+          <SynapseLogo className="w-24 h-24 relative" />
+        </div>
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-black tracking-[0.3em] text-white animate-pulse">SYNAPSE</h1>
+          <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">Initializing Center</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background">
-      <div className="w-full max-w-sm space-y-12">
-        <div className="flex flex-col items-center space-y-8">
-          <SynapseLogo className="w-40 h-40" />
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="w-full max-w-sm space-y-10">
+        <div className="flex flex-col items-center space-y-6">
+          {/* Pulsing Dot above the card */}
+          <div className="relative mb-2">
+            <div className="w-4 h-4 rounded-full bg-primary animate-ping absolute" />
+            <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(0,229,255,0.8)]" />
+          </div>
+          
           <div className="text-center space-y-2">
             <h1 className="text-5xl font-black tracking-tighter text-white">SYNAPSE</h1>
-            <p className="text-muted-foreground font-bold uppercase tracking-[0.3em] text-[10px]">Medical Review Center</p>
+            <p className="text-muted-foreground font-bold uppercase tracking-widest text-[9px] text-primary/80">
+              Next-Gen review for Next-Gen RMTs
+            </p>
           </div>
         </div>
 
-        <Card className="spotify-glass border-none">
-          <CardContent className="pt-8">
-            <form onSubmit={handleAuth} className="space-y-5">
+        <Card className="spotify-glass border-none rounded-[2.5rem] shadow-2xl overflow-hidden">
+          <CardContent className="pt-10">
+            <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Student Email</label>
+                <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
                 <Input 
                   type="email" 
                   placeholder="student@reviewcenter.edu" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 bg-white/5 border-white/10 rounded-2xl focus:border-primary"
+                  className="h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary px-6"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Access Key</label>
+                <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Access Key</label>
                 <Input 
                   type="password" 
                   placeholder="••••••••" 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 bg-white/5 border-white/10 rounded-2xl focus:border-primary"
+                  className="h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary px-6"
                 />
               </div>
-              <Button type="submit" className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-lg mt-4" disabled={isLoading}>
+              <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
                 {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register" : "Access Portal")}
               </Button>
             </form>
 
-            <div className="mt-8 text-center">
+            <div className="mt-8 text-center pb-4">
               <button 
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"

@@ -1,3 +1,4 @@
+
 "use client"
 
 import { cn } from "@/lib/utils";
@@ -7,7 +8,7 @@ export function SynapseLogo({ className }: { className?: string }) {
     <div className={cn("relative flex items-center justify-center", className)}>
       <svg 
         viewBox="0 0 100 100" 
-        className="w-full h-full heartbeat text-primary"
+        className="w-full h-full text-primary"
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -19,11 +20,11 @@ export function SynapseLogo({ className }: { className?: string }) {
           strokeLinecap="round" 
           strokeLinejoin="round"
         />
-        {/* Pulse Circle in the center */}
-        <circle cx="50" cy="50" r="10" fill="currentColor" className="opacity-30" />
+        {/* Pulse Dot in the center */}
+        <circle cx="50" cy="50" r="8" fill="currentColor" className="heartbeat shadow-lg" />
       </svg>
       {/* Glow Effect */}
-      <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full -z-10 animate-pulse" />
+      <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full -z-10 animate-pulse" />
     </div>
   );
 }
