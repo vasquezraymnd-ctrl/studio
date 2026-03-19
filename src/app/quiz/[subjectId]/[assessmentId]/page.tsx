@@ -15,7 +15,6 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Award, 
-  CheckCircle2, 
   HelpCircle,
   AlertCircle
 } from "lucide-react";
@@ -39,7 +38,6 @@ export default function AssessmentEngine() {
   const [validated, setValidated] = useState<Record<number, boolean>>({});
   const [analysisMode, setAnalysisMode] = useState(false);
   
-  // HUD
   const [showTimer, setShowTimer] = useState(true);
   const [showExplorer, setShowExplorer] = useState(false);
   const [timeLeft, setTimeLeft] = useState(3600);
@@ -101,8 +99,8 @@ export default function AssessmentEngine() {
             <LayoutGrid className="w-6 h-6" />
           </Button>
           <div className="hidden sm:block">
-            <h3 className="font-black text-white truncate max-w-[150px]">{assessment.title}</h3>
-            <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Active Session</p>
+            <h3 className="font-black text-white truncate max-w-[150px] uppercase">{assessment.title}</h3>
+            <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Examination Portal</p>
           </div>
         </div>
 
@@ -126,7 +124,7 @@ export default function AssessmentEngine() {
       {/* Explorer Overlay */}
       {showExplorer && (
         <div className="fixed inset-x-0 top-24 bottom-32 bg-[#0B1F3C]/95 backdrop-blur-2xl z-40 p-6">
-          <h2 className="text-[10px] font-black uppercase text-center mb-6 tracking-widest opacity-50">Navigation Matrix</h2>
+          <h2 className="text-[10px] font-black uppercase text-center mb-6 tracking-widest opacity-50">Item Matrix</h2>
           <ScrollArea className="h-full">
             <div className="grid grid-cols-5 gap-3 pb-20">
               {assessment.questions.map((_, i) => (
@@ -151,7 +149,7 @@ export default function AssessmentEngine() {
       <main className="flex-1 overflow-auto p-6 md:p-12">
         <div className="max-w-2xl mx-auto space-y-12">
           <div className="space-y-4">
-            <span className="text-[10px] font-black uppercase text-primary tracking-[0.4em]">Item {currentIndex + 1} of {assessment.questions.length}</span>
+            <span className="text-[10px] font-black uppercase text-primary tracking-[0.4em]">Question {currentIndex + 1} of {assessment.questions.length}</span>
             <h2 className="text-3xl md:text-4xl font-black text-white leading-tight tracking-tighter">
               {currentQ.q}
             </h2>
@@ -188,7 +186,7 @@ export default function AssessmentEngine() {
             <div className="p-8 rounded-[2.5rem] bg-white/5 border border-white/10 animate-in slide-in-from-bottom-4 shadow-2xl">
               <div className="flex items-center gap-2 mb-3">
                 <HelpCircle className="w-4 h-4 text-primary" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Analysis & Rationale</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Rationalization</p>
               </div>
               <p className="text-muted-foreground text-sm font-bold leading-relaxed">{currentQ.rationale}</p>
             </div>
@@ -205,7 +203,7 @@ export default function AssessmentEngine() {
             disabled={currentIndex === 0}
             className="text-muted-foreground font-black uppercase text-[10px] tracking-widest"
           >
-            <ChevronLeft className="w-5 h-5 mr-1" /> Prev
+            <ChevronLeft className="w-5 h-5 mr-1" /> Previous
           </Button>
 
           <Progress value={(Object.keys(answers).length / assessment.questions.length) * 100} className="h-2 bg-white/5 flex-1 mx-4" />
@@ -220,7 +218,7 @@ export default function AssessmentEngine() {
             </Button>
           ) : (
             <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-10 h-16 text-lg">
-              {currentIndex === assessment.questions.length - 1 ? "Result" : "Next"} <ChevronRight className="w-5 h-5 ml-1" />
+              {currentIndex === assessment.questions.length - 1 ? "Results" : "Next"} <ChevronRight className="w-5 h-5 ml-1" />
             </Button>
           )}
         </div>
@@ -233,7 +231,7 @@ function LoadingState() {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-background gap-4">
       <div className="w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-      <p className="text-[10px] font-black uppercase text-primary tracking-[0.5em]">Syncing Assessment</p>
+      <p className="text-[10px] font-black uppercase text-primary tracking-[0.5em]">Syncing Bank</p>
     </div>
   );
 }
@@ -242,8 +240,8 @@ function ErrorState({ onBack }: { onBack: () => void }) {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-background p-8 text-center space-y-6">
       <AlertCircle className="w-20 h-20 text-muted-foreground opacity-20" />
-      <h2 className="text-3xl font-black text-white">BANK OFFLINE</h2>
-      <Button onClick={onBack} className="rounded-full px-10 h-14 spotify-glass border-none text-white font-black">Return to Subject</Button>
+      <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Database Offline</h2>
+      <Button onClick={onBack} className="rounded-full px-10 h-14 spotify-glass border-none text-white font-black uppercase tracking-widest">Return to Subject</Button>
     </div>
   );
 }
@@ -257,15 +255,15 @@ function ResultScreen({ score, total, onReview, onBack }: { score: number, total
           <Award className={cn("w-24 h-24", isPass ? "text-primary" : "text-muted-foreground")} />
         </div>
         {isPass && (
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white text-primary font-black px-8 py-3 rounded-full text-xl shadow-2xl rotate-[-3deg] border-2 border-primary">
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white text-primary font-black px-8 py-3 rounded-full text-xl shadow-2xl rotate-[-3deg] border-2 border-primary tracking-tighter">
             FUTURE RMT
           </div>
         )}
       </div>
-      <h3 className="text-5xl font-black text-white tracking-tighter mb-2">{isPass ? "HUGE WIN" : "KEEP PUSHING"}</h3>
+      <h3 className="text-5xl font-black text-white tracking-tighter mb-2 uppercase">{isPass ? "Passed" : "Study More"}</h3>
       <p className="text-primary font-black text-2xl uppercase tracking-widest mb-12">{score} / {total}</p>
       <div className="w-full max-w-xs space-y-4">
-        <Button onClick={onBack} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-xl">Continue to Hub</Button>
+        <Button onClick={onBack} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-xl uppercase tracking-tighter">Continue Review</Button>
         <Button variant="ghost" onClick={onReview} className="w-full h-14 text-muted-foreground font-black uppercase tracking-widest hover:text-white">Analysis Mode</Button>
       </div>
     </div>

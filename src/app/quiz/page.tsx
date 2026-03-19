@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useState } from "react";
@@ -9,7 +10,7 @@ import { useFirestore, useCollection } from "@/firebase";
 import { collection, query, limit } from "firebase/firestore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Timer, LayoutGrid, Eye, EyeOff, X, AlertCircle, ChevronLeft, ChevronRight, Award, CheckCircle2 } from "lucide-react";
+import { Timer, LayoutGrid, EyeOff, ChevronLeft, ChevronRight, Award, CheckCircle2, AlertCircle } from "lucide-react";
 import { useMemoFirebase } from "@/firebase/provider";
 
 export default function QuizScreen() {
@@ -27,10 +28,9 @@ export default function QuizScreen() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [validated, setValidated] = useState<Record<number, boolean>>({});
   
-  // HUD Controls
   const [showTimer, setShowTimer] = useState(true);
   const [showItemList, setShowItemList] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(3600); // 60 minutes
+  const [timeLeft, setTimeLeft] = useState(3600);
   const [isFinished, setIsFinished] = useState(false);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
@@ -77,8 +77,8 @@ export default function QuizScreen() {
           <AlertCircle className="w-12 h-12 text-muted-foreground" />
         </div>
         <div className="space-y-2">
-          <h2 className="text-3xl font-black text-white tracking-tight">QUIZ EMPTY</h2>
-          <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest max-w-xs mx-auto">Assessment bank is currently offline.</p>
+          <h2 className="text-3xl font-black text-white tracking-tight uppercase">No Items Found</h2>
+          <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest max-w-xs mx-auto">The assessment bank for this category is currently empty.</p>
         </div>
         <Button onClick={() => router.push('/dashboard')} className="rounded-full px-10 h-14 bg-white/5 border border-white/10 text-white font-black hover:bg-white/10 transition-colors">
           Return Home
@@ -109,8 +109,8 @@ export default function QuizScreen() {
             <LayoutGrid className="w-6 h-6" />
           </Button>
           <div className="hidden sm:block">
-            <h3 className="font-black text-white text-lg tracking-tight">THE GAUNTLET</h3>
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">Med-Tech Assessment</p>
+            <h3 className="font-black text-white text-lg tracking-tight uppercase">Assessment Bank</h3>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">Standard Review Session</p>
           </div>
         </div>
 
@@ -126,7 +126,7 @@ export default function QuizScreen() {
           {showTimer && (
             <div className={cn(
               "font-black text-xl px-5 py-2 rounded-2xl border transition-all",
-              timeLeft < 300 ? "text-destructive border-destructive/20 bg-destructive/5 animate-pulse" : "text-primary border-primary/20 bg-primary/5"
+              "text-primary border-primary/20 bg-primary/5"
             )}>
               {formatTime(timeLeft)}
             </div>
@@ -138,7 +138,7 @@ export default function QuizScreen() {
       {showItemList && (
         <div className="fixed inset-x-0 top-24 bottom-24 bg-[#0B1F3C]/95 backdrop-blur-2xl z-40 p-6 animate-in fade-in slide-in-from-top-4">
           <div className="max-w-xl mx-auto h-full flex flex-col space-y-6">
-            <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground text-center">Item Explorer</h2>
+            <h2 className="text-[10px] font-black tracking-[0.4em] uppercase text-muted-foreground text-center">Item Navigator</h2>
             <ScrollArea className="flex-1">
               <div className="grid grid-cols-5 gap-3 pb-20">
                 {questions.map((_, i) => (
@@ -170,7 +170,7 @@ export default function QuizScreen() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-primary font-black text-[10px] tracking-[0.4em] uppercase">Item {currentIndex + 1} of {questions.length}</span>
-              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest text-muted-foreground border-white/10 px-3 py-1">{currentQ.category}</Badge>
+              <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest text-muted-foreground border-white/10 px-3 py-1">{currentQ.category || 'General'}</Badge>
             </div>
             <h2 className="text-3xl md:text-5xl font-black leading-tight text-white tracking-tighter">
               {currentQ.text}
@@ -214,7 +214,7 @@ export default function QuizScreen() {
             <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 animate-in slide-in-from-bottom-4 duration-500 shadow-2xl">
               <div className="flex items-center gap-2 mb-3">
                 <CheckCircle2 className="w-4 h-4 text-primary" />
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Key Rationale</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Rationalization</p>
               </div>
               <p className="text-muted-foreground text-sm font-bold leading-relaxed">{currentQ.explanation}</p>
             </div>
@@ -228,7 +228,10 @@ export default function QuizScreen() {
           <Button 
             variant="ghost" 
             className="text-muted-foreground font-black uppercase tracking-[0.3em] text-[10px] hover:text-white" 
-            onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
+            onClick={() => {
+              setCurrentIndex(Math.max(0, currentIndex - 1));
+              setSelectedOption(answers[currentIndex - 1] ?? null);
+            }}
             disabled={currentIndex === 0}
           >
             <ChevronLeft className="w-5 h-5 mr-1" /> Prev
@@ -242,13 +245,13 @@ export default function QuizScreen() {
             <Button 
               onClick={handleSubmitItem} 
               disabled={selectedOption === null}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-lg shadow-2xl shadow-primary/30 transition-transform active:scale-95"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-lg shadow-2xl transition-transform active:scale-95"
             >
-              Submit
+              Confirm
             </Button>
           ) : (
-            <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-lg shadow-2xl shadow-primary/30">
-              {currentIndex === questions.length - 1 ? "Finish" : "Next"} <ChevronRight className="w-5 h-5 ml-1" />
+            <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-lg shadow-2xl">
+              {currentIndex === questions.length - 1 ? "Result" : "Next"} <ChevronRight className="w-5 h-5 ml-1" />
             </Button>
           )}
         </div>
@@ -266,7 +269,7 @@ function SynapseLoadingPulse() {
           <div className="w-16 h-16 bg-primary rounded-full shadow-2xl" />
         </div>
       </div>
-      <p className="text-[11px] font-black uppercase tracking-[0.6em] text-primary animate-pulse">Initializing Synapse</p>
+      <p className="text-[11px] font-black uppercase tracking-[0.6em] text-primary animate-pulse">Initializing Portal</p>
     </div>
   );
 }
@@ -276,24 +279,6 @@ function CelebrationScreen({ score, total, onBack }: { score: number, total: num
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center relative overflow-hidden bg-background">
-      {isPass && (
-        <div className="absolute inset-0 pointer-events-none">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <div 
-              key={i} 
-              className="confetti-cyan" 
-              style={{ 
-                left: `${Math.random() * 100}%`, 
-                animationDelay: `${Math.random() * 3}s`,
-                width: `${Math.random() * 12 + 6}px`,
-                height: `${Math.random() * 12 + 6}px`,
-                background: i % 2 === 0 ? '#00E5FF' : '#FFFFFF'
-              }} 
-            />
-          ))}
-        </div>
-      )}
-      
       <div className="max-w-md space-y-16 animate-in fade-in zoom-in-95 duration-700">
         <div className="relative">
           <div className="w-56 h-56 mx-auto rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20 shadow-2xl">
@@ -307,15 +292,15 @@ function CelebrationScreen({ score, total, onBack }: { score: number, total: num
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-6xl font-black tracking-tighter text-white uppercase">{isPass ? "HUGE WIN" : "HUNGRY?"}</h2>
+          <h2 className="text-6xl font-black tracking-tighter text-white uppercase">{isPass ? "Excellent Work" : "Keep Reviewing"}</h2>
           <p className="text-muted-foreground text-xl font-bold uppercase tracking-widest">
-            Score: <span className="text-primary">{score} / {total}</span>
+            Session Score: <span className="text-primary">{score} / {total}</span>
           </p>
         </div>
 
         <div className="grid gap-4">
-          <Button onClick={onBack} className="w-full bg-primary hover:bg-primary/90 h-16 rounded-full text-primary-foreground font-black text-xl shadow-2xl shadow-primary/30">Continue to Hub</Button>
-          <Button variant="ghost" onClick={() => window.location.reload()} className="w-full h-16 rounded-full text-muted-foreground font-black text-sm uppercase tracking-widest hover:text-white">Retake Playlist</Button>
+          <Button onClick={onBack} className="w-full bg-primary hover:bg-primary/90 h-16 rounded-full text-primary-foreground font-black text-xl shadow-2xl">Continue Study</Button>
+          <Button variant="ghost" onClick={() => window.location.reload()} className="w-full h-16 rounded-full text-muted-foreground font-black text-sm uppercase tracking-widest hover:text-white">Retake Assessment</Button>
         </div>
       </div>
     </div>

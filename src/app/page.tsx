@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -37,8 +38,8 @@ export default function LoginPage() {
         setIsLoading(false);
         toast({
           variant: "destructive",
-          title: "Account Creation Failed",
-          description: error.message || "Could not create your account.",
+          title: "Portal Access Denied",
+          description: error.message || "Could not create your registration.",
         });
       });
     } else {
@@ -46,8 +47,8 @@ export default function LoginPage() {
         setIsLoading(false);
         toast({
           variant: "destructive",
-          title: "Login Failed",
-          description: "Invalid email or password.",
+          title: "Authentication Failed",
+          description: "Invalid email or access key.",
         });
       });
     }
@@ -68,7 +69,7 @@ export default function LoginPage() {
           <SynapseLogo className="w-40 h-40" />
           <div className="text-center space-y-2">
             <h1 className="text-5xl font-black tracking-tighter text-white">SYNAPSE</h1>
-            <p className="text-muted-foreground font-bold uppercase tracking-[0.3em] text-[10px]">Medical Study Hub</p>
+            <p className="text-muted-foreground font-bold uppercase tracking-[0.3em] text-[10px]">Medical Review Center</p>
           </div>
         </div>
 
@@ -76,10 +77,10 @@ export default function LoginPage() {
           <CardContent className="pt-8">
             <form onSubmit={handleAuth} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Email</label>
+                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Student Email</label>
                 <Input 
                   type="email" 
-                  placeholder="name@future.rmt" 
+                  placeholder="student@reviewcenter.edu" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -87,7 +88,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Password</label>
+                <label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Access Key</label>
                 <Input 
                   type="password" 
                   placeholder="••••••••" 
@@ -98,7 +99,7 @@ export default function LoginPage() {
                 />
               </div>
               <Button type="submit" className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-lg mt-4" disabled={isLoading}>
-                {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Get Started" : "Sign In")}
+                {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register" : "Access Portal")}
               </Button>
             </form>
 
@@ -107,7 +108,7 @@ export default function LoginPage() {
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
               >
-                {isSignUp ? "Already a member? Log In" : "New RMT? Create Account"}
+                {isSignUp ? "Existing Student? Login" : "New Student? Enroll Here"}
               </button>
             </div>
           </CardContent>

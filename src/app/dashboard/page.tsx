@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useUser, useAuth } from "@/firebase";
 import { 
   BookOpen, 
-  Trophy, 
-  Play, 
   LogOut, 
   Home, 
   Grid, 
@@ -18,7 +16,8 @@ import {
   Microscope,
   Droplets,
   Stethoscope,
-  Scale
+  Scale,
+  Library
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
@@ -46,8 +45,8 @@ export default function DiscoveryDashboard() {
     <div className="min-h-screen pb-32 bg-background font-body">
       <header className="px-6 pt-12 pb-6 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter text-white">Discovery</h1>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Med-Tech Hub</p>
+          <h1 className="text-3xl font-black tracking-tighter text-white">Review Center</h1>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Student Portal</p>
         </div>
         <Button variant="ghost" size="icon" onClick={() => auth.signOut()} className="text-muted-foreground hover:text-white">
           <LogOut className="w-6 h-6" />
@@ -55,20 +54,13 @@ export default function DiscoveryDashboard() {
       </header>
 
       <main className="px-6 space-y-10">
-        {/* Daily Challenge Banner */}
-        <div 
-          className="relative group cursor-pointer overflow-hidden rounded-[2rem] shadow-2xl transition-transform active:scale-[0.98] h-48"
-          onClick={() => router.push('/quiz/daily-challenge')}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-primary to-cyan-900 opacity-90" />
-          <div className="relative p-8 flex flex-col justify-center h-full space-y-2">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-white" />
-              <span className="text-[9px] font-black uppercase tracking-[0.4em] text-white/80">Daily Gauntlet</span>
-            </div>
-            <h2 className="text-3xl font-black text-white leading-none tracking-tighter">BOARD EXAM CHALLENGE</h2>
-            <p className="text-white/80 font-bold text-xs">10 high-yield items. New every 24h.</p>
+        {/* Simple Welcome Banner */}
+        <div className="relative overflow-hidden rounded-[2rem] shadow-2xl h-40 bg-gradient-to-r from-[#1A365D] to-[#0B1F3C] border border-white/5 flex items-center px-8">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black text-white tracking-tighter uppercase">Welcome back, {user.email?.split('@')[0]}</h2>
+            <p className="text-white/60 font-bold text-xs uppercase tracking-widest">Select a subject to begin your session</p>
           </div>
+          <Library className="w-24 h-24 text-white/5 absolute -right-4 -bottom-4 rotate-12" />
         </div>
 
         {/* Subjects Grid */}
@@ -89,20 +81,20 @@ export default function DiscoveryDashboard() {
           </div>
         </section>
 
-        {/* Recently Viewed (Horizontal) */}
+        {/* Recently Released (Horizontal) */}
         <section className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">Recently Released</h3>
+          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">Latest Materials</h3>
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex gap-4 pb-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="w-64 h-32 rounded-[1.5rem] spotify-glass p-5 shrink-0 flex flex-col justify-between">
+                <div key={i} className="w-64 h-32 rounded-[1.5rem] spotify-glass p-5 shrink-0 flex flex-col justify-between border-white/5">
                   <div className="flex justify-between items-start">
                     <BookOpen className="w-6 h-6 text-primary" />
-                    <span className="text-[8px] font-black uppercase text-primary/50">Module</span>
+                    <span className="text-[8px] font-black uppercase text-primary/50 tracking-widest">Resource</span>
                   </div>
                   <div>
-                    <h4 className="text-sm font-black text-white truncate">Metabolic Disorders {i}</h4>
-                    <p className="text-[10px] text-muted-foreground font-bold">Clinical Chemistry</p>
+                    <h4 className="text-sm font-black text-white truncate">Review Module {i}</h4>
+                    <p className="text-[10px] text-muted-foreground font-bold">Standard Reference</p>
                   </div>
                 </div>
               ))}
