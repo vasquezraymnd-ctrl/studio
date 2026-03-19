@@ -93,14 +93,14 @@ export default function LoginPage() {
 
   if (isSplashLoading || isUserLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-8 animate-in fade-in duration-500">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-12 animate-in fade-in duration-500">
         <div className="relative">
-          <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
-          <SynapseLogo className="w-24 h-24 relative" />
+          <div className="w-32 h-32 rounded-full bg-primary/20 animate-ping absolute" />
+          <SynapseLogo className="w-32 h-32 relative" />
         </div>
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-black tracking-[0.3em] animate-pulse">SYNAPSE</h1>
-          <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">Good day!</p>
+        <div className="text-center space-y-4">
+          <h1 className="text-6xl font-black tracking-[0.4em] animate-pulse">SYNAPSE</h1>
+          <p className="text-primary font-black text-sm uppercase tracking-[0.5em]">Good day!</p>
         </div>
       </div>
     );
@@ -114,23 +114,23 @@ export default function LoginPage() {
         </div>
       </div>
       
-      <div className="w-full max-sm:max-w-xs max-w-sm space-y-10">
-        <div className="flex flex-col items-center space-y-6">
+      <div className="w-full max-sm:max-w-sm max-w-md space-y-12">
+        <div className="flex flex-col items-center space-y-8">
           <div className="relative mb-2">
-            <div className="w-4 h-4 rounded-full bg-primary animate-ping absolute" />
-            <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(0,229,255,0.8)]" />
+            <div className="w-6 h-6 rounded-full bg-primary animate-ping absolute" />
+            <div className="w-6 h-6 rounded-full bg-primary shadow-[0_0_20px_rgba(0,229,255,1)]" />
           </div>
           
-          <div className="text-center space-y-2">
-            <h1 className="text-5xl font-black tracking-tighter">SYNAPSE</h1>
-            <p className="font-bold uppercase tracking-widest text-[9px] text-primary">
+          <div className="text-center space-y-3">
+            <h1 className="text-7xl font-black tracking-tighter">SYNAPSE</h1>
+            <p className="font-bold uppercase tracking-[0.2em] text-[11px] text-primary">
               Next-Gen review for Next-Gen RMTs
             </p>
           </div>
         </div>
 
-        <Card className="spotify-glass border-none rounded-[2.5rem] shadow-2xl overflow-hidden">
-          <CardContent className="pt-10">
+        <Card className="spotify-glass border-none rounded-[3rem] shadow-2xl overflow-hidden">
+          <CardContent className="pt-12 px-8 pb-10">
             <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
@@ -170,10 +170,10 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="mt-8 text-center pb-4">
+            <div className="mt-10 text-center">
               <button 
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em]"
+                className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.3em]"
               >
                 {isSignUp ? "Existing Student? Login" : "New Student? Enroll Here"}
               </button>
