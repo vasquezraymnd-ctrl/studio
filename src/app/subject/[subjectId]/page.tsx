@@ -1,4 +1,3 @@
-
 "use client"
 
 export const runtime = 'edge';
@@ -25,12 +24,12 @@ export default function SubjectHub() {
   const isAdmin = user?.email?.toLowerCase().includes('admin');
   
   const modulesQuery = useMemoFirebase(() => {
-    if (!db) return null;
+    if (!db || !subjectId) return null;
     return query(collection(db, "subjects", subjectId as string, "modules"), orderBy("dateAdded", "desc"));
   }, [db, subjectId]);
 
   const assessmentsQuery = useMemoFirebase(() => {
-    if (!db) return null;
+    if (!db || !subjectId) return null;
     return query(collection(db, "subjects", subjectId as string, "assessments"), orderBy("title", "asc"));
   }, [db, subjectId]);
 
@@ -50,18 +49,19 @@ export default function SubjectHub() {
   }, [rawAssessments, now, isAdmin]);
 
   const subjectName = useMemo(() => {
+    if (!subjectId) return "Loading...";
     return (subjectId as string).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }, [subjectId]);
 
   const handleDeleteModule = (moduleId: string) => {
-    if (!db || !isAdmin) return;
+    if (!db || !isAdmin || !subjectId) return;
     const ref = doc(db, "subjects", subjectId as string, "modules", moduleId);
     deleteDocumentNonBlocking(ref);
     toast({ title: "Module Removed", description: "The study material has been deleted." });
   };
 
   const handleDeleteAssessment = (assessmentId: string) => {
-    if (!db || !isAdmin) return;
+    if (!db || !isAdmin || !subjectId) return;
     const ref = doc(db, "subjects", subjectId as string, "assessments", assessmentId);
     deleteDocumentNonBlocking(ref);
     toast({ title: "Assessment Removed", description: "The test bank item has been deleted." });

@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect, useState, useMemo } from "react";
@@ -25,9 +24,9 @@ export default function GlobalLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const allModulesQuery = useMemoFirebase(() => {
-    if (!db) return null;
+    if (!db || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"));
-  }, [db]);
+  }, [db, user]);
 
   const { data: rawModules, isLoading } = useCollection(allModulesQuery);
 

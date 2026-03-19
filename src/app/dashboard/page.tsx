@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect, useState } from "react";
@@ -41,7 +40,6 @@ function CountdownTimer() {
   const [daysLeft, setDaysLeft] = useState(0);
 
   useEffect(() => {
-    // Target: Approximate next Board Exam date (e.g., August 2024)
     const targetDate = new Date('2024-08-12T00:00:00');
     const now = new Date();
     const diff = targetDate.getTime() - now.getTime();
@@ -77,9 +75,9 @@ export default function DiscoveryDashboard() {
   const { data: profile } = useDoc(profileRef);
 
   const latestModulesQuery = useMemoFirebase(() => {
-    if (!db) return null;
+    if (!db || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
-  }, [db]);
+  }, [db, user]);
 
   const { data: latestModules, isLoading: modulesLoading } = useCollection(latestModulesQuery);
 

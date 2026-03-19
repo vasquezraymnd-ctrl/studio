@@ -1,4 +1,3 @@
-
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -8,19 +7,24 @@ service cloud.firestore {
     // Admin check: either exists in admins collection or has 'admin' in their email
     function isAdmin() { 
       return isSignedIn() && (
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) || 
-        (request.auth.token.email != null && request.auth.token.email.lower().matches('.*admin.*'))
+        (request.auth.token.email != null && request.auth.token.email.lower().matches('.*admin.*')) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
       ); 
     }
 
     // COLLECTION GROUP RULES
-    // These must be defined to allow collectionGroup() queries
+    // These must be defined at the root to allow collectionGroup() queries
     match /{path=**}/modules/{moduleId} {
       allow read: if isSignedIn();
     }
     
+    match /{path=**}/assessments/{assessmentId} {
+      allow read: if isSignedIn();
+    }
+    
     match /{path=**}/progress/{progressId} {
-      allow read: if isAdmin();
+      // Admins can see all progress; students can see their own
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid == resource.data.userId);
     }
 
     // STANDARD PATH RULES
