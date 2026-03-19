@@ -4,7 +4,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useUser, useAuth, useDoc } from "@/firebase";
+import { useUser, useAuth, useDoc, useFirestore } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { 
   BookOpen, 
@@ -37,14 +37,15 @@ const SUBJECTS = [
 export default function DiscoveryDashboard() {
   const router = useRouter();
   const auth = useAuth();
+  const db = useFirestore();
   const { user, isUserLoading } = useUser();
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
   const profileRef = useMemoFirebase(() => {
-    if (!user) return null;
-    return doc(useFirestore(), "users", user.uid);
-  }, [user]);
+    if (!user || !db) return null;
+    return doc(db, "users", user.uid);
+  }, [user, db]);
 
   const { data: profile } = useDoc(profileRef);
 
@@ -143,9 +144,4 @@ export default function DiscoveryDashboard() {
       </nav>
     </div>
   );
-}
-
-function useFirestore() {
-  const { firestore } = useUser() as any;
-  return firestore;
 }
