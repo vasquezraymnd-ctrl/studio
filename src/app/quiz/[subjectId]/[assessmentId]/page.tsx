@@ -15,10 +15,9 @@ import {
   ChevronLeft, 
   ChevronRight, 
   Award, 
-  HelpCircle,
+  CheckCircle2,
   AlertCircle,
-  X,
-  CheckCircle2
+  X
 } from "lucide-react";
 import { useMemoFirebase } from "@/firebase/provider";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -133,7 +132,7 @@ export default function AssessmentEngine() {
         <div className="flex items-center gap-3">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-white/5 text-muted-foreground hover:text-destructive">
+              <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-white/5 text-muted-foreground hover:text-destructive transition-colors">
                 <X className="w-6 h-6" />
               </Button>
             </AlertDialogTrigger>
@@ -146,7 +145,7 @@ export default function AssessmentEngine() {
               </AlertDialogHeader>
               <AlertDialogFooter className="mt-6 gap-4">
                 <AlertDialogCancel className="rounded-full h-14 font-black border-white/10 hover:bg-white/5">Stay & Complete</AlertDialogCancel>
-                <AlertDialogAction onClick={() => router.push(`/subject/${subjectId}`)} className="rounded-full h-14 font-black bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction onClick={() => router.push(`/subject/${subjectId}`)} className="rounded-full h-14 font-black bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all">
                   Terminate
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -155,7 +154,7 @@ export default function AssessmentEngine() {
           
           <div className="hidden sm:block ml-2">
             <h3 className="font-black text-white truncate max-w-[150px] uppercase leading-none">{assessment.title}</h3>
-            <p className="text-[8px] font-black uppercase text-primary tracking-widest mt-1">Examination Hub</p>
+            <p className="text-[8px] font-black uppercase text-primary tracking-widest mt-1">Synapse Engine</p>
           </div>
         </div>
 
@@ -179,7 +178,7 @@ export default function AssessmentEngine() {
           </Button>
 
           {showTimer && (
-            <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 font-black text-primary text-lg tabular-nums">
+            <div className="px-5 py-2.5 rounded-2xl bg-white/5 border border-white/10 font-black text-primary text-lg tabular-nums shadow-inner">
               {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
             </div>
           )}
@@ -188,7 +187,7 @@ export default function AssessmentEngine() {
 
       {/* Explorer Overlay (Navigation Panel) */}
       {showExplorer && (
-        <div className="fixed inset-x-0 top-24 bottom-32 bg-background/95 backdrop-blur-3xl z-40 p-6 animate-in slide-in-from-top-4">
+        <div className="fixed inset-x-0 top-24 bottom-32 bg-background/95 backdrop-blur-3xl z-40 p-6 animate-in slide-in-from-top-4 duration-500">
           <div className="max-w-2xl mx-auto h-full flex flex-col">
             <h2 className="text-[10px] font-black uppercase text-center mb-8 tracking-[0.5em] text-muted-foreground">Item Matrix</h2>
             <ScrollArea className="flex-1">
@@ -203,7 +202,7 @@ export default function AssessmentEngine() {
                       className={cn(
                         "aspect-square rounded-2xl flex items-center justify-center text-xs font-black border transition-all duration-300",
                         isCurrent ? "bg-primary text-primary-foreground border-primary scale-110 shadow-xl" :
-                        isAnsweredItem ? "bg-primary/20 text-primary border-primary/30" : "bg-white/5 text-white/20 border-white/5 hover:border-white/20"
+                        isAnsweredItem ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.1)]" : "bg-white/5 text-white/20 border-white/5 hover:border-white/20"
                       )}
                     >
                       {i + 1}
@@ -218,7 +217,7 @@ export default function AssessmentEngine() {
 
       {/* Quiz Area */}
       <main className="flex-1 overflow-auto p-6 md:p-12 scrollbar-hide">
-        <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4">
+        <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="space-y-4">
             <span className="text-[10px] font-black uppercase text-primary tracking-[0.6em] ml-1">ITEM {currentIndex + 1} OF {assessment.questions.length}</span>
             <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.1] tracking-tighter">
@@ -246,7 +245,7 @@ export default function AssessmentEngine() {
                   className={cn("w-full text-left p-6 rounded-[2.5rem] border transition-all flex items-center gap-6 group", stateStyle)}
                 >
                   <span className={cn(
-                    "w-12 h-12 rounded-full flex items-center justify-center text-sm font-black shrink-0 transition-colors",
+                    "w-12 h-12 rounded-full flex items-center justify-center text-sm font-black shrink-0 transition-colors shadow-inner",
                     (isAnswered || analysisMode) && idx === currentQ.a ? "bg-primary-foreground/20" : "bg-black/30"
                   )}>
                     {String.fromCharCode(65 + idx)}
@@ -280,7 +279,7 @@ export default function AssessmentEngine() {
               setTempSelection(answers[prevIdx] ?? null);
             }}
             disabled={currentIndex === 0}
-            className="text-muted-foreground font-black uppercase text-[10px] tracking-[0.3em] h-14 px-6 rounded-2xl hover:text-white"
+            className="text-muted-foreground font-black uppercase text-[10px] tracking-[0.3em] h-14 px-6 rounded-2xl hover:text-white transition-colors"
           >
             <ChevronLeft className="w-5 h-5 mr-2" /> Previous
           </Button>
@@ -302,7 +301,7 @@ export default function AssessmentEngine() {
               Confirm
             </Button>
           ) : (
-            <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-xl shadow-[0_20px_50px_rgba(0,229,255,0.2)]">
+            <Button onClick={handleNext} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full px-12 h-16 text-xl shadow-[0_20px_50px_rgba(0,229,255,0.2)] transition-all active:scale-95">
               {currentIndex === assessment.questions.length - 1 ? "Results" : "Next Item"} <ChevronRight className="w-5 h-5 ml-2" />
             </Button>
           )}
@@ -347,7 +346,7 @@ function ResultScreen({ score, total, onReview, onBack }: { score: number, total
   return (
     <div className="h-screen flex flex-col items-center justify-center p-12 text-center bg-background animate-in fade-in duration-1000">
       <div className="relative mb-20">
-        <div className="w-64 h-64 rounded-full bg-primary/5 flex items-center justify-center border-8 border-primary/10 relative">
+        <div className="w-64 h-64 rounded-full bg-primary/5 flex items-center justify-center border-8 border-primary/10 relative shadow-2xl">
           <Award className={cn("w-32 h-32 transition-all duration-1000", isPass ? "text-primary scale-110 drop-shadow-[0_0_30px_rgba(0,229,255,0.5)]" : "text-muted-foreground opacity-30")} />
         </div>
         {isPass && (
@@ -366,8 +365,8 @@ function ResultScreen({ score, total, onReview, onBack }: { score: number, total
       </div>
 
       <div className="w-full max-w-sm space-y-4">
-        <Button onClick={onBack} className="w-full h-18 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-2xl uppercase tracking-tighter shadow-2xl py-8">Continue Review</Button>
-        <Button variant="ghost" onClick={onReview} className="w-full h-16 text-muted-foreground font-black uppercase tracking-widest hover:text-white text-sm">Analysis Mode</Button>
+        <Button onClick={onBack} className="w-full h-18 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-2xl uppercase tracking-tighter shadow-2xl py-8 transition-transform active:scale-95">Continue Review</Button>
+        <Button variant="ghost" onClick={onReview} className="w-full h-16 text-muted-foreground font-black uppercase tracking-widest hover:text-white text-sm transition-colors">Analysis Mode</Button>
       </div>
     </div>
   );

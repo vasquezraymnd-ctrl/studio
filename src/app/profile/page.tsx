@@ -91,18 +91,18 @@ export default function StudentProfile() {
   return (
     <div className="min-h-screen pb-32 bg-background font-body">
       <header className="px-6 pt-12 pb-8 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-50">
-        <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-0 text-muted-foreground hover:text-white">
+        <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-0 text-muted-foreground hover:text-white transition-colors">
           <ChevronLeft className="w-6 h-6 mr-1" /> Dashboard
         </Button>
         <div className="text-right">
-          <h1 className="text-2xl font-black text-white tracking-tighter uppercase">Reviewee Profile</h1>
-          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Active Session</p>
+          <h1 className="text-2xl font-black text-white tracking-tighter uppercase leading-none">Reviewee Profile</h1>
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary mt-1">Active Session</p>
         </div>
       </header>
 
       <main className="px-6 space-y-10 max-w-2xl mx-auto">
         {/* Profile Card */}
-        <section className="spotify-glass rounded-[3rem] p-10 space-y-8">
+        <section className="spotify-glass rounded-[3rem] p-10 space-y-8 shadow-2xl">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-2xl shadow-primary/5">
               <UserIcon className="w-10 h-10 text-primary" />
@@ -111,7 +111,7 @@ export default function StudentProfile() {
               <h2 className="text-2xl font-black text-white leading-none uppercase tracking-tighter">
                 {displayName || user?.email?.split('@')[0]} RMT
               </h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mt-2">Active Reviewee</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mt-2">Professional Progress</p>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default function StudentProfile() {
                   value={displayName} 
                   onChange={e => setDisplayName(e.target.value)} 
                   placeholder="Enter your full name" 
-                  className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl" 
+                  className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50" 
                 />
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function StudentProfile() {
                   value={school} 
                   onChange={e => setSchool(e.target.value)} 
                   placeholder="e.g., University of Santo Tomas" 
-                  className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl" 
+                  className="pl-12 h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary/50" 
                 />
               </div>
             </div>
@@ -154,7 +154,7 @@ export default function StudentProfile() {
               </div>
             </div>
 
-            <Button type="submit" disabled={isUpdating} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl transition-all active:scale-95">
+            <Button type="submit" disabled={isUpdating} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl transition-all active:scale-95 hover:bg-primary/90">
               {isUpdating ? <Loader2 className="animate-spin" /> : <><Save className="mr-2 w-5 h-5" /> Save Profile</>}
             </Button>
           </form>
@@ -167,8 +167,8 @@ export default function StudentProfile() {
             <span className="text-[10px] font-black text-primary uppercase tracking-widest">{progressItems?.length || 0} Attempts</span>
           </div>
 
-          <ScrollArea className="h-[400px]">
-            <div className="space-y-4 pr-4">
+          <ScrollArea className="h-[400px] pr-4">
+            <div className="space-y-4">
               {isProgressLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="h-28 w-full rounded-[2rem] bg-white/5 animate-pulse" />
@@ -180,21 +180,21 @@ export default function StudentProfile() {
                 </div>
               ) : (
                 progressItems?.map((item) => (
-                  <Card key={item.id} className="spotify-glass border-none rounded-[2rem] overflow-hidden group hover:bg-white/5 transition-colors">
+                  <Card key={item.id} className="spotify-glass border-none rounded-[2rem] overflow-hidden group hover:bg-white/5 transition-colors shadow-lg">
                     <CardContent className="p-6 space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                             <Trophy className="w-6 h-6 text-primary" />
                           </div>
-                          <div>
-                            <h4 className="font-black text-white text-lg tracking-tight uppercase leading-none">{item.assessmentTitle}</h4>
+                          <div className="min-w-0">
+                            <h4 className="font-black text-white text-lg tracking-tight uppercase leading-none truncate">{item.assessmentTitle}</h4>
                             <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest mt-1 flex items-center gap-1">
                               <Calendar className="w-3 h-3" /> {new Date(item.completedAt).toLocaleDateString()}
                             </p>
                           </div>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right shrink-0">
                           <span className="text-2xl font-black text-primary leading-none">{item.score}</span>
                           <span className="text-xs font-black text-muted-foreground uppercase ml-1">/ {item.total}</span>
                         </div>
@@ -222,12 +222,12 @@ export default function StudentProfile() {
           <span className="text-[9px] font-black uppercase tracking-widest">Home</span>
         </Button>
         {isAdmin && (
-          <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-primary" onClick={() => router.push('/admin')}>
+          <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-primary transition-colors" onClick={() => router.push('/admin')}>
             <Zap className="w-7 h-7" />
             <span className="text-[9px] font-black uppercase tracking-widest">Admin</span>
           </Button>
         )}
-        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-primary" onClick={() => router.push('/library')}>
+        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-primary transition-colors" onClick={() => router.push('/library')}>
           <Grid className="w-7 h-7" />
           <span className="text-[9px] font-black uppercase tracking-widest">Library</span>
         </Button>
