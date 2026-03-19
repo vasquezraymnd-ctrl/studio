@@ -35,6 +35,8 @@ export default function DiscoveryDashboard() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
 
+  const isAdmin = user?.email?.toLowerCase().includes('admin');
+
   useEffect(() => {
     if (!isUserLoading && !user) router.push('/');
   }, [user, isUserLoading, router]);
@@ -106,15 +108,17 @@ export default function DiscoveryDashboard() {
 
       {/* Spotify style Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 h-24 bg-[#0B1F3C]/95 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-8 z-50 rounded-t-[3rem] shadow-2xl">
-        <Button variant="ghost" className="flex flex-col gap-1 items-center text-primary hover:bg-transparent">
+        <Button variant="ghost" className="flex flex-col gap-1 items-center text-primary hover:bg-transparent" onClick={() => router.push('/dashboard')}>
           <Home className="w-7 h-7" />
           <span className="text-[9px] font-black uppercase tracking-widest">Home</span>
         </Button>
-        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-white" onClick={() => router.push('/admin')}>
-          <Zap className="w-7 h-7" />
-          <span className="text-[9px] font-black uppercase tracking-widest">Admin</span>
-        </Button>
-        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-white">
+        {isAdmin && (
+          <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-white" onClick={() => router.push('/admin')}>
+            <Zap className="w-7 h-7" />
+            <span className="text-[9px] font-black uppercase tracking-widest">Admin</span>
+          </Button>
+        )}
+        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-white" onClick={() => router.push('/library')}>
           <Grid className="w-7 h-7" />
           <span className="text-[9px] font-black uppercase tracking-widest">Library</span>
         </Button>

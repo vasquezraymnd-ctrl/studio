@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -9,7 +10,7 @@ import { useFirestore, useUser } from "@/firebase";
 import { collection, addDoc, doc, setDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert } from "lucide-react";
+import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminPortal() {
@@ -26,16 +27,18 @@ export default function AdminPortal() {
   const [jsonInput, setJsonInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Strict email check for admin access
+  const isAdmin = user?.email?.toLowerCase().includes('admin');
+
   useEffect(() => {
-    // Basic email-based admin check for prototype
-    if (!isUserLoading && (!user || !user.email?.includes('admin'))) {
+    if (!isUserLoading && !isAdmin) {
       router.push('/dashboard');
     }
-  }, [user, isUserLoading, router]);
+  }, [isAdmin, isUserLoading, router]);
 
   const handleModuleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject || !db) return;
+    if (!subject || !db || !isAdmin) return;
     setIsSubmitting(true);
     try {
       await addDoc(collection(db, "subjects", subject, "modules"), {
@@ -54,7 +57,7 @@ export default function AdminPortal() {
 
   const handleQuizSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!subject || !jsonInput || !db) return;
+    if (!subject || !jsonInput || !db || !isAdmin) return;
     setIsSubmitting(true);
     try {
       const parsed = JSON.parse(jsonInput);
@@ -73,6 +76,17 @@ export default function AdminPortal() {
   };
 
   if (isUserLoading || !user) return null;
+
+  if (!isAdmin) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-background p-8 text-center space-y-6">
+        <Lock className="w-20 h-20 text-destructive/50" />
+        <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Access Denied</h2>
+        <p className="text-muted-foreground text-sm font-bold">Only administrators can access the Command Center.</p>
+        <Button onClick={() => router.push('/dashboard')} className="rounded-full px-10 h-14 bg-white/5 border border-white/10 text-white font-black uppercase tracking-widest">Return Home</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -125,6 +139,10 @@ export default function AdminPortal() {
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Module Title</label>
                 <Input value={title} onChange={e => setTitle(e.target.value)} required placeholder="e.g., CBC & Morphology" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
+              </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Brief Description</label>
+                <Input value={description} onChange={e => setDescription(e.target.value)} placeholder="Summary of material content" className="h-14 bg-white/5 border-white/10 rounded-2xl" />
               </div>
               <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Resource Link (PDF/Video)</label>
