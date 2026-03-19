@@ -82,9 +82,9 @@ export default function DiscoveryDashboard() {
                 onClick={() => router.push(`/subject/${sub.id}`)}
                 className={`relative aspect-square rounded-[2.5rem] p-6 text-left overflow-hidden bg-gradient-to-br ${sub.color} to-card group transition-all active:scale-95 shadow-xl border border-white/5`}
               >
-                <sub.icon className="w-10 h-10 text-white/20 absolute -right-2 -bottom-2 group-hover:scale-125 transition-transform" />
-                <sub.icon className="w-8 h-8 text-white mb-4" />
-                <span className="text-lg font-black text-white leading-tight block">{sub.name}</span>
+                <sub.icon className="w-16 h-16 text-white/10 absolute -right-2 -bottom-2 group-hover:scale-125 transition-transform" />
+                <sub.icon className="w-12 h-12 text-white mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
+                <span className="text-lg font-black text-white leading-tight block drop-shadow-md">{sub.name}</span>
               </button>
             ))}
           </div>
@@ -97,7 +97,7 @@ export default function DiscoveryDashboard() {
               {[1, 2, 3].map((i) => (
                 <div key={i} className="w-64 h-32 rounded-[2rem] spotify-glass p-5 shrink-0 flex flex-col justify-between">
                   <div className="flex justify-between items-start">
-                    <BookOpen className="w-6 h-6 text-primary" />
+                    <BookOpen className="w-6 h-6 text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
                     <span className="text-[8px] font-black uppercase text-primary/50 tracking-widest">Board Ready</span>
                   </div>
                   <div>
