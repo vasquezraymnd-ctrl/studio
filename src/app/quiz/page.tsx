@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect, useState, useRef } from "react";
@@ -9,7 +10,7 @@ import { useFirestore, useCollection } from "@/firebase";
 import { collection, query, limit } from "firebase/firestore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { Timer, LayoutGrid, Eye, EyeOff, CheckCircle2, ChevronRight, ChevronLeft, Award, X } from "lucide-react";
+import { Timer, LayoutGrid, Eye, EyeOff, CheckCircle2, ChevronRight, ChevronLeft, Award, X, AlertCircle } from "lucide-react";
 import { useMemoFirebase } from "@/firebase/provider";
 
 export default function QuizScreen() {
@@ -61,19 +62,39 @@ export default function QuizScreen() {
     }
   };
 
-  if (isLoading || !questions) return (
+  if (isLoading) return (
     <div className="min-h-screen flex items-center justify-center">
       <SynapseLoadingPulse />
     </div>
   );
 
+  if (!questions || questions.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center space-y-6">
+        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center">
+          <AlertCircle className="w-10 h-10 text-muted-foreground" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-white">No Questions Found</h2>
+          <p className="text-muted-foreground max-w-xs mx-auto">The assessment bank is currently empty. Please contact your administrator.</p>
+        </div>
+        <Button onClick={() => router.push('/dashboard')} variant="outline" className="rounded-full px-8">
+          Return to Dashboard
+        </Button>
+      </div>
+    );
+  }
+
   if (isFinished) {
-    const score = Object.values(answers).filter((a, i) => a === questions[i].correctAnswerIndex).length;
+    const score = questions.reduce((acc, q, idx) => {
+      return acc + (answers[idx] === q.correctAnswerIndex ? 1 : 0);
+    }, 0);
     return <CelebrationScreen score={score} total={questions.length} onBack={() => router.push('/dashboard')} />;
   }
 
   const currentQ = questions[currentIndex];
-  const isCorrect = answers[currentIndex] === currentQ.correctAnswerIndex;
+  if (!currentQ) return null;
+
   const isAnswered = validated[currentIndex];
 
   return (
@@ -232,7 +253,7 @@ function SynapseLoadingPulse() {
 }
 
 function CelebrationScreen({ score, total, onBack }: { score: number, total: number, onBack: () => void }) {
-  const isPass = score >= 75;
+  const isPass = total > 0 && (score / total) >= 0.75;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 text-center relative overflow-hidden">
