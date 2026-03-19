@@ -68,7 +68,6 @@ export default function AssessmentEngine() {
     }
   }, [timeLeft, isFinished]);
 
-  // Save progress when finished
   useEffect(() => {
     if (isFinished && user && db && assessment && !analysisMode) {
       const score = assessment.questions.reduce((acc: number, q: any, idx: number) => acc + (answers[idx] === q.a ? 1 : 0), 0);
@@ -99,7 +98,6 @@ export default function AssessmentEngine() {
     setAnswers({ ...answers, [currentIndex]: tempSelection });
     setValidated({ ...validated, [currentIndex]: true });
     
-    // Automatically move to next after a short delay for better UX if not in analysis mode
     if (!analysisMode) {
       setTimeout(() => {
         handleNext();
@@ -137,7 +135,6 @@ export default function AssessmentEngine() {
 
   return (
     <div className="flex flex-col h-screen bg-background overflow-hidden font-body">
-      {/* HUD Header */}
       <header className="h-24 px-6 flex items-center justify-between spotify-glass border-none z-50">
         <div className="flex items-center gap-3">
           <AlertDialog>
@@ -199,7 +196,6 @@ export default function AssessmentEngine() {
         </div>
       </header>
 
-      {/* Explorer Overlay (Navigation Panel) */}
       {showExplorer && (
         <div className="fixed inset-x-0 top-24 bottom-32 bg-background/95 backdrop-blur-3xl z-40 p-6 animate-in slide-in-from-top-4 duration-500">
           <div className="max-w-2xl mx-auto h-full flex flex-col">
@@ -235,7 +231,6 @@ export default function AssessmentEngine() {
         </div>
       )}
 
-      {/* Quiz Area */}
       <main className="flex-1 overflow-auto p-6 md:p-12 scrollbar-hide">
         <div className="max-w-3xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="space-y-4">
@@ -264,7 +259,6 @@ export default function AssessmentEngine() {
                 else if (idx === answers[currentIndex]) stateStyle = "bg-destructive/20 border-destructive/40 text-destructive line-through";
                 else stateStyle = "opacity-30 border-transparent grayscale";
               } else if (isAnswered) {
-                // In testing mode, show the selection but no colors
                 if (idx === answers[currentIndex]) stateStyle = "bg-white/10 border-white/30 text-white font-bold ring-2 ring-white/10 scale-[1.02]";
                 else stateStyle = "opacity-30 border-transparent grayscale";
               } else if (tempSelection === idx) {
@@ -305,7 +299,6 @@ export default function AssessmentEngine() {
         </div>
       </main>
 
-      {/* Footer Nav */}
       <footer className="h-32 px-6 spotify-glass border-none z-50 flex items-center justify-center rounded-t-[4rem]">
         <div className="max-w-3xl w-full flex items-center justify-between gap-10">
           <Button 
