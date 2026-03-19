@@ -48,7 +48,7 @@ export default function SubjectHub() {
   return (
     <div className="min-h-screen pb-24 bg-background">
       <header className="px-6 pt-12 pb-8 space-y-4">
-        <Button variant="ghost" onClick={() => router.back()} className="p-0 text-muted-foreground hover:text-white">
+        <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-0 text-muted-foreground hover:text-white">
           <ChevronLeft className="w-6 h-6 mr-1" /> Back
         </Button>
         <div>
