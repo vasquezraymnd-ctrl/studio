@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -28,7 +27,6 @@ export default function AdminPortal() {
   const [jsonInput, setJsonInput] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Strict email check for admin access
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
   useEffect(() => {

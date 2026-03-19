@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from "react";
@@ -106,7 +105,7 @@ export default function LoginPage() {
                 <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
                 <Input 
                   type="email" 
-                  placeholder="student@reviewcenter.edu" 
+                  placeholder="student@synapse.edu" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -125,7 +124,7 @@ export default function LoginPage() {
                 />
               </div>
               <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
-                {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register" : "Access Portal")}
+                {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register Account" : "Access Portal")}
               </Button>
             </form>
 

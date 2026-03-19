@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect } from "react";
@@ -44,12 +43,14 @@ export default function DiscoveryDashboard() {
 
   if (isUserLoading || !user) return null;
 
+  const displayName = user.email?.split('@')[0].toUpperCase();
+
   return (
     <div className="min-h-screen pb-32 bg-transparent font-body">
       <header className="px-6 pt-12 pb-6 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div>
           <h1 className="text-3xl font-black tracking-tighter uppercase">Synapse</h1>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Student Portal</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Clinical Excellence</p>
         </div>
         <div className="flex items-center gap-2">
           <ModeToggle />
@@ -60,14 +61,15 @@ export default function DiscoveryDashboard() {
       </header>
 
       <main className="px-6 space-y-10">
-        <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl h-40 bg-gradient-to-r from-card to-background border border-white/5 flex items-center px-8">
-          <div className="space-y-1">
-            <h2 className="text-2xl font-black tracking-tighter uppercase">
-              Welcome back, {user.email?.split('@')[0]} RMT
+        <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl h-44 bg-gradient-to-br from-card to-background border border-white/5 flex items-center px-10">
+          <div className="space-y-2 relative z-10">
+            <p className="text-primary font-black text-[10px] uppercase tracking-[0.4em]">Future Medical Technologist</p>
+            <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">
+              {displayName} RMT
             </h2>
-            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest">Select a subject to begin your session</p>
+            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest mt-2">Select a pillar to begin your session</p>
           </div>
-          <Library className="w-24 h-24 text-primary/5 absolute -right-4 -bottom-4 rotate-12" />
+          <Library className="w-32 h-32 text-primary/5 absolute -right-6 -bottom-6 rotate-12" />
         </div>
 
         <section className="space-y-4">
@@ -77,7 +79,7 @@ export default function DiscoveryDashboard() {
               <button 
                 key={sub.id}
                 onClick={() => router.push(`/subject/${sub.id}`)}
-                className={`relative aspect-square rounded-[2.5rem] p-6 text-left overflow-hidden bg-gradient-to-br ${sub.color} to-card group transition-all active:scale-95 shadow-xl`}
+                className={`relative aspect-square rounded-[2.5rem] p-6 text-left overflow-hidden bg-gradient-to-br ${sub.color} to-card group transition-all active:scale-95 shadow-xl border border-white/5`}
               >
                 <sub.icon className="w-10 h-10 text-white/20 absolute -right-2 -bottom-2 group-hover:scale-125 transition-transform" />
                 <sub.icon className="w-8 h-8 text-white mb-4" />
@@ -88,14 +90,14 @@ export default function DiscoveryDashboard() {
         </section>
 
         <section className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">Latest Materials</h3>
+          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground ml-1">Latest Releases</h3>
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex gap-4 pb-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="w-64 h-32 rounded-[2rem] spotify-glass p-5 shrink-0 flex flex-col justify-between">
                   <div className="flex justify-between items-start">
                     <BookOpen className="w-6 h-6 text-primary" />
-                    <span className="text-[8px] font-black uppercase text-primary/50 tracking-widest">Resource</span>
+                    <span className="text-[8px] font-black uppercase text-primary/50 tracking-widest">Board Ready</span>
                   </div>
                   <div>
                     <h4 className="text-sm font-black truncate">Review Module {i}</h4>
