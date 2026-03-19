@@ -4,14 +4,15 @@
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
 
 ## 🎉 DEPLOYMENT SUCCESSFUL
-Your project is now live at: `https://studio-9pm.pages.dev` (or your specific Cloudflare URL).
+Your project is now live at: `https://mobilesynapse.pages.dev` (or your specific Cloudflare URL).
 
 ### 🚨 CRITICAL FIX: Node.JS Compatibility Error
 If you see a "Node.JS Compatibility Error" on your live site, follow these steps:
 1. Log in to **Cloudflare Dashboard** -> **Workers & Pages** -> Your Project.
 2. Go to **Settings** -> **Functions** -> **Compatibility Flags**.
-3. Add the `nodejs_compat` flag to both **Production** and **Preview**.
-4. Go to **Deployments** and click **Retry Deployment** on your latest build.
+3. In the input field, type exactly: **`nodejs_compat`**
+4. Add this flag to both **Production** and **Preview**.
+5. Go to **Deployments** and click **Retry Deployment** on your latest build.
 
 ---
 
