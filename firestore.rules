@@ -13,7 +13,7 @@ service cloud.firestore {
       );
     }
 
-    // COLLECTION GROUP RULES - MUST BE AT THE TOP
+    // COLLECTION GROUP RULES - MUST BE AT THE TOP LEVEL
     // These allow recursive queries like collectionGroup(db, 'modules')
     match /{path=**}/modules/{moduleId} {
       allow read, list: if isSignedIn();
