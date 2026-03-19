@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth, useUser } from "@/firebase";
-import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
-import { Loader2 } from "lucide-react";
+import { initiateEmailSignIn, initiateEmailSignUp, initiatePasswordReset } from "@/firebase/non-blocking-login";
+import { Loader2, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -62,6 +62,35 @@ export default function LoginPage() {
     }
   };
 
+  const handleForgotPassword = () => {
+    if (!email) {
+      toast({
+        variant: "destructive",
+        title: "Email Required",
+        description: "Please enter your student email first to reset your password.",
+      });
+      return;
+    }
+
+    initiatePasswordReset(
+      auth, 
+      email, 
+      () => {
+        toast({
+          title: "Reset Link Sent",
+          description: `A password reset link has been sent to ${email}. Please check your inbox.`,
+        });
+      },
+      (error) => {
+        toast({
+          variant: "destructive",
+          title: "Reset Failed",
+          description: error.message || "Could not process password reset request.",
+        });
+      }
+    );
+  };
+
   if (isSplashLoading || isUserLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-8 animate-in fade-in duration-500">
@@ -80,7 +109,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="absolute top-8 right-8">
-        <ModeToggle />
+        <div className="flex items-center gap-2">
+          <ModeToggle />
+        </div>
       </div>
       
       <div className="w-full max-sm:max-w-xs max-w-sm space-y-10">
@@ -113,7 +144,18 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Access Key</label>
+                <div className="flex items-center justify-between ml-2">
+                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Access Key</label>
+                  {!isSignUp && (
+                    <button 
+                      type="button"
+                      onClick={handleForgotPassword}
+                      className="text-[9px] font-black text-primary/60 hover:text-primary uppercase tracking-widest transition-colors"
+                    >
+                      Forgot Key?
+                    </button>
+                  )}
+                </div>
                 <Input 
                   type="password" 
                   placeholder="••••••••" 
