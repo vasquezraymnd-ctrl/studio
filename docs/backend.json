@@ -1,0 +1,146 @@
+{
+  "entities": {
+    "Question": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Question",
+      "type": "object",
+      "description": "Represents a single quiz question with its options and correct answer.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Question entity."
+        },
+        "text": {
+          "type": "string",
+          "description": "The main text of the clinical laboratory science question."
+        },
+        "options": {
+          "type": "array",
+          "description": "An array of possible answer choices for the question.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "correctAnswerIndex": {
+          "type": "number",
+          "description": "The zero-based index of the correct answer within the 'options' array."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "An optional explanation or rationale for the correct answer."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category or topic of the question (e.g., 'Hematology', 'Clinical Chemistry')."
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "options",
+        "correctAnswerIndex"
+      ]
+    },
+    "StudyModule": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StudyModule",
+      "type": "object",
+      "description": "Represents a study module containing educational materials, uploaded by an administrator.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the StudyModule entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the study module."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the module's content."
+        },
+        "downloadLink": {
+          "type": "string",
+          "description": "A direct URL to download or view the study material (e.g., PDF link from Google Drive, Dropbox, GitHub).",
+          "format": "uri"
+        },
+        "uploadedById": {
+          "type": "string",
+          "description": "Reference to the unique identifier of the administrator who uploaded this module. (Relationship: User 1:N StudyModule)"
+        },
+        "uploadDate": {
+          "type": "string",
+          "description": "The date and time when the module was uploaded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "downloadLink",
+        "uploadedById",
+        "uploadDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/questions/{questionId}",
+        "definition": {
+          "entityName": "Question",
+          "schema": {
+            "$ref": "#/backend/entities/Question"
+          },
+          "description": "Stores the global bank of clinical laboratory science quiz questions. All documents in this collection are readable by authenticated users (students) and fully manageable by administrators. This collection supports secure list operations for students due to its homogeneous security posture.",
+          "params": [
+            {
+              "name": "questionId",
+              "description": "The unique identifier for a specific question."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/studyModules/{moduleId}",
+        "definition": {
+          "entityName": "StudyModule",
+          "schema": {
+            "$ref": "#/backend/entities/StudyModule"
+          },
+          "description": "Contains details for study modules, including titles, descriptions, and direct download links to external resources. All documents are readable by authenticated users (students) and fully manageable by administrators. Includes denormalized 'uploadedById' for admin ownership tracking. This collection supports secure list operations for students due to its homogeneous security posture.",
+          "params": [
+            {
+              "name": "moduleId",
+              "description": "The unique identifier for a specific study module."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/admins/{adminId}",
+        "definition": {
+          "entityName": "AdminRole",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "A collection where each document represents an administrator. The document ID corresponds to the user's UID. The existence of a document at `/admins/{uid}` grants administrative privileges, allowing for DBAC (Database-Based Access Control) without using custom claims or `get()` calls in security rules. Documents may contain minimal metadata (e.g., assignment date).",
+          "params": [
+            {
+              "name": "adminId",
+              "description": "The unique identifier (UID) of an administrator user."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The recommended Firestore structure is designed with a strong emphasis on Authorization Independence and Queryable Authorization Patterns (QAPs), as mandated by the core design principles. This approach simplifies security rules, enhances debuggability, and ensures scalability.\n\n1.  **Authorization Independence via Denormalization:**\n    *   **Admin Role:** To determine if a user has administrative privileges, we avoid `get()` calls to complex user profiles. Instead, a dedicated `/admins/{adminId}` collection is used. An admin's UID will exist as a document ID in this collection. Security rules can then simply use `exists(/databases/$(database)/documents/admins/$(request.auth.uid))` to grant elevated permissions. This is an atomic and highly performant check, eliminating hierarchical dependencies.\n    *   **Questions and Study Modules:** Access to `/questions/{questionId}` and `/studyModules/{moduleId}` is determined by whether the `request.auth.uid` is authenticated (for read access) and if they are an admin (for write access). The `StudyModule` entity already includes `uploadedById`, which can be leveraged for finer-grained admin control (e.g., only the uploader can modify their module), but for global admin write access, the `/admins` collection is sufficient. Neither of these collections relies on `get()` calls to parent documents for authorization.\n\n2.  **Supporting Queryable Authorization Patterns (QAPs) through Structural Segregation:**\n    *   **Homogeneous Security Posture:** Each collection (`/questions`, `/studyModules`, `/admins`) maintains a homogeneous security posture. This means all documents within a given collection share the same access rules.\n    *   **`/questions/{questionId}`:** All documents in this collection are globally accessible for reading by authenticated students and editable by authenticated admins. There is no mix of public/private questions, ensuring that any `list` operation performed by an authorized user will only return documents they are permitted to see. Rules do not act as filters.\n    *   **`/studyModules/{moduleId}`:** Similarly, all study modules are intended for reading by authenticated students and managed by admins. A `list` operation on this collection will securely return all available modules to students without filtering. This prevents situations where a query might fetch unauthorized data that then needs to be client-side filtered.\n    *   **`/admins/{adminId}`:** This collection is explicitly for defining admin roles. Non-admin users cannot read or list this collection, while admins can manage it. This segregation ensures QAPs for role management.\n\nBy adhering to these principles, the Firestore structure provides a clear, secure, and efficient foundation for the Synapse app, making security rule development straightforward and robust."
+  }
+}
