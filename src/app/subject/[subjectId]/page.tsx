@@ -2,24 +2,21 @@
 
 export const runtime = 'edge';
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useFirestore, useCollection, useUser } from "@/firebase";
-import { collection, query, orderBy, doc } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { BookOpen, Trophy, Play, ChevronLeft, ExternalLink, Clock, Trash2 } from "lucide-react";
+import { BookOpen, Trophy, Play, ChevronLeft, ExternalLink, Clock } from "lucide-react";
 import { useMemoFirebase } from "@/firebase/provider";
 import { Skeleton } from "@/components/ui/skeleton";
-import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import { useToast } from "@/hooks/use-toast";
 
 export default function SubjectHub() {
   const { subjectId } = useParams();
   const router = useRouter();
   const db = useFirestore();
   const { user } = useUser();
-  const { toast } = useToast();
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
   
@@ -53,20 +50,6 @@ export default function SubjectHub() {
     return (subjectId as string).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   }, [subjectId]);
 
-  const handleDeleteModule = (moduleId: string) => {
-    if (!db || !isAdmin || !subjectId) return;
-    const ref = doc(db, "subjects", subjectId as string, "modules", moduleId);
-    deleteDocumentNonBlocking(ref);
-    toast({ title: "Module Removed", description: "The study material has been deleted." });
-  };
-
-  const handleDeleteAssessment = (assessmentId: string) => {
-    if (!db || !isAdmin || !subjectId) return;
-    const ref = doc(db, "subjects", subjectId as string, "assessments", assessmentId);
-    deleteDocumentNonBlocking(ref);
-    toast({ title: "Assessment Removed", description: "The test bank item has been deleted." });
-  };
-
   return (
     <div className="min-h-screen pb-24 bg-background">
       <header className="px-6 pt-12 pb-8 space-y-4">
@@ -78,11 +61,6 @@ export default function SubjectHub() {
             <h1 className="text-4xl font-black tracking-tighter text-white">{subjectName}</h1>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Subject Library</p>
           </div>
-          {isAdmin && (
-            <div className="bg-primary/10 border border-primary/20 px-3 py-1 rounded-full">
-              <span className="text-[8px] font-black uppercase tracking-widest text-primary">Admin View</span>
-            </div>
-          )}
         </div>
       </header>
 
@@ -104,34 +82,19 @@ export default function SubjectHub() {
               <EmptyState icon={BookOpen} label="No materials released yet." />
             ) : (
               modules?.map((mod) => (
-                <div key={mod.id} className="spotify-glass rounded-[2rem] p-6 flex items-center gap-6 group relative">
+                <div key={mod.id} className="spotify-glass rounded-[2rem] p-6 flex items-center gap-6 group">
                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
                     <BookOpen className="w-8 h-8 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="font-black text-white text-lg truncate">{mod.title}</h4>
                     <p className="text-[10px] text-muted-foreground font-bold truncate">{mod.description || 'Standard Review Module'}</p>
-                    {isAdmin && mod.visibleAt && (
-                      <p className="text-[8px] font-black uppercase text-primary tracking-widest mt-1">Scheduled: {new Date(mod.visibleAt).toLocaleDateString()}</p>
-                    )}
                   </div>
-                  <div className="flex items-center gap-2">
-                    {isAdmin && (
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={(e) => { e.stopPropagation(); handleDeleteModule(mod.id); }}
-                        className="text-destructive hover:bg-destructive/10 rounded-xl"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </Button>
-                    )}
-                    <Button variant="ghost" size="icon" className="text-primary" asChild>
-                      <a href={mod.url} target="_blank" rel="noopener noreferrer">
-                        <ExternalLink className="w-6 h-6" />
-                      </a>
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="icon" className="text-primary" asChild>
+                    <a href={mod.url} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-6 h-6" />
+                    </a>
+                  </Button>
                 </div>
               ))
             )}
@@ -146,38 +109,21 @@ export default function SubjectHub() {
               assessments?.map((test) => (
                 <div 
                   key={test.id} 
-                  className="spotify-glass rounded-[2.5rem] p-8 flex items-center justify-between group relative overflow-hidden"
+                  onClick={() => router.push(`/quiz/${subjectId}/${test.id}`)}
+                  className="spotify-glass rounded-[2.5rem] p-8 flex items-center justify-between group cursor-pointer active:scale-[0.98] transition-all"
                 >
-                  <div className="space-y-2 flex-1 min-w-0" onClick={() => router.push(`/quiz/${subjectId}/${test.id}`)}>
+                  <div className="space-y-2 flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-[8px] font-black uppercase tracking-widest bg-primary/20 text-primary px-2 py-1 rounded-md">{test.difficulty || 'Board Standard'}</span>
                       <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1">
                         <Clock className="w-3 h-3" /> 60 MIN
                       </span>
-                      {isAdmin && test.visibleAt && (
-                        <span className="text-[8px] font-black uppercase tracking-widest text-primary">LIVE {new Date(test.visibleAt).toLocaleDateString()}</span>
-                      )}
                     </div>
                     <h4 className="font-black text-white text-2xl tracking-tighter leading-none truncate pr-10">{test.title}</h4>
                     <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">{test.totalItems} Items • Practice Bank</p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    {isAdmin && (
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={(e) => { e.stopPropagation(); handleDeleteAssessment(test.id); }}
-                        className="text-destructive hover:bg-destructive/10 h-14 w-14 rounded-full"
-                      >
-                        <Trash2 className="w-6 h-6" />
-                      </Button>
-                    )}
-                    <div 
-                      onClick={() => router.push(`/quiz/${subjectId}/${test.id}`)}
-                      className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform cursor-pointer"
-                    >
-                      <Play className="w-6 h-6 text-primary-foreground fill-current ml-1" />
-                    </div>
+                  <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+                    <Play className="w-6 h-6 text-primary-foreground fill-current ml-1" />
                   </div>
                 </div>
               ))
