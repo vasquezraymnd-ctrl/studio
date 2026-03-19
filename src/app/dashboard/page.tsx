@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useUser, useAuth, useDoc, useFirestore, useCollection } from "@/firebase";
-import { doc, collectionGroup, query, orderBy, limit, where } from "firebase/firestore";
+import { doc, collectionGroup, query, orderBy, limit } from "firebase/firestore";
 import { 
   BookOpen, 
   LogOut, 
@@ -75,7 +75,6 @@ export default function DiscoveryDashboard() {
   const { data: profile } = useDoc(profileRef);
 
   const latestModulesQuery = useMemoFirebase(() => {
-    // Only query if user is fully logged in and database is available
     if (!db || isUserLoading || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
   }, [db, user, isUserLoading]);
