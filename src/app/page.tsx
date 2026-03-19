@@ -92,7 +92,6 @@ export default function LoginPage() {
     );
   };
 
-  // Consistent branding component for both states
   const BrandingHeader = () => (
     <div className="w-full flex flex-col items-center space-y-6 text-center">
       <div className="relative">
@@ -101,10 +100,10 @@ export default function LoginPage() {
       </div>
       
       <div className="space-y-4 w-full">
-        <h1 className="text-[clamp(3.5rem,14vw,5.5rem)] font-black tracking-tighter uppercase leading-none w-full">
+        <h1 className="text-[clamp(3rem,12vw,5rem)] font-black tracking-tighter uppercase leading-none w-full">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.25em] text-[11px] sm:text-[13px] text-primary w-full text-center whitespace-nowrap">
+        <p className="font-black uppercase tracking-[0.2em] text-[10px] sm:text-[12px] text-primary w-full text-center whitespace-nowrap">
           Next-Gen review for Next-Gen RMTs
         </p>
       </div>

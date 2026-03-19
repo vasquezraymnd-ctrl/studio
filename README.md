@@ -3,14 +3,14 @@
 
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
 
-## 🚀 How to Publish for $0 (Truly Free Startup Guide)
+## 🚀 How to Publish for $0 (Startup Guide)
 
-If you are a startup in a region where phone verification or credit card requirements are a barrier for Google Cloud or Vercel, use **Cloudflare Pages**. It is free, fast, and reliable.
+If you are facing hurdles with credit cards or phone verification on other platforms, use **Cloudflare Pages**. It is free, fast, and does not typically require strict verification for hobby/startup projects.
 
 ### 🛠 Cloudflare Pages Deployment Steps
 
 1.  **Go to Workers & Pages**: In your Cloudflare dashboard, click **Workers & Pages** in the left sidebar.
-2.  **Select Pages**: Do NOT create a Worker. Click the **Pages** tab at the top of the list.
+2.  **Select Pages**: Do NOT create a "Worker". Click the **Pages** tab at the top of the main area.
 3.  **Connect to Git**: Click **Connect to Git** (or Create application > Pages).
 4.  **Connect GitHub**: Connect your account and select your `mobilesynapse` repository.
 5.  **Set up builds and deployments**: On this screen:
@@ -21,6 +21,12 @@ If you are a startup in a region where phone verification or credit card require
     - Key: `NODE_VERSION`
     - Value: `20`
 7.  **Save and Deploy**: Your site will be live at a `*.pages.dev` address.
+
+### ⚠️ Troubleshooting: "No Production Branch"
+If the branch dropdown is empty:
+- **Push your code first**: You must push your code from your local machine to your GitHub repository before Cloudflare can see any branches.
+- **Check the branch name**: Ensure you have a branch named `main` or `master`.
+- **Refresh**: Once you push your code, refresh the Cloudflare setup page.
 
 ## 👥 How to Manage Students & Content
 
