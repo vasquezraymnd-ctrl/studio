@@ -29,8 +29,8 @@ git commit -m "Initial Synapse Startup Deploy"
 git branch -M main
 
 # 5. Connect to your specific GitHub repo
-# Replace the URL with your actual GitHub repo URL if it's different
-git remote add origin https://github.com/vasquezraymnd-ctrl/mobilesynapse.git
+# Replace the URL with your actual GitHub repo URL
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 
 # 6. Push the code
 git push -u origin main
@@ -41,7 +41,7 @@ git push -u origin main
 1.  **Go to Workers & Pages**: In your Cloudflare dashboard, click **Workers & Pages** in the left sidebar.
 2.  **Select Pages**: Click the **Pages** tab at the top. (Do NOT stay on "Workers").
 3.  **Connect to Git**: Click **Connect to Git**.
-4.  **Connect GitHub**: Select your `mobilesynapse` repository.
+4.  **Connect GitHub**: Select your repository.
 5.  **Set up builds and deployments**: 
     - **Framework preset**: Select **Next.js**.
     - **Build command**: `npm run build`

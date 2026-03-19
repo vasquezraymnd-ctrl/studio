@@ -93,17 +93,17 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full max-w-[320px] flex flex-col items-center space-y-4 text-center">
+    <div className="w-full max-w-md flex flex-col items-center space-y-4 text-center">
       <div className="relative">
-        <div className="w-20 h-20 rounded-full bg-primary/20 animate-ping absolute" />
-        <SynapseLogo className="w-20 h-20 relative filter drop-shadow-[0_0_20px_rgba(0,229,255,0.8)]" />
+        <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
+        <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_25px_rgba(0,229,255,0.8)]" />
       </div>
       
       <div className="space-y-1 w-full">
-        <h1 className="text-3xl font-black tracking-tighter uppercase leading-none w-full">
+        <h1 className="text-4xl font-black tracking-tighter uppercase leading-none w-full">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.2em] text-[8px] text-primary w-full text-center whitespace-nowrap">
+        <p className="font-black uppercase tracking-[0.3em] text-[10px] text-primary w-full text-center whitespace-nowrap">
           Next-Gen review for Next-Gen RMTs
         </p>
       </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
         <ModeToggle />
       </div>
       
-      <div className="w-full max-w-md space-y-8 flex flex-col items-center">
+      <div className="w-full max-w-md space-y-10 flex flex-col items-center">
         <BrandingHeader />
 
         <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden w-full">
