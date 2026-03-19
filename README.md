@@ -9,8 +9,9 @@ To host your app for free without phone verification issues, use **Cloudflare Pa
 
 ### 💻 WHERE IS MY TERMINAL?
 Look at the **bottom of your screen** in Firebase Studio. You should see a tab labeled "Terminal". 
-- If you don't see it, press **`Ctrl + `** (the key next to '1') on your keyboard.
-- Or go to the top menu: **Terminal > New Terminal**.
+- **If you don't see it:** Look for a small horizontal bar at the very bottom and drag it up.
+- **Keyboard Shortcut:** Press **`Ctrl + `** (the key next to '1') to toggle it.
+- **Top Menu:** Go to **Terminal > New Terminal** in the top navigation bar.
 
 ### 📦 HOW TO PUSH YOUR CODE (The Commands)
 Once the terminal is open, copy and paste these commands one by one and press Enter:
@@ -29,7 +30,7 @@ git commit -m "Initial Synapse Startup Deploy"
 git branch -M main
 
 # 5. Connect to your specific GitHub repo
-# Replace the URL with your actual GitHub repo URL
+# Replace the URL with your actual GitHub repo URL from your browser
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 
 # 6. Push the code

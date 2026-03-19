@@ -93,18 +93,18 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full max-w-md flex flex-col items-center space-y-4 text-center">
+    <div className="w-full max-w-md flex flex-col items-center space-y-6 text-center">
       <div className="relative">
-        <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
-        <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_25px_rgba(0,229,255,0.8)]" />
+        <div className="w-28 h-28 rounded-full bg-primary/20 animate-ping absolute" />
+        <SynapseLogo className="w-28 h-28 relative filter drop-shadow-[0_0_30px_rgba(0,229,255,0.9)]" />
       </div>
       
-      <div className="space-y-1 w-full">
-        <h1 className="text-4xl font-black tracking-tighter uppercase leading-none w-full">
+      <div className="space-y-2 w-full">
+        <h1 className="text-5xl font-black tracking-tighter uppercase leading-none w-full text-white">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.3em] text-[10px] text-primary w-full text-center whitespace-nowrap">
-          Next-Gen review for Next-Gen RMTs
+        <p className="font-black uppercase tracking-[0.4em] text-[10px] text-primary w-full text-center whitespace-nowrap">
+          NEXT-GEN REVIEW FOR NEXT-GEN RMTS
         </p>
       </div>
     </div>
@@ -124,10 +124,10 @@ export default function LoginPage() {
         <ModeToggle />
       </div>
       
-      <div className="w-full max-w-md space-y-10 flex flex-col items-center">
+      <div className="w-full max-w-md space-y-12 flex flex-col items-center">
         <BrandingHeader />
 
-        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden w-full">
+        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden w-full transition-all duration-500 hover:shadow-primary/5">
           <CardContent className="pt-16 px-10 pb-12 space-y-8">
             <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
