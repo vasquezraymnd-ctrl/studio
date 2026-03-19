@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useFirestore, useUser, useCollection } from "@/firebase";
@@ -26,20 +26,26 @@ export default function GlobalLibrary() {
 
   const allModulesQuery = useMemoFirebase(() => {
     if (!db) return null;
-    // Using collectionGroup to get all 'modules' across all subjects
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"));
   }, [db]);
 
-  const { data: modules, isLoading } = useCollection(allModulesQuery);
+  const { data: rawModules, isLoading } = useCollection(allModulesQuery);
+
+  const now = new Date();
+
+  const filteredModules = useMemo(() => {
+    if (!rawModules) return [];
+    return rawModules
+      .filter(m => !m.visibleAt || new Date(m.visibleAt) <= now)
+      .filter(mod => 
+        mod.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        mod.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+  }, [rawModules, searchTerm, now]);
 
   useEffect(() => {
     if (!isUserLoading && !user) router.push('/');
   }, [user, isUserLoading, router]);
-
-  const filteredModules = modules?.filter(mod => 
-    mod.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    mod.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   if (isUserLoading || !user) return null;
 

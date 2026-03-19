@@ -26,8 +26,20 @@ export default function SubjectHub() {
     return query(collection(db, "subjects", subjectId as string, "assessments"), orderBy("title", "asc"));
   }, [db, subjectId]);
 
-  const { data: modules, isLoading: modulesLoading } = useCollection(modulesQuery);
-  const { data: assessments, isLoading: assessmentsLoading } = useCollection(assessmentsQuery);
+  const { data: rawModules, isLoading: modulesLoading } = useCollection(modulesQuery);
+  const { data: rawAssessments, isLoading: assessmentsLoading } = useCollection(assessmentsQuery);
+
+  const now = new Date();
+
+  const modules = useMemo(() => {
+    if (!rawModules) return null;
+    return rawModules.filter(m => !m.visibleAt || new Date(m.visibleAt) <= now);
+  }, [rawModules, now]);
+
+  const assessments = useMemo(() => {
+    if (!rawAssessments) return null;
+    return rawAssessments.filter(a => !a.visibleAt || new Date(a.visibleAt) <= now);
+  }, [rawAssessments, now]);
 
   const subjectName = useMemo(() => {
     return (subjectId as string).split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');

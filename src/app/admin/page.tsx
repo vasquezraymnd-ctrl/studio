@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react";
@@ -9,7 +10,7 @@ import { useFirestore, useUser } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2 } from "lucide-react";
+import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
@@ -25,6 +26,7 @@ export default function AdminPortal() {
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [jsonInput, setJsonInput] = useState("");
+  const [visibleAt, setVisibleAt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
@@ -45,13 +47,14 @@ export default function AdminPortal() {
       title,
       description,
       url,
-      dateAdded: new Date().toISOString()
+      dateAdded: new Date().toISOString(),
+      visibleAt: visibleAt ? new Date(visibleAt).toISOString() : new Date().toISOString()
     };
 
     addDocumentNonBlocking(colRef, data)
       .then(() => {
-        toast({ title: "Module Deployed", description: "The study material has been queued for sync." });
-        setTitle(""); setDescription(""); setUrl("");
+        toast({ title: "Module Deployed", description: "The study material has been scheduled." });
+        setTitle(""); setDescription(""); setUrl(""); setVisibleAt("");
       })
       .finally(() => setIsSubmitting(false));
   };
@@ -68,13 +71,14 @@ export default function AdminPortal() {
       const data = {
         ...parsed,
         id: assessmentRef.id,
-        totalItems: parsed.questions?.length || 0
+        totalItems: parsed.questions?.length || 0,
+        visibleAt: visibleAt ? new Date(visibleAt).toISOString() : new Date().toISOString()
       };
 
       setDocumentNonBlocking(assessmentRef, data, { merge: true });
       
-      toast({ title: "Quiz Data Sent", description: "Test bank is being updated in the background." });
-      setJsonInput("");
+      toast({ title: "Quiz Scheduled", description: "Test bank has been queued for sync." });
+      setJsonInput(""); setVisibleAt("");
     } catch (e: any) {
       toast({ variant: "destructive", title: "JSON Syntax Error", description: "Please verify the question object structure." });
     }
@@ -144,6 +148,19 @@ export default function AdminPortal() {
                 <SelectItem value="mt-laws">MT Laws</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-4">
+            <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1 flex items-center gap-2">
+              <CalendarClock className="w-3 h-3 text-primary" /> Visibility Schedule (Optional)
+            </label>
+            <Input 
+              type="datetime-local" 
+              value={visibleAt} 
+              onChange={e => setVisibleAt(e.target.value)} 
+              className="h-14 bg-white/5 border-white/10 rounded-2xl" 
+            />
+            <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest ml-1">If empty, item will be visible immediately.</p>
           </div>
 
           {mode === 'module' ? (

@@ -20,7 +20,8 @@
         "title": { "type": "string" },
         "description": { "type": "string" },
         "url": { "type": "string", "format": "uri" },
-        "dateAdded": { "type": "string", "format": "date-time" }
+        "dateAdded": { "type": "string", "format": "date-time" },
+        "visibleAt": { "type": "string", "format": "date-time", "description": "When this module becomes visible to students." }
       },
       "required": ["id", "title", "url"]
     },
@@ -32,6 +33,7 @@
         "title": { "type": "string" },
         "totalItems": { "type": "number" },
         "difficulty": { "type": "string", "enum": ["Easy", "Moderate", "Hard", "Board Exam"] },
+        "visibleAt": { "type": "string", "format": "date-time", "description": "When this quiz becomes visible to students." },
         "questions": {
           "type": "array",
           "items": {
