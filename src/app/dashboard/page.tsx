@@ -27,15 +27,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { useMemoFirebase } from "@/firebase/provider";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const SUBJECTS = [
-  { id: 'clinical-chemistry', name: 'Clinical Chemistry', icon: FlaskConical, color: 'from-blue-600' },
-  { id: 'microbiology', name: 'Microbiology & Parasitology', icon: Microscope, color: 'from-green-600' },
-  { id: 'hematology', name: 'Hematology', icon: Droplets, color: 'from-red-600' },
-  { id: 'blood-banking', name: 'Blood Banking & Serology', icon: HeartPulse, color: 'from-purple-600' },
-  { id: 'clinical-microscopy', name: 'Clinical Microscopy', icon: TestTube2, color: 'from-cyan-600' },
-  { id: 'mt-laws', name: 'MT Laws & Histopath', icon: Gavel, color: 'from-amber-600' },
-];
-
 function CountdownTimer() {
   const [daysLeft, setDaysLeft] = useState(0);
 
@@ -59,6 +50,15 @@ function CountdownTimer() {
   );
 }
 
+const SUBJECTS = [
+  { id: 'clinical-chemistry', name: 'Clinical Chemistry', icon: FlaskConical, color: 'from-blue-600' },
+  { id: 'microbiology', name: 'Microbiology & Parasitology', icon: Microscope, color: 'from-green-600' },
+  { id: 'hematology', name: 'Hematology', icon: Droplets, color: 'from-red-600' },
+  { id: 'blood-banking', name: 'Blood Banking & Serology', icon: HeartPulse, color: 'from-purple-600' },
+  { id: 'clinical-microscopy', name: 'Clinical Microscopy', icon: TestTube2, color: 'from-cyan-600' },
+  { id: 'mt-laws', name: 'MT Laws & Histopath', icon: Gavel, color: 'from-amber-600' },
+];
+
 export default function DiscoveryDashboard() {
   const router = useRouter();
   const auth = useAuth();
@@ -74,6 +74,7 @@ export default function DiscoveryDashboard() {
 
   const { data: profile } = useDoc(profileRef);
 
+  // DEFENSIVE: Only query collection group when auth is fully settled
   const latestModulesQuery = useMemoFirebase(() => {
     if (!db || isUserLoading || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
