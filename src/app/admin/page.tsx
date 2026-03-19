@@ -44,17 +44,17 @@ export default function AdminPortal() {
 
   // Robust client-side check for admin status
   const isAdmin = useMemo(() => {
-    if (isUserLoading || !user) return false;
-    const email = user.email?.toLowerCase() || "";
-    return email.includes('admin');
+    if (isUserLoading || !user || !user.email) return false;
+    return user.email.toLowerCase().includes('admin');
   }, [user, isUserLoading]);
 
   // Query for global student progress - STRICTLY guarded by isAdmin
-  // This query will only ever be defined if the user is a confirmed administrator
   const globalProgressQuery = useMemoFirebase(() => {
-    const userEmail = user?.email?.toLowerCase() || "";
-    // Double-check here to prevent any accidental unauthorized query initialization
-    if (!db || isUserLoading || !user || !userEmail.includes('admin')) return null;
+    if (!db || isUserLoading || !user || !user.email) return null;
+    
+    // Final check for admin in the email string
+    const email = user.email.toLowerCase();
+    if (!email.includes('admin')) return null;
     
     try {
       return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
@@ -128,7 +128,7 @@ export default function AdminPortal() {
     );
   }
 
-  if (!isAdmin && !isUserLoading) {
+  if (!isAdmin) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background p-8 text-center space-y-6">
         <Lock className="w-20 h-20 text-destructive/50" />
