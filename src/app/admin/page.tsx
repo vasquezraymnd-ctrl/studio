@@ -50,7 +50,7 @@ export default function AdminPortal() {
 
   // Query for global student progress - STRICTLY guarded by isAdmin
   const globalProgressQuery = useMemoFirebase(() => {
-    // Crucial: Only create this query if we are 100% sure the user is an admin
+    // Only create this query if we are 100% sure the user is an admin
     if (!db || !isAdmin) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
   }, [db, isAdmin]);
@@ -119,7 +119,7 @@ export default function AdminPortal() {
     );
   }
 
-  if (!isAdmin) {
+  if (!isAdmin && !isUserLoading) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background p-8 text-center space-y-6">
         <Lock className="w-20 h-20 text-destructive/50" />

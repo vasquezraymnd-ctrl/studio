@@ -75,6 +75,7 @@ export default function DiscoveryDashboard() {
   const { data: profile } = useDoc(profileRef);
 
   const latestModulesQuery = useMemoFirebase(() => {
+    // Only query if user is logged in
     if (!db || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
   }, [db, user]);
