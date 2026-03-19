@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect } from "react";
@@ -14,8 +15,9 @@ import {
   FlaskConical,
   Microscope,
   Droplets,
-  Stethoscope,
-  Scale,
+  HeartPulse,
+  TestTube2,
+  Gavel,
   Library
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -25,9 +27,9 @@ const SUBJECTS = [
   { id: 'clinical-chemistry', name: 'Clinical Chemistry', icon: FlaskConical, color: 'from-blue-600' },
   { id: 'microbiology', name: 'Microbiology & Parasitology', icon: Microscope, color: 'from-green-600' },
   { id: 'hematology', name: 'Hematology', icon: Droplets, color: 'from-red-600' },
-  { id: 'blood-banking', name: 'Blood Banking & Serology', icon: Zap, color: 'from-purple-600' },
-  { id: 'clinical-microscopy', name: 'Clinical Microscopy', icon: Stethoscope, color: 'from-cyan-600' },
-  { id: 'mt-laws', name: 'MT Laws & Histopath', icon: Scale, color: 'from-amber-600' },
+  { id: 'blood-banking', name: 'Blood Banking & Serology', icon: HeartPulse, color: 'from-purple-600' },
+  { id: 'clinical-microscopy', name: 'Clinical Microscopy', icon: TestTube2, color: 'from-cyan-600' },
+  { id: 'mt-laws', name: 'MT Laws & Histopath', icon: Gavel, color: 'from-amber-600' },
 ];
 
 export default function DiscoveryDashboard() {
