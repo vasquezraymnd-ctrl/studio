@@ -93,17 +93,17 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full max-w-[400px] flex flex-col items-center space-y-6 text-center">
+    <div className="w-full max-w-[400px] flex flex-col items-center space-y-4 text-center">
       <div className="relative">
-        <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
-        <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_30px_rgba(0,229,255,0.9)]" />
+        <div className="w-20 h-20 rounded-full bg-primary/20 animate-ping absolute" />
+        <SynapseLogo className="w-20 h-20 relative filter drop-shadow-[0_0_20px_rgba(0,229,255,0.7)]" />
       </div>
       
-      <div className="space-y-2 w-full">
-        <h1 className="text-5xl font-black tracking-tighter uppercase leading-none text-white">
+      <div className="space-y-1 w-full">
+        <h1 className="text-4xl font-black tracking-tighter uppercase leading-none text-white">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.4em] text-[10px] text-primary w-full text-center whitespace-nowrap opacity-90">
+        <p className="font-black uppercase tracking-[0.4em] text-[8px] text-primary w-full text-center whitespace-nowrap opacity-90">
           NEXT-GEN REVIEW FOR NEXT-GEN RMTS
         </p>
       </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
         <ModeToggle />
       </div>
       
-      <div className="w-full max-w-md space-y-10 flex flex-col items-center">
+      <div className="w-full max-w-[400px] space-y-10 flex flex-col items-center">
         <BrandingHeader />
 
         <Card className="spotify-glass border-none rounded-[3rem] shadow-2xl overflow-hidden w-full transition-all duration-500 hover:shadow-primary/5">

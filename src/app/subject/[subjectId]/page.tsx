@@ -109,7 +109,7 @@ export default function SubjectHub() {
                 >
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-[8px] font-black uppercase tracking-widest bg-primary/20 text-primary px-2 py-1 rounded-md">{test.difficulty || 'Board Standard'}</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest bg-primary/20 text-primary px-2 tea-1 rounded-md">{test.difficulty || 'Board Standard'}</span>
                       <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1">
                         <Clock className="w-3 h-3" /> 60 MIN
                       </span>
