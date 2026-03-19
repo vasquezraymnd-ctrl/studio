@@ -1,95 +1,27 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
 
-    /**
-     * SYNAPSE SECURITY RULES: MEDICAL SPOTIFY MODEL
-     * 
-     * Core Philosophy: 
-     * This ruleset implements a "Public-Read, Admin-Write" model for educational content. 
-     * Students (authenticated users) are granted read-only access to study materials, 
-     * while users verified via the /admins collection are granted full management rights.
-     *
-     * Data Structure:
-     * - /admins/{adminId}: A registry of administrative UIDs.
-     * - /questions/{questionId}: A global bank of clinical laboratory science questions.
-     * - /studyModules/{moduleId}: External links and metadata for PDF study guides.
-     *
-     * Key Security Decisions:
-     * 1. DBAC (Database-Based Access Control): Instead of complex Custom Claims, 
-     *    administrative status is checked via the existence of a document in the /admins path.
-     * 2. Relational Integrity: On StudyModule creation, we enforce that the 'uploadedById' 
-     *    matches the creator's UID to maintain a reliable audit trail.
-     * 3. Prototyping Flexibility: Data schemas (types and optional fields) are not enforced 
-     *    here to allow rapid frontend iteration, focusing purely on authorization.
-     */
-
-    // --- HELPER FUNCTIONS ---
-
-    /** Checks if the user is authenticated via Firebase Auth. */
-    function isSignedIn() {
-      return request.auth != null;
+    match /subjects/{subjectId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+      
+      match /modules/{moduleId} {
+        allow read: if isSignedIn();
+        allow write: if isAdmin();
+      }
+      
+      match /assessments/{assessmentId} {
+        allow read: if isSignedIn();
+        allow write: if isAdmin();
+      }
     }
 
-    /** 
-     * Checks if the authenticated user has administrative privileges.
-     * Uses an atomic 'exists' check on the admins collection for high performance.
-     */
-    function isAdmin() {
-      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-
-    /** Verifies a document exists and the user is an admin for destructive operations. */
-    function isExistingAdmin() {
-      return isAdmin() && resource != null;
-    }
-
-    // --- COLLECTION RULES ---
-
-    /**
-     * @description Registry of administrative users.
-     * @path /admins/{adminId}
-     * @allow Admins can create or modify other admin records.
-     * @deny Standard students or unauthenticated users cannot view or edit the admin list.
-     * @principle Role-Based Access Control (RBAC) via structural segregation.
-     */
     match /admins/{adminId} {
-      allow get: if isAdmin();
-      allow list: if isAdmin();
-      allow create: if isAdmin();
-      allow update: if isExistingAdmin();
-      allow delete: if isExistingAdmin();
-    }
-
-    /**
-     * @description Global bank of quiz questions for the Assessment Engine.
-     * @path /questions/{questionId}
-     * @allow Any signed-in user (get, list). Admins (create, update, delete).
-     * @deny Unauthenticated users (all). Signed-in students (create, update, delete).
-     * @principle Path-based authorization for public read/restricted write.
-     */
-    match /questions/{questionId} {
-      allow get, list: if isSignedIn();
-      allow create: if isAdmin();
-      allow update: if isExistingAdmin();
-      allow delete: if isExistingAdmin();
-    }
-
-    /**
-     * @description Study guides displayed as 'Playlists'.
-     * @path /studyModules/{moduleId}
-     * @allow (create) Admin with 'uploadedById' matching their UID.
-     * @deny (update) Attempting to change the 'uploadedById' field.
-     * @principle Relational integrity and immutable ownership fields.
-     */
-    match /studyModules/{moduleId} {
-      allow get, list: if isSignedIn();
-      
-      allow create: if isAdmin() && request.resource.data.uploadedById == request.auth.uid;
-      
-      allow update: if isExistingAdmin() && request.resource.data.uploadedById == resource.data.uploadedById;
-      
-      allow delete: if isExistingAdmin();
+      allow read, write: if isAdmin();
     }
   }
 }
