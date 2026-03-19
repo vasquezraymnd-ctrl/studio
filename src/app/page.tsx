@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth, useUser } from "@/firebase";
 import { initiateEmailSignIn, initiateEmailSignUp, initiatePasswordReset } from "@/firebase/non-blocking-login";
-import { Loader2, KeyRound } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -93,14 +93,14 @@ export default function LoginPage() {
 
   if (isSplashLoading || isUserLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-12 animate-in fade-in duration-500">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-16 animate-in fade-in duration-500">
         <div className="relative">
-          <div className="w-44 h-44 rounded-full bg-primary/20 animate-ping absolute" />
-          <SynapseLogo className="w-44 h-44 relative" />
+          <div className="w-56 h-56 rounded-full bg-primary/20 animate-ping absolute" />
+          <SynapseLogo className="w-56 h-56 relative" />
         </div>
-        <div className="text-center space-y-4">
-          <h1 className="text-8xl font-black tracking-[0.4em] animate-pulse">SYNAPSE</h1>
-          <p className="text-primary font-black text-xs uppercase tracking-[0.3em]">Next-Gen review for Next-Gen RMTs</p>
+        <div className="text-center space-y-6">
+          <h1 className="text-9xl font-black tracking-[0.4em] animate-pulse">SYNAPSE</h1>
+          <p className="text-primary font-black text-sm uppercase tracking-[0.4em]">Next-Gen review for Next-Gen RMTs</p>
         </div>
       </div>
     );
@@ -114,23 +114,24 @@ export default function LoginPage() {
         </div>
       </div>
       
-      <div className="w-full max-sm:max-w-sm max-w-md space-y-12">
-        <div className="flex flex-col items-center space-y-8">
-          <div className="relative mb-2">
-            <div className="w-10 h-10 rounded-full bg-primary animate-ping absolute" />
-            <div className="w-10 h-10 rounded-full bg-primary shadow-[0_0_20px_rgba(0,229,255,1)]" />
-          </div>
-          
-          <div className="text-center space-y-3">
-            <h1 className="text-9xl font-black tracking-tighter">SYNAPSE</h1>
-            <p className="font-bold uppercase tracking-[0.2em] text-[14px] text-primary">
-              Next-Gen review for Next-Gen RMTs
-            </p>
-          </div>
-        </div>
+      <div className="w-full max-sm:max-w-sm max-w-md">
+        <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden">
+          <CardContent className="pt-16 px-10 pb-12 space-y-12">
+            {/* Logo and Slogan INSIDE the Card */}
+            <div className="flex flex-col items-center space-y-6 text-center">
+              <div className="relative">
+                <div className="w-12 h-12 rounded-full bg-primary animate-ping absolute" />
+                <div className="w-12 h-12 rounded-full bg-primary shadow-[0_0_20px_rgba(0,229,255,1)]" />
+              </div>
+              
+              <div className="space-y-2">
+                <h1 className="text-7xl font-black tracking-tighter uppercase leading-none">SYNAPSE</h1>
+                <p className="font-bold uppercase tracking-[0.15em] text-[11px] text-primary max-w-[250px] mx-auto">
+                  Next-Gen review for Next-Gen RMTs
+                </p>
+              </div>
+            </div>
 
-        <Card className="spotify-glass border-none rounded-[3rem] shadow-2xl overflow-hidden">
-          <CardContent className="pt-12 px-8 pb-10">
             <form onSubmit={handleAuth} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
@@ -165,12 +166,12 @@ export default function LoginPage() {
                   className="h-14 bg-background/50 border-border rounded-2xl focus:border-primary px-6"
                 />
               </div>
-              <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
+              <Button type="submit" className="w-full h-18 py-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
                 {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register Account" : "Access Portal")}
               </Button>
             </form>
 
-            <div className="mt-10 text-center">
+            <div className="text-center pt-4">
               <button 
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.3em]"
