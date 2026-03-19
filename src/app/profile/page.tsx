@@ -74,7 +74,7 @@ export default function StudentProfile() {
     };
 
     setDocumentNonBlocking(profileRef, data, { merge: true });
-    toast({ title: "Profile Updated", description: "Your professional details have been saved." });
+    toast({ title: "Profile Updated", description: "Your details have been saved." });
     setIsUpdating(false);
   };
 
@@ -95,8 +95,8 @@ export default function StudentProfile() {
           <ChevronLeft className="w-6 h-6 mr-1" /> Dashboard
         </Button>
         <div className="text-right">
-          <h1 className="text-2xl font-black text-white tracking-tighter uppercase">Professional ID</h1>
-          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Student Registry</p>
+          <h1 className="text-2xl font-black text-white tracking-tighter uppercase">Reviewee Profile</h1>
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Active Session</p>
         </div>
       </header>
 
@@ -111,7 +111,7 @@ export default function StudentProfile() {
               <h2 className="text-2xl font-black text-white leading-none uppercase tracking-tighter">
                 {displayName || user?.email?.split('@')[0]} RMT
               </h2>
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mt-2">Active License Candidate</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mt-2">Active Reviewee</p>
             </div>
           </div>
 
@@ -130,7 +130,7 @@ export default function StudentProfile() {
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2">Review Center / School</label>
+              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2">School / Institution</label>
               <div className="relative">
                 <School className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/40" />
                 <Input 
@@ -143,7 +143,7 @@ export default function StudentProfile() {
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2">Student Email</label>
+              <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2">Reviewee Email</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/40" />
                 <Input 
@@ -155,7 +155,7 @@ export default function StudentProfile() {
             </div>
 
             <Button type="submit" disabled={isUpdating} className="w-full h-16 bg-primary text-primary-foreground font-black rounded-full text-lg shadow-2xl transition-all active:scale-95">
-              {isUpdating ? <Loader2 className="animate-spin" /> : <><Save className="mr-2 w-5 h-5" /> Save ID Card</>}
+              {isUpdating ? <Loader2 className="animate-spin" /> : <><Save className="mr-2 w-5 h-5" /> Save Profile</>}
             </Button>
           </form>
         </section>
