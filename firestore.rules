@@ -3,8 +3,16 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isSignedIn() { return request.auth != null; }
-    function isAdmin() { return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); }
+    
+    // Admin check: either exists in admins collection or has 'admin' in their email
+    function isAdmin() { 
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) || 
+        (request.auth.token.email != null && request.auth.token.email.lower().matches('.*admin.*'))
+      ); 
+    }
 
+    // Standard path rules
     match /subjects/{subjectId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
@@ -20,8 +28,15 @@ service cloud.firestore {
       }
     }
 
+    // Collection Group rules (Crucial for the Global Library page)
+    // This allows collectionGroup(db, 'modules') queries to function
+    match /{path=**}/modules/{moduleId} {
+      allow read: if isSignedIn();
+    }
+
     match /admins/{adminId} {
-      allow read, write: if isAdmin();
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }
