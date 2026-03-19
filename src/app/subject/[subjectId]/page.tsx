@@ -187,7 +187,7 @@ export default function SubjectHub() {
 
 function SkeletonList() {
   return Array.from({ length: 3 }).map((_, i) => (
-    <Skeleton key={i} className="h-28 w-full rounded-[2rem] bg-white/5" />
+    <Skeleton className="h-28 w-full rounded-[2rem] bg-white/5" />
   ));
 }
 
