@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth, useUser } from "@/firebase";
-import { initiateEmailSignIn } from "@/firebase/non-blocking-login";
+import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,32 +16,45 @@ export default function LoginPage() {
   const auth = useAuth();
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
+  
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setIsLoggingIn(false);
+      setIsLoading(false);
       router.push('/dashboard');
     }
   }, [user, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleAuth = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoggingIn(true);
+    setIsLoading(true);
     
-    initiateEmailSignIn(auth, email, password, (error) => {
-      setIsLoggingIn(false);
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid email or password. Please check your credentials and try again.",
+    if (isSignUp) {
+      initiateEmailSignUp(auth, email, password, (error) => {
+        setIsLoading(false);
+        toast({
+          variant: "destructive",
+          title: "Account Creation Failed",
+          description: error.message || "Could not create your account. Please try again.",
+        });
       });
-    });
+    } else {
+      initiateEmailSignIn(auth, email, password, (error) => {
+        setIsLoading(false);
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: "Invalid email or password. Please check your credentials.",
+        });
+      });
+    }
   };
 
-  if (isUserLoading && !isLoggingIn) {
+  if (isUserLoading && !isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-12 h-12 text-primary animate-spin" />
@@ -62,7 +75,7 @@ export default function LoginPage() {
 
         <Card className="spotify-glass border-none shadow-2xl">
           <CardContent className="pt-8">
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleAuth} className="space-y-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase text-muted-foreground ml-1">Email Address</label>
                 <Input 
@@ -85,10 +98,19 @@ export default function LoginPage() {
                   className="h-12 bg-white/5 border-white/10 focus:border-primary focus:ring-primary rounded-xl"
                 />
               </div>
-              <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full text-lg mt-4 transition-transform active:scale-95" disabled={isLoggingIn}>
-                {isLoggingIn ? <Loader2 className="animate-spin mr-2" /> : "Sign In"}
+              <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-full text-lg mt-4 transition-transform active:scale-95" disabled={isLoading}>
+                {isLoading ? <Loader2 className="animate-spin mr-2" /> : (isSignUp ? "Create Account" : "Sign In")}
               </Button>
             </form>
+
+            <div className="mt-6 text-center">
+              <button 
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest"
+              >
+                {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Create one"}
+              </button>
+            </div>
           </CardContent>
         </Card>
 
