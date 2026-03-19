@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useUser, useAuth, useDoc, useFirestore, useCollection } from "@/firebase";
@@ -65,7 +65,10 @@ export default function DiscoveryDashboard() {
   const db = useFirestore();
   const { user, isUserLoading } = useUser();
 
-  const isAdmin = user?.email?.toLowerCase().includes('admin');
+  const isAdmin = useMemo(() => {
+    if (isUserLoading || !user || !user.email) return false;
+    return user.email.toLowerCase().includes('admin');
+  }, [user, isUserLoading]);
 
   const profileRef = useMemoFirebase(() => {
     if (!user || !db) return null;
@@ -86,7 +89,13 @@ export default function DiscoveryDashboard() {
     if (!isUserLoading && !user) router.push('/');
   }, [user, isUserLoading, router]);
 
-  if (isUserLoading || !user) return null;
+  if (isUserLoading || !user) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   const displayName = profile?.displayName || user.email?.split('@')[0].toUpperCase();
 
@@ -148,7 +157,7 @@ export default function DiscoveryDashboard() {
                 [1, 2, 3].map((i) => (
                   <Skeleton key={i} className="w-64 h-32 rounded-[2rem] bg-white/5 shrink-0" />
                 ))
-              ) : latestModules?.length === 0 ? (
+              ) : !latestModules || latestModules.length === 0 ? (
                 <div className="w-full h-32 rounded-[2rem] border-2 border-dashed border-white/10 flex items-center justify-center">
                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">No modules deployed yet</p>
                 </div>

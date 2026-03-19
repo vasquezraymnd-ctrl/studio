@@ -317,9 +317,9 @@ export default function AssessmentEngine() {
           <div className="flex-1 space-y-3 hidden md:block">
             <div className="flex justify-between text-[9px] font-black text-muted-foreground uppercase tracking-widest px-1">
               <span>Progress</span>
-              <span>{Math.round((Object.keys(answers).length / assessment.questions.length) * 100)}%</span>
+              <span>{Object.keys(answers).length > 0 ? Math.round((Object.keys(answers).length / assessment.questions.length) * 100) : 0}%</span>
             </div>
-            <Progress value={(Object.keys(answers).length / assessment.questions.length) * 100} className="h-2 bg-white/5" />
+            <Progress value={Object.keys(answers).length > 0 ? (Object.keys(answers).length / assessment.questions.length) * 100 : 0} className="h-2 bg-white/5" />
           </div>
 
           {(!isAnswered && !analysisMode) ? (

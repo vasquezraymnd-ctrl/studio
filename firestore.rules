@@ -2,6 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // --- HELPER FUNCTIONS ---
     function isSignedIn() {
       return request.auth != null;
     }
@@ -12,21 +13,21 @@ service cloud.firestore {
              request.auth.token.email.lower().matches('.*admin.*');
     }
 
-    // --- COLLECTION GROUP RULES (Priority) ---
-    // These must be defined at the top to correctly handle collectionGroup queries.
+    // --- COLLECTION GROUP RULES (MUST BE TOP-LEVEL) ---
+    // These rules allow the app to query across all subjects for specific collections.
     
     match /{path=**}/modules/{moduleId} {
-      allow read, list: if isSignedIn();
+      allow list, read: if isSignedIn();
     }
     
     match /{path=**}/assessments/{assessmentId} {
-      allow read, list: if isSignedIn();
+      allow list, read: if isSignedIn();
     }
 
     match /{path=**}/progress/{progressId} {
-      // Admins can list all progress. Students can list their own via filtered query.
+      // Admins can see all. Students can only see their own (requires query filter by userId).
       allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
-      allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
 
     // --- PATH-SPECIFIC RULES ---
@@ -38,11 +39,13 @@ service cloud.firestore {
       match /modules/{moduleId} {
         allow read: if isSignedIn();
         allow write: if isAdmin();
+        allow delete: if isAdmin();
       }
       
       match /assessments/{assessmentId} {
         allow read: if isSignedIn();
         allow write: if isAdmin();
+        allow delete: if isAdmin();
       }
     }
 

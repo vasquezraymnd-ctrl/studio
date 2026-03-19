@@ -52,6 +52,7 @@ export default function AdminPortal() {
 
   // Global Progress Monitoring - ONLY query if we are certain of admin status
   const allProgressQuery = useMemoFirebase(() => {
+    // CRITICAL: prevents unauthorized list attempt at root path
     if (!db || isUserLoading || !user || !isAdmin) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
   }, [db, isAdmin, isUserLoading, user]);
@@ -245,7 +246,7 @@ export default function AdminPortal() {
                   Array.from({ length: 5 }).map((_, i) => (
                     <div key={i} className="h-28 w-full rounded-[2rem] bg-white/5 animate-pulse" />
                   ))
-                ) : globalProgress?.length === 0 ? (
+                ) : !globalProgress || globalProgress.length === 0 ? (
                   <div className="text-center py-20 bg-white/5 rounded-[3rem] border-2 border-dashed border-white/10">
                     <Trophy className="w-12 h-12 mx-auto text-muted-foreground mb-4 opacity-20" />
                     <p className="text-muted-foreground font-black text-[10px] uppercase tracking-widest">No student data recorded yet.</p>
@@ -275,9 +276,9 @@ export default function AdminPortal() {
                       <div className="space-y-2">
                         <div className="flex justify-between text-[8px] font-black uppercase text-muted-foreground tracking-widest">
                           <span>Success Rate</span>
-                          <span>{Math.round((item.score / item.total) * 100)}%</span>
+                          <span>{item.total > 0 ? Math.round((item.score / item.total) * 100) : 0}%</span>
                         </div>
-                        <Progress value={(item.score / item.total) * 100} className="h-1.5 bg-white/5" />
+                        <Progress value={item.total > 0 ? (item.score / item.total) * 100 : 0} className="h-1.5 bg-white/5" />
                       </div>
                     </div>
                   ))
