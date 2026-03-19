@@ -1,3 +1,4 @@
+
 # Synapse | RMT Medical Study Platform
 
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
@@ -30,19 +31,18 @@ You can host this entire platform for free using **Firebase App Hosting** (Spark
 - Firebase will provide you with a secure `web.app` or `firebaseapp.com` domain.
 - **Automatic Updates**: Every time you push changes to your GitHub `main` branch, Firebase will automatically build and re-deploy your app.
 
+## 🧪 Sample Clinical Chemistry Data
+To quickly test your platform, go to the **Command Center**, select **Bulk Quiz**, and click **"Load Chemistry Sample"**. This will populate a 5-item high-yield assessment including:
+- Jaffe Reaction mechanisms
+- GGT sensitivity in liver disease
+- Fasting Blood Glucose classifications
+- Lipoprotein functions (HDL)
+- Intracellular Electrolytes (Potassium)
+
 ## 🛠 Core Systems
 - **Synapse Engine**: 100-item skippable assessments with a confirm-to-submit workflow and instant rationalization.
 - **Reviewee Profile**: Personalized identity tracking for names, institutions, and historical assessment scores.
 - **Global Library**: A searchable, centralized hub for all deployed study modules.
-- **Command Center**: Admin-only portal for deploying study materials and flashing JSON-based test banks.
-
-## 🩺 Subject Specializations
-The platform is optimized for the 6 core Board Exam subjects:
-- **Clinical Chemistry**
-- **Microbiology & Parasitology**
-- **Hematology**
-- **Blood Banking & Serology**
-- **Clinical Microscopy**
-- **MT Laws & Histopath**
+- **Command Center**: Admin-only portal for deploying study materials and flashing JSON-based test banks with visibility scheduling.
 
 Good day, Future RMT!

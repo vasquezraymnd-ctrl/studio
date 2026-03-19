@@ -10,9 +10,46 @@ import { useFirestore, useUser } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock } from "lucide-react";
+import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock, FlaskConical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+
+const SAMPLE_CHEMISTRY_QUIZ = {
+  "title": "Clinical Chemistry 101 - Preliminary Review",
+  "difficulty": "Moderate",
+  "questions": [
+    {
+      "q": "What is the primary indicator used in the Jaffe reaction for the measurement of creatinine?",
+      "options": ["Sodium hydroxide", "Alkaline picrate", "Phosphotungstic acid", "Diacetyl monoxime"],
+      "a": 1,
+      "rationale": "The Jaffe reaction uses alkaline picrate to react with creatinine, forming a red-orange complex (creatinine picrate)."
+    },
+    {
+      "q": "Which enzyme is considered the most sensitive marker for identifying chronic alcoholic liver disease?",
+      "options": ["ALT", "AST", "ALP", "GGT"],
+      "a": 3,
+      "rationale": "Gamma-glutamyl transferase (GGT) is highly sensitive to alcohol consumption and is the primary marker used to detect chronic alcohol abuse."
+    },
+    {
+      "q": "A patient with a fasting blood glucose of 115 mg/dL would be classified as having:",
+      "options": ["Normal glucose", "Impaired fasting glucose", "Diabetes mellitus", "Hypoglycemia"],
+      "a": 1,
+      "rationale": "According to ADA criteria, a fasting blood glucose between 100 and 125 mg/dL is classified as Impaired Fasting Glucose (Pre-diabetes)."
+    },
+    {
+      "q": "Which lipoprotein is responsible for 'Reverse Cholesterol Transport', moving cholesterol back to the liver?",
+      "options": ["Chylomicrons", "VLDL", "LDL", "HDL"],
+      "a": 3,
+      "rationale": "HDL is known as 'good cholesterol' because it performs reverse cholesterol transport, removing excess cholesterol from peripheral tissues."
+    },
+    {
+      "q": "The primary electrolyte found in the intracellular fluid (ICF) is:",
+      "options": ["Sodium", "Chloride", "Potassium", "Bicarbonate"],
+      "a": 2,
+      "rationale": "Potassium is the major intracellular cation, while Sodium is the major extracellular cation."
+    }
+  ]
+};
 
 export default function AdminPortal() {
   const router = useRouter();
@@ -83,6 +120,12 @@ export default function AdminPortal() {
       toast({ variant: "destructive", title: "JSON Syntax Error", description: "Please verify the question object structure." });
     }
     setIsSubmitting(false);
+  };
+
+  const loadSampleQuiz = () => {
+    setJsonInput(JSON.stringify(SAMPLE_CHEMISTRY_QUIZ, null, 2));
+    setSubject("clinical-chemistry");
+    toast({ title: "Sample Loaded", description: "Chemistry quiz template populated." });
   };
 
   if (isUserLoading) {
@@ -187,10 +230,20 @@ export default function AdminPortal() {
           ) : (
             <form onSubmit={handleQuizSubmit} className="space-y-6">
               <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1 flex items-center justify-between">
-                  <span>JSON Payload (Test Bank Format)</span>
-                  <FileJson className="w-4 h-4" />
-                </label>
+                <div className="flex items-center justify-between ml-1">
+                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest flex items-center gap-2">
+                    <FileJson className="w-4 h-4" /> JSON Payload (Test Bank Format)
+                  </label>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={loadSampleQuiz}
+                    className="h-8 text-[9px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors"
+                  >
+                    <FlaskConical className="w-3 h-3 mr-1" /> Load Chemistry Sample
+                  </Button>
+                </div>
                 <Textarea 
                   value={jsonInput} 
                   onChange={e => setJsonInput(e.target.value)} 
@@ -213,3 +266,4 @@ export default function AdminPortal() {
     </div>
   );
 }
+
