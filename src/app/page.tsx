@@ -93,17 +93,17 @@ export default function LoginPage() {
   };
 
   const BrandingHeader = () => (
-    <div className="w-full max-w-[400px] flex flex-col items-center space-y-4 text-center">
+    <div className="w-full max-w-[400px] flex flex-col items-center space-y-6 text-center animate-in fade-in zoom-in-95 duration-1000">
       <div className="relative">
-        <div className="w-20 h-20 rounded-full bg-primary/20 animate-ping absolute" />
-        <SynapseLogo className="w-20 h-20 relative filter drop-shadow-[0_0_20px_rgba(0,229,255,0.7)]" />
+        <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute -inset-2" />
+        <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_30px_rgba(0,229,255,0.7)]" />
       </div>
       
-      <div className="space-y-1 w-full">
-        <h1 className="text-4xl font-black tracking-tighter uppercase leading-none text-white">
+      <div className="space-y-2 w-full">
+        <h1 className="text-5xl font-black tracking-tighter uppercase leading-none text-white drop-shadow-2xl">
           SYNAPSE
         </h1>
-        <p className="font-black uppercase tracking-[0.4em] text-[8px] text-primary w-full text-center whitespace-nowrap opacity-90">
+        <p className="font-black uppercase tracking-[0.5em] text-[10px] text-primary w-full text-center whitespace-nowrap opacity-90 drop-shadow-md">
           NEXT-GEN REVIEW FOR NEXT-GEN RMTS
         </p>
       </div>
@@ -121,29 +121,31 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="absolute top-8 right-8">
-        <ModeToggle />
+        <div className="spotify-glass p-1 rounded-full">
+          <ModeToggle />
+        </div>
       </div>
       
-      <div className="w-full max-w-[400px] space-y-10 flex flex-col items-center">
+      <div className="w-full max-w-[400px] space-y-12 flex flex-col items-center">
         <BrandingHeader />
 
-        <Card className="spotify-glass border-none rounded-[3rem] shadow-2xl overflow-hidden w-full transition-all duration-500 hover:shadow-primary/5">
-          <CardContent className="pt-12 px-8 pb-10 space-y-6">
-            <form onSubmit={handleAuth} className="space-y-5">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest">Student Email</label>
+        <Card className="spotify-glass border-none rounded-[3.5rem] shadow-2xl overflow-hidden w-full transition-all duration-500 hover:shadow-primary/10">
+          <CardContent className="pt-14 px-10 pb-12 space-y-8">
+            <form onSubmit={handleAuth} className="space-y-6">
+              <div className="space-y-3">
+                <label className="text-[10px] font-black uppercase text-muted-foreground ml-2 tracking-widest opacity-70">Student Email</label>
                 <Input 
                   type="email" 
                   placeholder="student@synapse.edu" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-14 bg-background/50 border-border rounded-2xl focus:border-primary px-6"
+                  className="h-16 bg-background/50 border-white/5 rounded-3xl focus:border-primary px-8 text-lg"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between ml-2">
-                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Access Key</label>
+                  <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest opacity-70">Access Key</label>
                   {!isSignUp && (
                     <button 
                       type="button"
@@ -160,10 +162,10 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-14 bg-background/50 border-border rounded-2xl focus:border-primary px-6"
+                  className="h-16 bg-background/50 border-white/5 rounded-3xl focus:border-primary px-8 text-lg"
                 />
               </div>
-              <Button type="submit" className="w-full h-16 py-6 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-lg mt-2 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
+              <Button type="submit" className="w-full h-20 py-8 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-2xl shadow-primary/20 transition-transform active:scale-95" disabled={isLoading}>
                 {isLoading ? <Loader2 className="animate-spin" /> : (isSignUp ? "Register Account" : "Access Portal")}
               </Button>
             </form>
@@ -171,7 +173,7 @@ export default function LoginPage() {
             <div className="text-center pt-2">
               <button 
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.3em]"
+                className="text-[10px] font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.4em]"
               >
                 {isSignUp ? "Existing Student? Login" : "New Student? Enroll Here"}
               </button>
