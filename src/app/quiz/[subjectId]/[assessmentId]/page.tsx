@@ -73,7 +73,7 @@ export default function AssessmentEngine() {
       const progressRef = doc(db, "users", user.uid, "progress", assessmentId as string);
       
       const progressData = {
-        userId: user.uid, // CRITICAL: Explicit field for collection group security rules
+        userId: user.uid, // REQUIRED FOR SECURITY RULES LISTING
         assessmentId,
         assessmentTitle: assessment.title,
         subjectId,

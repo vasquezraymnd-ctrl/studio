@@ -12,9 +12,11 @@ service cloud.firestore {
              request.auth.token.email.lower().matches('.*admin.*');
     }
 
-    // PRIMARY: Collection Group rules for global queries (Dashboard/Library)
-    // These must allow 'list' for the query to succeed.
+    // --- COLLECTION GROUP RULES (Priority) ---
+    // These allow global queries (Dashboard, Library, Admin Metrics)
+    
     match /{path=**}/modules/{moduleId} {
+      // Students can list all modules to see "Latest Releases"
       allow read, list: if isSignedIn();
     }
     
@@ -22,7 +24,15 @@ service cloud.firestore {
       allow read, list: if isSignedIn();
     }
 
-    // SECONDARY: Subject-specific content rules
+    match /{path=**}/progress/{progressId} {
+      // Admins can see all progress. 
+      // Students can only list their own (requires .where("userId", "==", uid) in query)
+      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100 && resource.data.userId == request.auth.uid);
+      allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+    }
+
+    // --- PATH-SPECIFIC RULES ---
+
     match /subjects/{subjectId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
@@ -38,7 +48,6 @@ service cloud.firestore {
       }
     }
 
-    // User personal data
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
       
@@ -47,7 +56,6 @@ service cloud.firestore {
       }
     }
 
-    // Admin registry
     match /admins/{adminId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
