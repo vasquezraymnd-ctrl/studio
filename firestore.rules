@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Robust admin check
+    // Robust admin check based on email containing "admin"
     function isAdmin() {
       return request.auth != null && 
              request.auth.token.email != null && 
@@ -10,7 +10,8 @@ service cloud.firestore {
     }
 
     // 1. COLLECTION GROUP RULES - MUST BE AT THE TOP
-    // Allows listing across all subjects for public materials
+    // These allow listing across all subjects (e.g., Dashboard, Library, Admin Metrics)
+    
     match /{path=**}/modules/{moduleId} {
       allow read: if request.auth != null;
     }
@@ -19,13 +20,14 @@ service cloud.firestore {
       allow read: if request.auth != null;
     }
     
-    // Admins can see all student progress.
-    // Students can only see their own progress via collection group.
     match /{path=**}/progress/{progressId} {
+      // Admins can see all student progress.
+      // Students can only see their own progress (requires .where("userId", "==", uid) in query).
       allow read: if isAdmin() || (request.auth != null && request.auth.uid == resource.data.userId);
     }
 
     // 2. STANDARD PATH RULES
+    
     match /subjects/{subjectId} {
       allow read: if request.auth != null;
       allow write: if isAdmin();
