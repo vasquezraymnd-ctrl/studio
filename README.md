@@ -15,14 +15,14 @@ The terminal is **NOT** inside the running app (the prototype). It is inside the
 4. **Shortcut:** Press **`Ctrl + `** (the key next to '1') to toggle it.
 5. **Top Menu:** Go to **Terminal > New Terminal** in the top navigation bar.
 
-### 📦 HOW TO PUSH YOUR CODE (The Commands)
-Once the terminal is open in the **Editor**, copy and paste these commands one by one:
+### 📦 FIRST TIME PUSH TO GITHUB (The Commands)
+Once the terminal is open in the **Editor**, copy and paste these commands exactly as shown:
 
 ```bash
 # 1. Initialize git
 git init
 
-# 2. Add all your files
+# 2. Add your files
 git add .
 
 # 3. Commit the changes
@@ -32,8 +32,7 @@ git commit -m "Initial Synapse Startup Deploy"
 git branch -M main
 
 # 5. Connect to your specific GitHub repo
-# Replace the URL below with your actual GitHub repo URL
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+git remote add origin https://github.com/vasquezraymnd-ctrl/mobilesynapse.git
 
 # 6. Push the code
 git push -u origin main
@@ -41,16 +40,16 @@ git push -u origin main
 
 ### 🛠 Cloudflare Pages Deployment Steps (AFTER PUSHING)
 
-1.  **Go to Workers & Pages**: In your Cloudflare dashboard, click **Workers & Pages** in the left sidebar.
-2.  **Select Pages**: Click the **Pages** tab at the top. (Do NOT stay on "Workers").
-3.  **Connect to Git**: Click **Connect to Git**.
-4.  **Connect GitHub**: Select your repository.
-5.  **Set up builds and deployments**: 
+1. **Go to Workers & Pages**: In your Cloudflare dashboard, click **Workers & Pages** in the left sidebar.
+2. **Select Pages**: Click the **Pages** tab at the top. (Do NOT stay on "Workers").
+3. **Connect to Git**: Click **Connect to Git**.
+4. **Connect GitHub**: Select your repository.
+5. **Set up builds and deployments**: 
     - **Framework preset**: Select **Next.js**.
     - **Build command**: `npm run build`
     - **Output directory**: `.vercel/output`
-6.  **Environment Variables**: Add `NODE_VERSION` with value `20`.
-7.  **Save and Deploy**.
+6. **Environment Variables**: Add `NODE_VERSION` with value `20`.
+7. **Save and Deploy**.
 
 ### ⚠️ Troubleshooting: "No Production Branch"
 If Cloudflare doesn't see a branch:
