@@ -6,16 +6,6 @@ A high-performance "Spotify-style" review application for Clinical Laboratory Sc
 ## 🎉 DEPLOYMENT SUCCESSFUL
 Your project is now live! Follow the steps below to manage and update your site.
 
-### 🚨 CRITICAL FIX: Node.JS Compatibility Error
-If you see a "Node.JS Compatibility Error" on your live site, follow these steps:
-1. Log in to **Cloudflare Dashboard** -> **Workers & Pages** -> Your Project.
-2. Go to **Settings** -> **Functions** -> **Compatibility Flags**.
-3. In the input field, type exactly: **`nodejs_compat`**
-4. Add this flag to both **Production** and **Preview**.
-5. **Redeploy**: Go to the **Deployments** tab and click **Retry Deployment** on your latest build, OR push a new commit from the Editor.
-
----
-
 ### 💻 WHERE IS MY TERMINAL?
 The terminal is **NOT** inside the running prototype. It is inside the **Editor**.
 1. **Switch to Editor**: Click the "Editor" tab in your workspace.
@@ -27,7 +17,7 @@ The terminal is **NOT** inside the running prototype. It is inside the **Editor*
 Whenever you click "Apply Changes" from the AI, you must run these in the Editor terminal:
 ```bash
 git add .
-git commit -m "Add AI Quiz Generator and Edge Runtime fixes"
+git commit -m "Remove AI features and refine vetting pipeline"
 git push origin main
 ```
 Cloudflare will automatically detect the push and rebuild your site in ~1 minute.
@@ -37,4 +27,5 @@ Cloudflare will automatically detect the push and rebuild your site in ~1 minute
 ### 🚀 POST-DEPLOYMENT STEPS
 1. **Access the Portal**: Go to your live URL.
 2. **Admin Access**: Sign in with an email containing "admin" (e.g., `admin@synapse.edu`) to unlock the **Command Center**.
-3. **AI Assistant**: Use the new "AI Magic" tab in the Command Center to generate high-yield test banks instantly.
+3. **Manual Vetting**: Use the **Command Center** to upload vetted JSON test banks. This ensures all content is high-yield and secure from student exploitation.
+4. **Schedule Releases**: Use the "Visibility Schedule" to time your module releases for specific study rotations.

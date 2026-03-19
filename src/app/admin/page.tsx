@@ -9,10 +9,9 @@ import { useFirestore, useUser } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock, FlaskConical, Sparkles, Wand2 } from "lucide-react";
+import { ChevronLeft, Database, FileJson, Link as LinkIcon, PlusCircle, ShieldAlert, Lock, Loader2, CalendarClock, FlaskConical } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import { generateQuiz } from "@/ai/flows/generate-quiz-flow";
 
 export default function AdminPortal() {
   const router = useRouter();
@@ -20,16 +19,14 @@ export default function AdminPortal() {
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
 
-  const [mode, setMode] = useState<'module' | 'quiz' | 'ai'>('module');
+  const [mode, setMode] = useState<'module' | 'quiz'>('module');
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [jsonInput, setJsonInput] = useState("");
   const [visibleAt, setVisibleAt] = useState("");
-  const [aiPrompt, setAiPrompt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAiGenerating, setIsAiGenerating] = useState(false);
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
@@ -81,26 +78,10 @@ export default function AdminPortal() {
       
       toast({ title: "Quiz Scheduled", description: "Test bank has been queued for sync." });
       setJsonInput(""); setVisibleAt("");
-      setMode('quiz'); // Reset view if in AI mode
     } catch (e: any) {
       toast({ variant: "destructive", title: "JSON Syntax Error", description: "Please verify the question object structure." });
     }
     setIsSubmitting(false);
-  };
-
-  const handleAiGeneration = async () => {
-    if (!aiPrompt) return;
-    setIsAiGenerating(true);
-    try {
-      const result = await generateQuiz({ topic: aiPrompt });
-      setJsonInput(JSON.stringify(result, null, 2));
-      setMode('quiz');
-      toast({ title: "AI Generation Success", description: "Structured JSON has been loaded into the editor." });
-    } catch (error: any) {
-      toast({ variant: "destructive", title: "AI Error", description: error.message || "Failed to generate quiz." });
-    } finally {
-      setIsAiGenerating(false);
-    }
   };
 
   if (isUserLoading) {
@@ -130,7 +111,7 @@ export default function AdminPortal() {
         </Button>
         <div className="text-right">
           <h1 className="text-2xl font-black text-white tracking-tighter">COMMAND CENTER</h1>
-          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Deployment pipeline</p>
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-primary">Vetted Deployment pipeline</p>
         </div>
       </header>
 
@@ -140,19 +121,13 @@ export default function AdminPortal() {
             onClick={() => setMode('module')} 
             className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'module' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
           >
-            <PlusCircle className="mr-2 w-4 h-4" /> Module
+            <PlusCircle className="mr-2 w-4 h-4" /> Add Module
           </Button>
           <Button 
             onClick={() => setMode('quiz')} 
             className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'quiz' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
           >
-            <Database className="mr-2 w-4 h-4" /> Bulk
-          </Button>
-          <Button 
-            onClick={() => setMode('ai')} 
-            className={cn("flex-1 h-12 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all", mode === 'ai' ? "bg-primary text-primary-foreground shadow-lg" : "spotify-glass border-none text-white/50")}
-          >
-            <Sparkles className="mr-2 w-4 h-4" /> AI Magic
+            <Database className="mr-2 w-4 h-4" /> Bulk Upload
           </Button>
         </div>
 
@@ -205,11 +180,12 @@ export default function AdminPortal() {
           {mode === 'quiz' && (
             <form onSubmit={handleQuizSubmit} className="space-y-6">
               <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">JSON Payload</label>
+                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">JSON Payload (Manual Upload)</label>
                 <Textarea 
                   value={jsonInput} 
                   onChange={e => setJsonInput(e.target.value)} 
                   required 
+                  placeholder='{ "title": "Hematology Quiz", "questions": [...] }'
                   className="min-h-[300px] bg-white/5 border-white/10 rounded-3xl p-6 font-mono text-xs"
                 />
               </div>
@@ -217,29 +193,6 @@ export default function AdminPortal() {
                 {isSubmitting ? <Loader2 className="animate-spin" /> : "Flash to Test Bank"}
               </Button>
             </form>
-          )}
-
-          {mode === 'ai' && (
-            <div className="space-y-6">
-              <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Quiz Topic (AI Assistant)</label>
-                <Input 
-                  value={aiPrompt} 
-                  onChange={e => setAiPrompt(e.target.value)} 
-                  placeholder="e.g. Gram Positive Cocci" 
-                  className="h-14 bg-white/5 border-white/10 rounded-2xl" 
-                />
-                <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-widest ml-1 italic">Gemini will generate high-yield board questions.</p>
-              </div>
-              <Button 
-                onClick={handleAiGeneration} 
-                disabled={isAiGenerating || !aiPrompt} 
-                className="w-full h-16 bg-white/10 text-white font-black rounded-full text-lg border border-white/10 hover:bg-primary hover:text-primary-foreground transition-all"
-              >
-                {isAiGenerating ? <Loader2 className="animate-spin mr-2" /> : <Wand2 className="mr-2 w-5 h-5" />}
-                {isAiGenerating ? "Synthesizing..." : "Generate Test Bank"}
-              </Button>
-            </div>
           )}
         </div>
       </main>
