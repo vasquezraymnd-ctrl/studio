@@ -11,14 +11,15 @@ If you are a startup in a region where phone verification or credit card require
 - **Cost**: $0 (Free Plan).
 - **Setup Steps**:
     1. Go to **Workers & Pages** in your Cloudflare dashboard.
-    2. Click **Create** > **Pages** > **Connect to Git**.
-    3. Select your GitHub repository.
-    4. **The "Set up builds and deployments" page will now appear automatically.**
-    5. In **Build settings**, find the **Framework preset** dropdown and select **Next.js**.
-    6. **Important**: Add an Environment Variable in the "Environment variables (advanced)" section: 
+    2. Click **Create** > **Pages** (Do NOT select "Worker").
+    3. Click **Connect to Git**.
+    4. Select your GitHub repository.
+    5. **The "Set up builds and deployments" page will now appear automatically.**
+    6. In **Build settings**, find the **Framework preset** dropdown and select **Next.js**.
+    7. **Important**: Add an Environment Variable in the "Environment variables (advanced)" section: 
        - Key: `NODE_VERSION`
        - Value: `20`
-    7. Click **Save and Deploy**.
+    8. Click **Save and Deploy**.
 - **Why?**: No phone verification required in most regions and unlimited bandwidth.
 
 ### 2. Netlify
