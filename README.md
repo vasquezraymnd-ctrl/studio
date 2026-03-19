@@ -3,33 +3,24 @@
 
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
 
-## 🚀 How to Publish for $0 (Startup Alternatives)
+## 🚀 How to Publish for $0 (Truly Free Startup Guide)
 
-If you are a startup in a region where phone verification or credit card requirements are a barrier for Google Cloud or Vercel, use these **truly free** alternatives to host your Next.js application:
+If you are a startup in a region where phone verification or credit card requirements are a barrier for Google Cloud or Vercel, use **Cloudflare Pages**. It is free, fast, and reliable.
 
-### 1. Cloudflare Pages (Highly Recommended)
-- **Cost**: $0 (Free Plan).
-- **Setup Steps**:
-    1. Go to **Workers & Pages** in your Cloudflare dashboard.
-    2. Click **Create** > **Pages** (Do NOT select "Worker").
-    3. Click **Connect to Git**.
-    4. Select your GitHub repository.
-    5. **The "Set up builds and deployments" page will now appear automatically.**
-    6. In **Build settings**, find the **Framework preset** dropdown and select **Next.js**.
-    7. **Important**: Add an Environment Variable in the "Environment variables (advanced)" section: 
-       - Key: `NODE_VERSION`
-       - Value: `20`
-    8. Click **Save and Deploy**.
-- **Why?**: No phone verification required in most regions and unlimited bandwidth.
+### 🛠 Cloudflare Pages Deployment Steps
 
-### 2. Netlify
-- **Cost**: $0 (Starter Plan).
-- **Setup**: Connect your GitHub repository. Netlify automatically detects Next.js. Select the default settings.
-- **Why?**: Extremely user-friendly for startups with no credit card requirement on the free tier.
-
-### 3. The Backend (Firebase Spark Plan)
-- **Cost**: $0 (Spark Plan).
-- **Security**: Security is handled via **Firestore Security Rules** (already configured in this project). Your `apiKey` is public by design; the rules prevent unauthorized access.
+1.  **Go to Workers & Pages**: In your Cloudflare dashboard, click **Workers & Pages** in the left sidebar.
+2.  **Select Pages**: Do NOT create a Worker. Click the **Pages** tab at the top of the list.
+3.  **Connect to Git**: Click **Connect to Git** (or Create application > Pages).
+4.  **Connect GitHub**: Connect your account and select your `mobilesynapse` repository.
+5.  **Set up builds and deployments**: On this screen:
+    - **Framework preset**: Select **Next.js**.
+    - **Build command**: `npm run build` (automatic).
+    - **Output directory**: `.vercel/output` (automatic).
+6.  **Environment Variables**: Add this variable for compatibility:
+    - Key: `NODE_VERSION`
+    - Value: `20`
+7.  **Save and Deploy**: Your site will be live at a `*.pages.dev` address.
 
 ## 👥 How to Manage Students & Content
 

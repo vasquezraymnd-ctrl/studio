@@ -92,22 +92,30 @@ export default function LoginPage() {
     );
   };
 
+  // Consistent branding component for both states
+  const BrandingHeader = () => (
+    <div className="w-full flex flex-col items-center space-y-6 text-center">
+      <div className="relative">
+        <div className="w-48 h-48 rounded-full bg-primary/20 animate-ping absolute" />
+        <SynapseLogo className="w-48 h-48 relative filter drop-shadow-[0_0_20px_rgba(0,229,255,0.8)]" />
+      </div>
+      
+      <div className="space-y-4 w-full">
+        <h1 className="text-[clamp(3.5rem,14vw,5.5rem)] font-black tracking-tighter uppercase leading-none w-full">
+          SYNAPSE
+        </h1>
+        <p className="font-black uppercase tracking-[0.25em] text-[11px] sm:text-[13px] text-primary w-full text-center whitespace-nowrap">
+          Next-Gen review for Next-Gen RMTs
+        </p>
+      </div>
+    </div>
+  );
+
   if (isSplashLoading || isUserLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-10 animate-in fade-in duration-500">
-        <div className="w-full max-w-md flex flex-col items-center space-y-8 text-center px-4">
-          <div className="relative">
-            <div className="w-40 h-40 rounded-full bg-primary/20 animate-ping absolute" />
-            <SynapseLogo className="w-40 h-40 relative" />
-          </div>
-          <div className="space-y-4 w-full">
-            <h1 className="text-[clamp(3.5rem,15vw,6rem)] font-black tracking-tighter animate-pulse uppercase leading-none w-full text-center">
-              SYNAPSE
-            </h1>
-            <p className="font-bold uppercase tracking-[0.25em] text-[10px] sm:text-[12px] text-primary w-full text-center whitespace-nowrap">
-              Next-Gen review for Next-Gen RMTs
-            </p>
-          </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 animate-in fade-in duration-500">
+        <div className="w-full max-w-md">
+          <BrandingHeader />
         </div>
       </div>
     );
@@ -116,27 +124,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="absolute top-8 right-8">
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-        </div>
+        <ModeToggle />
       </div>
       
-      <div className="w-full max-w-md space-y-10">
-        <div className="flex flex-col items-center space-y-8 text-center w-full px-4">
-          <div className="relative">
-            <div className="w-40 h-40 rounded-full bg-primary/20 animate-ping absolute" />
-            <SynapseLogo className="w-40 h-40 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
-          </div>
-          
-          <div className="space-y-4 w-full text-center">
-            <h1 className="text-[clamp(3.5rem,15vw,6rem)] font-black tracking-tighter uppercase leading-none w-full">
-              SYNAPSE
-            </h1>
-            <p className="font-bold uppercase tracking-[0.25em] text-[10px] sm:text-[12px] text-primary w-full text-center whitespace-nowrap">
-              Next-Gen review for Next-Gen RMTs
-            </p>
-          </div>
-        </div>
+      <div className="w-full max-w-md space-y-12">
+        <BrandingHeader />
 
         <Card className="spotify-glass border-none rounded-[4rem] shadow-2xl overflow-hidden">
           <CardContent className="pt-16 px-10 pb-12 space-y-8">
