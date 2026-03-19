@@ -43,21 +43,23 @@ export default function AdminPortal() {
   const [visibleAt, setVisibleAt] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // REDUNDANT GUARD: Ensure isAdmin is only true when user and email are definitively loaded
   const isAdmin = useMemo(() => {
-    if (isUserLoading || !user || !user.email) return false;
+    if (isUserLoading) return false;
+    if (!user || !user.email) return false;
     return user.email.toLowerCase().includes('admin');
   }, [user, isUserLoading]);
 
-  // Global Progress Monitoring
+  // Global Progress Monitoring - ONLY query if we are certain of admin status
   const allProgressQuery = useMemoFirebase(() => {
-    if (!db || !isAdmin) return null;
+    if (!db || isUserLoading || !user || !isAdmin) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
-  }, [db, isAdmin]);
+  }, [db, isAdmin, isUserLoading, user]);
 
   const { data: globalProgress, isLoading: progressLoading } = useCollection(allProgressQuery);
 
   useEffect(() => {
-    if (!isUserLoading && user && !isAdmin) {
+    if (!isUserLoading && (!user || !isAdmin)) {
       router.push('/dashboard');
     }
   }, [isAdmin, isUserLoading, router, user]);

@@ -13,10 +13,9 @@ service cloud.firestore {
     }
 
     // --- COLLECTION GROUP RULES (Priority) ---
-    // These allow global queries (Dashboard, Library, Admin Metrics)
+    // These must be defined at the top to correctly handle collectionGroup queries.
     
     match /{path=**}/modules/{moduleId} {
-      // Students can list all modules to see "Latest Releases"
       allow read, list: if isSignedIn();
     }
     
@@ -25,9 +24,8 @@ service cloud.firestore {
     }
 
     match /{path=**}/progress/{progressId} {
-      // Admins can see all progress. 
-      // Students can only list their own (requires .where("userId", "==", uid) in query)
-      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100 && resource.data.userId == request.auth.uid);
+      // Admins can list all progress. Students can list their own via filtered query.
+      allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow read: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
     }
 
