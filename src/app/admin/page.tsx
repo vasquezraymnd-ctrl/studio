@@ -45,11 +45,11 @@ export default function AdminPortal() {
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
-  // Query for global student progress
+  // Query for global student progress - only active if user is confirmed admin
   const globalProgressQuery = useMemoFirebase(() => {
-    if (!db || !isAdmin) return null;
+    if (!db || !isAdmin || isUserLoading) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
-  }, [db, isAdmin]);
+  }, [db, isAdmin, isUserLoading]);
 
   const { data: globalProgress, isLoading: metricsLoading } = useCollection(globalProgressQuery);
 

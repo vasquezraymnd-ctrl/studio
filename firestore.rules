@@ -2,6 +2,7 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Utility functions
     function isSignedIn() { return request.auth != null; }
     
     // Admin check: either exists in admins collection or has 'admin' in their email
@@ -12,7 +13,8 @@ service cloud.firestore {
       ); 
     }
 
-    // Collection Group rules (Crucial for the Global Library and Admin Metrics)
+    // COLLECTION GROUP RULES
+    // These must be defined to allow collectionGroup() queries
     match /{path=**}/modules/{moduleId} {
       allow read: if isSignedIn();
     }
@@ -21,7 +23,7 @@ service cloud.firestore {
       allow read: if isAdmin();
     }
 
-    // Standard subject-based path rules
+    // STANDARD PATH RULES
     match /subjects/{subjectId} {
       allow read: if isSignedIn();
       allow write: if isAdmin();
