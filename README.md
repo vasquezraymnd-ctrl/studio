@@ -4,7 +4,7 @@
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
 
 ## 🎉 DEPLOYMENT SUCCESSFUL
-Your project is now live at: `https://mobilesynapse.pages.dev` (or your specific Cloudflare URL).
+Your project is now live! Follow the steps below to manage and update your site.
 
 ### 🚨 CRITICAL FIX: Node.JS Compatibility Error
 If you see a "Node.JS Compatibility Error" on your live site, follow these steps:
@@ -12,15 +12,7 @@ If you see a "Node.JS Compatibility Error" on your live site, follow these steps
 2. Go to **Settings** -> **Functions** -> **Compatibility Flags**.
 3. In the input field, type exactly: **`nodejs_compat`**
 4. Add this flag to both **Production** and **Preview**.
-5. Go to **Deployments** and click **Retry Deployment** on your latest build (or push a new commit).
-
----
-
-### 🚀 POST-DEPLOYMENT STEPS
-1. **Access the Portal**: Go to your live URL.
-2. **Admin Access**: Sign in with an email containing "admin" (e.g., `admin@synapse.edu`) to unlock the **Command Center**.
-3. **Add Content**: Use the Command Center to upload real study modules and bulk JSON test banks.
-4. **Student Enrollment**: Students can now register directly on your live site.
+5. **Redeploy**: Go to the **Deployments** tab and click **Retry Deployment** on your latest build, OR push a new commit from the Editor.
 
 ---
 
@@ -35,14 +27,14 @@ The terminal is **NOT** inside the running prototype. It is inside the **Editor*
 Whenever you click "Apply Changes" from the AI, you must run these in the Editor terminal:
 ```bash
 git add .
-git commit -m "Describe your change here"
+git commit -m "Apply latest updates"
 git push origin main
 ```
 Cloudflare will automatically detect the push and rebuild your site in ~1 minute.
 
 ---
 
-### ⚠️ Troubleshooting: "Edge Runtime Error"
-If your build fails, ensure every dynamic page (like `[subjectId]`) has this at the top:
-`export const runtime = 'edge';`
-(The AI has already applied this fix to your current files).
+### 🚀 POST-DEPLOYMENT STEPS
+1. **Access the Portal**: Go to your live URL.
+2. **Admin Access**: Sign in with an email containing "admin" (e.g., `admin@synapse.edu`) to unlock the **Command Center**.
+3. **Add Content**: Use the Command Center to upload real study modules and bulk JSON test banks.
