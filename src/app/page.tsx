@@ -124,7 +124,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-10">
         <div className="flex flex-col items-center space-y-8 text-center w-full">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-primary animate-ping absolute" />
+            <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
             <SynapseLogo className="w-24 h-24 relative filter drop-shadow-[0_0_15px_rgba(0,229,255,1)]" />
           </div>
           

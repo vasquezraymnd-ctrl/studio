@@ -3,27 +3,24 @@
 
 A high-performance "Spotify-style" review application for Clinical Laboratory Science students.
 
-## 🚀 How to Publish for $0 (The True Startup Guide)
+## 🚀 How to Publish for $0 (Startup Alternatives)
 
-To keep this platform **completely free** without needing a credit card for a billing account, follow this hybrid setup:
+If you are a startup in a region where phone verification or credit card requirements are a barrier, use these **truly free** alternatives to host your Next.js application:
 
-### 1. The Backend (Firebase Spark Plan)
-- Go to the [Firebase Console](https://console.firebase.google.com/).
-- Select your project.
-- Ensure you are on the **Spark Plan** (Free). 
-- Use Firebase for **Authentication** and **Firestore**. These have huge free tiers that will likely never cost you a cent during your startup phase.
+### 1. Netlify (Recommended Alternative)
+- **Cost**: $0 (Starter Plan).
+- **Setup**: Connect your GitHub repository. Netlify automatically detects Next.js.
+- **Why?**: Netlify has a very generous free tier and often has fewer verification hurdles than Google Cloud or Vercel in certain regions.
 
-### 2. The Frontend (Vercel - Recommended for $0)
-- Create a free account on [Vercel](https://vercel.com).
-- Connect your GitHub repository.
-- Vercel will automatically detect the Next.js project and deploy it.
-- **Why Vercel?**: Unlike "Firebase App Hosting," Vercel's hobby tier is truly $0 and does not require a billing account or credit card to get started.
+### 2. Cloudflare Pages
+- **Cost**: $0 (Free Plan).
+- **Setup**: Connect GitHub and select "Next.js" as the framework preset.
+- **Why?**: Cloudflare offers unlimited bandwidth on their free tier and is highly accessible globally. It handles Next.js App Router via their `@cloudflare/next-on-pages` adapter.
 
-### 3. Deployment Steps
-1. Push your code to a GitHub repository.
-2. Import the project into Vercel.
-3. Add your Firebase configuration (from `src/firebase/config.ts`) as Environment Variables in Vercel if you want extra security, though the public config is safe to keep in code.
-4. Every time you push to GitHub, your site updates automatically.
+### 3. The Backend (Firebase Spark Plan)
+- **Cost**: $0 (Spark Plan).
+- **Setup**: Go to the [Firebase Console](https://console.firebase.google.com/).
+- **Security**: Your `apiKey` and `authDomain` are public-facing by design in Firebase. Security is handled via **Firestore Security Rules** (already configured in this project).
 
 ## 👥 How to Manage Students
 
@@ -31,7 +28,7 @@ As the administrator, you manage your users via the **Firebase Console**:
 
 1. **View Enrollments**: Go to **Authentication > Users**. You can see every student who has registered.
 2. **Revoking Access**: To stop a student from using the platform, select their user record and click "Disable account" or "Delete account."
-3. **Password Resets**: If a student forgets their key, you can send them a reset email manually from the "Users" tab, though the "Forgot Key?" button on the login screen handles this automatically.
+3. **Password Resets**: If a student forgets their key, they can click "Forgot Key?" on the login screen, or you can trigger a reset email manually from the "Users" tab.
 4. **Admin Privileges**: The platform automatically grants Admin access to any email containing the word "admin" (e.g., `admin.synapse@gmail.com`).
 
 Good day, Future RMT!
