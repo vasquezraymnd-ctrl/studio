@@ -48,7 +48,7 @@ export default function DiscoveryDashboard() {
     <div className="min-h-screen pb-32 bg-transparent font-body">
       <header className="px-6 pt-12 pb-6 flex items-center justify-between sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter">Review Center</h1>
+          <h1 className="text-3xl font-black tracking-tighter uppercase">Synapse</h1>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Student Portal</p>
         </div>
         <div className="flex items-center gap-2">
@@ -62,7 +62,9 @@ export default function DiscoveryDashboard() {
       <main className="px-6 space-y-10">
         <div className="relative overflow-hidden rounded-[2.5rem] shadow-2xl h-40 bg-gradient-to-r from-card to-background border border-white/5 flex items-center px-8">
           <div className="space-y-1">
-            <h2 className="text-2xl font-black tracking-tighter uppercase">Welcome back, {user.email?.split('@')[0]}</h2>
+            <h2 className="text-2xl font-black tracking-tighter uppercase">
+              Welcome back, {user.email?.split('@')[0]} RMT
+            </h2>
             <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest">Select a subject to begin your session</p>
           </div>
           <Library className="w-24 h-24 text-primary/5 absolute -right-4 -bottom-4 rotate-12" />
