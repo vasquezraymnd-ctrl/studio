@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { useFirestore, useDoc } from "@/firebase";
+import { useFirestore, useDoc, useUser } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import { 
@@ -33,11 +33,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 export default function AssessmentEngine() {
   const { subjectId, assessmentId } = useParams();
   const router = useRouter();
   const db = useFirestore();
+  const { user } = useUser();
 
   const docRef = useMemoFirebase(() => {
     if (!db) return null;
@@ -63,6 +65,25 @@ export default function AssessmentEngine() {
       return () => clearInterval(timer);
     }
   }, [timeLeft, isFinished]);
+
+  // Save progress when finished
+  useEffect(() => {
+    if (isFinished && user && db && assessment) {
+      const score = assessment.questions.reduce((acc: number, q: any, idx: number) => acc + (answers[idx] === q.a ? 1 : 0), 0);
+      const progressRef = doc(db, "users", user.uid, "progress", assessmentId as string);
+      
+      const progressData = {
+        assessmentId,
+        assessmentTitle: assessment.title,
+        subjectId,
+        score,
+        total: assessment.questions.length,
+        completedAt: new Date().toISOString()
+      };
+
+      setDocumentNonBlocking(progressRef, progressData, { merge: true });
+    }
+  }, [isFinished, user, db, assessment, assessmentId, subjectId, answers]);
 
   if (isLoading) return <LoadingState />;
 
@@ -351,4 +372,3 @@ function ResultScreen({ score, total, onReview, onBack }: { score: number, total
     </div>
   );
 }
-

@@ -47,6 +47,26 @@
         }
       },
       "required": ["id", "title", "questions"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "school": { "type": "string" },
+        "email": { "type": "string" }
+      }
+    },
+    "UserProgress": {
+      "title": "User Progress",
+      "type": "object",
+      "properties": {
+        "assessmentId": { "type": "string" },
+        "assessmentTitle": { "type": "string" },
+        "score": { "type": "number" },
+        "total": { "type": "number" },
+        "completedAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "auth": {
@@ -68,6 +88,14 @@
     "/admins/{adminId}": {
       "schema": { "type": "object", "properties": { "uid": { "type": "string" } } },
       "description": "Admin registry for secure access."
+    },
+    "/users/{userId}": {
+      "schema": "#/backend/entities/UserProfile",
+      "description": "Private student profile data."
+    },
+    "/users/{userId}/progress/{assessmentId}": {
+      "schema": "#/backend/entities/UserProgress",
+      "description": "Stored quiz results for progress tracking."
     }
   }
 }

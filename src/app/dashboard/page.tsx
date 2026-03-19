@@ -4,7 +4,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useUser, useAuth } from "@/firebase";
+import { useUser, useAuth, useDoc } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { 
   BookOpen, 
   LogOut, 
@@ -22,6 +23,7 @@ import {
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useMemoFirebase } from "@/firebase/provider";
 
 const SUBJECTS = [
   { id: 'clinical-chemistry', name: 'Clinical Chemistry', icon: FlaskConical, color: 'from-blue-600' },
@@ -39,13 +41,20 @@ export default function DiscoveryDashboard() {
 
   const isAdmin = user?.email?.toLowerCase().includes('admin');
 
+  const profileRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(useFirestore(), "users", user.uid);
+  }, [user]);
+
+  const { data: profile } = useDoc(profileRef);
+
   useEffect(() => {
     if (!isUserLoading && !user) router.push('/');
   }, [user, isUserLoading, router]);
 
   if (isUserLoading || !user) return null;
 
-  const displayName = user.email?.split('@')[0].toUpperCase();
+  const displayName = profile?.displayName || user.email?.split('@')[0].toUpperCase();
 
   return (
     <div className="min-h-screen pb-32 bg-transparent font-body">
@@ -82,8 +91,8 @@ export default function DiscoveryDashboard() {
                 onClick={() => router.push(`/subject/${sub.id}`)}
                 className={`relative aspect-square rounded-[2.5rem] p-6 text-left overflow-hidden bg-gradient-to-br ${sub.color} to-card group transition-all active:scale-95 shadow-xl border border-white/5`}
               >
-                <sub.icon className="w-16 h-16 text-white/10 absolute -right-2 -bottom-2 group-hover:scale-125 transition-transform" />
-                <sub.icon className="w-12 h-12 text-white mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
+                <sub.icon className="w-20 h-20 text-white/10 absolute -right-4 -bottom-4 group-hover:scale-125 transition-transform" />
+                <sub.icon className="w-14 h-14 text-white mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
                 <span className="text-lg font-black text-white leading-tight block drop-shadow-md">{sub.name}</span>
               </button>
             ))}
@@ -127,11 +136,16 @@ export default function DiscoveryDashboard() {
           <Grid className="w-7 h-7" />
           <span className="text-[9px] font-black uppercase tracking-widest">Library</span>
         </Button>
-        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-primary">
+        <Button variant="ghost" className="flex flex-col gap-1 items-center text-muted-foreground hover:text-primary" onClick={() => router.push('/profile')}>
           <UserIcon className="w-7 h-7" />
           <span className="text-[9px] font-black uppercase tracking-widest">Profile</span>
         </Button>
       </nav>
     </div>
   );
+}
+
+function useFirestore() {
+  const { firestore } = useUser() as any;
+  return firestore;
 }

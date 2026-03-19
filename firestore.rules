@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -12,7 +13,6 @@ service cloud.firestore {
     }
 
     // Collection Group rules (Crucial for the Global Library page)
-    // Allows collectionGroup(db, 'modules') queries to function across the entire database
     match /{path=**}/modules/{moduleId} {
       allow read: if isSignedIn();
     }
@@ -30,6 +30,15 @@ service cloud.firestore {
       match /assessments/{assessmentId} {
         allow read: if isSignedIn();
         allow write: if isAdmin();
+      }
+    }
+
+    // User personal data rules
+    match /users/{userId} {
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      
+      match /progress/{progressId} {
+        allow read, write: if isSignedIn() && request.auth.uid == userId;
       }
     }
 
