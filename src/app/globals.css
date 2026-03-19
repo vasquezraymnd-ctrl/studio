@@ -1,29 +1,56 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 217 69% 14%; /* #0B1F3C */
-    --foreground: 0 0% 100%;
-    --card: 215 56% 23%; /* #1A365D */
-    --card-foreground: 0 0% 100%;
-    --popover: 217 69% 10%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 186 100% 50%; /* #00E5FF */
-    --primary-foreground: 217 69% 14%;
-    --secondary: 215 56% 30%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 215 56% 20%;
-    --muted-foreground: 0 0% 70%; /* Light Grey #B3B3B3 */
-    --accent: 186 100% 50%;
-    --accent-foreground: 217 69% 14%;
+    --background: 210 40% 98%;
+    --foreground: 217 80% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 217 80% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 80% 5%;
+    --primary: 186 100% 40%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 90%;
+    --secondary-foreground: 217 80% 5%;
+    --muted: 210 40% 92%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 186 100% 40%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 56% 30%;
-    --input: 215 56% 20%;
-    --ring: 186 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 186 100% 40%;
     --radius: 1.5rem;
+    --bg-gradient-start: 210 40% 98%;
+    --bg-gradient-end: 210 40% 94%;
+  }
+
+  .dark {
+    --background: 217 80% 5%; /* Darker Medical Blue #050E1B */
+    --foreground: 0 0% 100%;
+    --card: 217 60% 10%; /* #0B1F3C */
+    --card-foreground: 0 0% 100%;
+    --popover: 217 80% 4%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 186 100% 50%; /* Vivid Cyan #00E5FF */
+    --primary-foreground: 217 80% 5%;
+    --secondary: 217 60% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 217 60% 8%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 186 100% 50%;
+    --accent-foreground: 217 80% 5%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 217 60% 15%;
+    --input: 217 60% 15%;
+    --ring: 186 100% 50%;
+    --bg-gradient-start: 217 80% 5%;
+    --bg-gradient-end: 217 80% 9%;
   }
 }
 
@@ -33,17 +60,14 @@
   }
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(180deg, #0B1F3C 0%, #112A4D 100%);
+    background: linear-gradient(180deg, hsl(var(--bg-gradient-start)) 0%, hsl(var(--bg-gradient-end)) 100%);
     min-height: 100vh;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 .spotify-glass {
-  background: linear-gradient(135deg, rgba(26, 54, 93, 0.7) 0%, rgba(26, 54, 93, 0.3) 100%);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  @apply bg-card/60 backdrop-blur-xl border border-white/10 shadow-2xl;
 }
 
 .heartbeat {
@@ -58,21 +82,6 @@
   100% { transform: scale(1); opacity: 0.9; }
 }
 
-.confetti-cyan {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #00E5FF;
-  top: -10px;
-  opacity: 0;
-  animation: fall 3s linear infinite;
-}
-
-@keyframes fall {
-  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-}
-
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -80,9 +89,9 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 229, 255, 0.2);
+  background: hsl(var(--primary) / 0.2);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 229, 255, 0.4);
+  background: hsl(var(--primary) / 0.4);
 }

@@ -11,6 +11,7 @@ import { useAuth, useUser } from "@/firebase";
 import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSplashLoading, setIsSplashLoading] = useState(true);
 
-  // Initial Splash Screen Effect
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsSplashLoading(false);
@@ -63,16 +63,15 @@ export default function LoginPage() {
     }
   };
 
-  // Splash Screen Overlay
   if (isSplashLoading || isUserLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 space-y-8 animate-in fade-in duration-500">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-transparent p-6 space-y-8 animate-in fade-in duration-500">
         <div className="relative">
           <div className="w-24 h-24 rounded-full bg-primary/20 animate-ping absolute" />
           <SynapseLogo className="w-24 h-24 relative" />
         </div>
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-black tracking-[0.3em] text-white animate-pulse">SYNAPSE</h1>
+          <h1 className="text-4xl font-black tracking-[0.3em] animate-pulse">SYNAPSE</h1>
           <p className="text-primary font-black text-[10px] uppercase tracking-[0.5em]">WELCOME FUTURE RMT</p>
         </div>
       </div>
@@ -80,18 +79,21 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-background animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-transparent animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="absolute top-8 right-8">
+        <ModeToggle />
+      </div>
+      
       <div className="w-full max-sm:max-w-xs max-w-sm space-y-10">
         <div className="flex flex-col items-center space-y-6">
-          {/* Pulsing Dot above the card */}
           <div className="relative mb-2">
             <div className="w-4 h-4 rounded-full bg-primary animate-ping absolute" />
             <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(0,229,255,0.8)]" />
           </div>
           
           <div className="text-center space-y-2">
-            <h1 className="text-5xl font-black tracking-tighter text-white">SYNAPSE</h1>
-            <p className="text-muted-foreground font-bold uppercase tracking-widest text-[9px] text-primary/80">
+            <h1 className="text-5xl font-black tracking-tighter">SYNAPSE</h1>
+            <p className="font-bold uppercase tracking-widest text-[9px] text-primary">
               Next-Gen review for Next-Gen RMTs
             </p>
           </div>
@@ -108,7 +110,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary px-6"
+                  className="h-14 bg-background/50 border-border rounded-2xl focus:border-primary px-6"
                 />
               </div>
               <div className="space-y-2">
@@ -119,7 +121,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-14 bg-white/5 border-white/10 rounded-2xl focus:border-primary px-6"
+                  className="h-14 bg-background/50 border-border rounded-2xl focus:border-primary px-6"
                 />
               </div>
               <Button type="submit" className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-black rounded-full text-xl mt-4 shadow-xl shadow-primary/10 transition-transform active:scale-95" disabled={isLoading}>
