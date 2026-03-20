@@ -13,6 +13,7 @@ import { useMemoFirebase } from "@/firebase/provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 export default function SubjectHub() {
   const { subjectId } = useParams();
@@ -187,7 +188,7 @@ export default function SubjectHub() {
 
 function SkeletonList() {
   return Array.from({ length: 3 }).map((_, i) => (
-    <Skeleton className="h-28 w-full rounded-[2rem] bg-white/5" />
+    <Skeleton key={i} className="h-28 w-full rounded-[2rem] bg-white/5" />
   ));
 }
 
