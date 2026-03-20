@@ -179,7 +179,7 @@ export default function AdminPortal() {
                     <SelectItem value="hematology">Hematology</SelectItem>
                     <SelectItem value="blood-banking">Blood Banking</SelectItem>
                     <SelectItem value="clinical-microscopy">Clinical Microscopy</SelectItem>
-                    <SelectItem value="mt-laws">MT Laws</SelectItem
+                    <SelectItem value="mt-laws">MT Laws</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
