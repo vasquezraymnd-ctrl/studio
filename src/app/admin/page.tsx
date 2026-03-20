@@ -46,7 +46,7 @@ export default function AdminPortal() {
 
   const isAdmin = useMemo(() => {
     if (isUserLoading || !user || !user.email) return false;
-    return user.email.toLowerCase().includes('admin');
+    return user.email.toLowerCase().includes('admin') || user.email === 'ray@synapse.edu';
   }, [user, isUserLoading]);
 
   // Global Progress Monitoring - ONLY query if we are certain of admin status
