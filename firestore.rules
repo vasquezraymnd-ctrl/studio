@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -8,16 +9,16 @@ service cloud.firestore {
     }
 
     // Admins are identified by the string "admin" in their email.
-    // Removed email_verified requirement as requested to ensure immediate access.
+    // Removed email_verified requirement to ensure immediate access.
     function isAdmin() {
       return isSignedIn() && 
              request.auth.token.email != null && 
              request.auth.token.email.lower().matches('.*admin.*');
     }
 
-    // --- COLLECTION GROUP RULES (MUST BE AT THE TOP) ---
+    // --- COLLECTION GROUP RULES (CRITICAL FOR GLOBAL LISTING) ---
     // These allow global queries across all subject-specific subcollections.
-    // List permission is required for collectionGroup queries to work starting at the root.
+    // They must be outside or prioritized at the top level for list operations.
     
     match /{path=**}/modules/{moduleId} {
       allow list, read: if isSignedIn();
@@ -29,9 +30,11 @@ service cloud.firestore {
 
     match /{path=**}/progress/{progressId} {
       // Admins can list and read all student performance globally.
-      // Students can only list their own data (must filter by userId in the query).
+      // Students can list their own data (must filter by userId in the query).
       allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
+      // Allow writing progress records
+      allow create, update: if isSignedIn() && request.auth.uid == request.resource.data.userId;
     }
 
     // --- PATH-SPECIFIC RULES ---
