@@ -62,7 +62,7 @@ export function useCollection<T = any>(
   const [error, setError] = useState<FirestoreError | Error | null>(null);
 
   useEffect(() => {
-    if (!memoizedTargetRefOrQuery) {
+    if (!memoizedTargetRefOrQuery || typeof memoizedTargetRefOrQuery.type !== 'string') {
       setData(null);
       setIsLoading(false);
       setError(null);

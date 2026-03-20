@@ -46,7 +46,7 @@ export default function AdminPortal() {
 
   const isAdmin = useMemo(() => {
     if (isUserLoading || !user || !user.email) return false;
-    return user.email.toLowerCase().includes('admin') || user.email === 'ray@synapse.edu';
+    return user.email.toLowerCase().includes('admin');
   }, [user, isUserLoading]);
 
   // Global Progress Monitoring - ONLY query if we are certain of admin status
@@ -179,7 +179,7 @@ export default function AdminPortal() {
                     <SelectItem value="hematology">Hematology</SelectItem>
                     <SelectItem value="blood-banking">Blood Banking</SelectItem>
                     <SelectItem value="clinical-microscopy">Clinical Microscopy</SelectItem>
-                    <SelectItem value="mt-laws">MT Laws</SelectItem>
+                    <SelectItem value="mt-laws">MT Laws</SelectItem
                   </SelectContent>
                 </Select>
               </div>

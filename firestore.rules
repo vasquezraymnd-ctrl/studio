@@ -17,8 +17,7 @@ service cloud.firestore {
     function isAdmin() {
       return isSignedIn() && 
              request.auth.token.email != null && 
-             (request.auth.token.email.lower().matches('.*admin.*') || 
-              request.auth.token.email == 'ray@synapse.edu');
+             request.auth.token.email.lower().matches('.*admin.*');
     }
 
     // --- COLLECTION GROUP RULES (CRITICAL FOR GLOBAL LISTING) ---
