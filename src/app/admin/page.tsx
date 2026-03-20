@@ -23,7 +23,7 @@ import {
   EyeOff
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { addDocumentNonBlocking, setDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { addDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useMemoFirebase } from "@/firebase/provider";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Progress } from "@/components/ui/progress";
@@ -45,14 +45,12 @@ export default function AdminPortal() {
 
   // REDUNDANT GUARD: Ensure isAdmin is only true when user and email are definitively loaded
   const isAdmin = useMemo(() => {
-    if (isUserLoading) return false;
-    if (!user || !user.email) return false;
+    if (isUserLoading || !user || !user.email) return false;
     return user.email.toLowerCase().includes('admin');
   }, [user, isUserLoading]);
 
-  // Global Progress Monitoring - ONLY query if we are certain of admin status
+  // Global Progress Monitoring - ONLY query if we are certain of admin status and auth is settled
   const allProgressQuery = useMemoFirebase(() => {
-    // CRITICAL: prevents unauthorized list attempt at root path
     if (!db || isUserLoading || !user || !isAdmin) return null;
     return query(collectionGroup(db, "progress"), orderBy("completedAt", "desc"), limit(50));
   }, [db, isAdmin, isUserLoading, user]);
