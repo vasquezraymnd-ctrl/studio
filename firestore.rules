@@ -8,7 +8,7 @@ service cloud.firestore {
     }
 
     // Admins are identified by the string "admin" in their email.
-    // We removed the email_verified requirement as requested.
+    // Removed email_verified requirement as requested.
     function isAdmin() {
       return isSignedIn() && 
              request.auth.token.email != null && 
@@ -29,7 +29,7 @@ service cloud.firestore {
 
     match /{path=**}/progress/{progressId} {
       // Admins can list all student performance globally.
-      // Students can only list their own progress data (filtered by userId in the query).
+      // Students can only list their own progress data (must be filtered by userId in the query).
       allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
