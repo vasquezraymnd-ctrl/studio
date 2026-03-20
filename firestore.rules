@@ -7,6 +7,8 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Admins are identified by the string "admin" in their email.
+    // We removed the email_verified requirement as requested.
     function isAdmin() {
       return isSignedIn() && 
              request.auth.token.email != null && 
@@ -15,6 +17,7 @@ service cloud.firestore {
 
     // --- COLLECTION GROUP RULES (REQUIRED FOR GLOBAL QUERIES) ---
     // These allow global listing across all subject-specific subcollections.
+    // They must be matched via the {path=**} recursive wildcard.
     
     match /{path=**}/modules/{moduleId} {
       allow list, read: if isSignedIn();
@@ -25,8 +28,8 @@ service cloud.firestore {
     }
 
     match /{path=**}/progress/{progressId} {
-      // Admins can see all student performance.
-      // Students can only list their own data (filtered by userId in the query).
+      // Admins can list all student performance globally.
+      // Students can only list their own progress data (filtered by userId in the query).
       allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }

@@ -138,7 +138,7 @@ export default function DiscoveryDashboard() {
               >
                 <sub.icon className="w-20 h-20 text-white/10 absolute -right-4 -bottom-4 group-hover:scale-125 transition-transform" />
                 <sub.icon className="w-14 h-14 text-white mb-4 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
-                <span className="text-lg font-black text-white leading-tight block drop-shadow-md">{sub.name}</span>
+                <span className="text-lg font-black text-white font-headline leading-tight block drop-shadow-md">{sub.name}</span>
               </button>
             ))}
           </div>
