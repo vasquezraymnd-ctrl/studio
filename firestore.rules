@@ -13,8 +13,8 @@ service cloud.firestore {
              request.auth.token.email.lower().matches('.*admin.*');
     }
 
-    // --- COLLECTION GROUP RULES (MUST BE AT TOP) ---
-    // These allow global queries (e.g., across all subjects)
+    // --- COLLECTION GROUP RULES (REQUIRED FOR GLOBAL QUERIES) ---
+    // These allow global listing across all subject-specific subcollections.
     
     match /{path=**}/modules/{moduleId} {
       allow list, read: if isSignedIn();
@@ -25,8 +25,9 @@ service cloud.firestore {
     }
 
     match /{path=**}/progress/{progressId} {
-      // Admins can list all. Students can only list if they filter by their own userId in the query.
-      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100 && resource.data.userId == request.auth.uid);
+      // Admins can see all student performance.
+      // Students can only list their own data (filtered by userId in the query).
+      allow list: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
       allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
 

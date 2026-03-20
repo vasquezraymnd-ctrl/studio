@@ -20,7 +20,8 @@ import {
   Gavel,
   Library,
   Clock,
-  ChevronRight
+  ChevronRight,
+  Loader2
 } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -77,7 +78,6 @@ export default function DiscoveryDashboard() {
 
   const { data: profile } = useDoc(profileRef);
 
-  // DEFENSIVE: Only query collection group when auth is fully settled
   const latestModulesQuery = useMemoFirebase(() => {
     if (!db || isUserLoading || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
