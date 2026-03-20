@@ -1,0 +1,46 @@
+<svg 
+  viewBox="0 0 100 100" 
+  width="192" 
+  height="192" 
+  fill="none" 
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <style>
+    .heartbeat {
+      animation: heartbeat-animation 1.5s infinite ease-in-out;
+    }
+    @keyframes heartbeat-animation {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px 10px rgba(0, 229, 255, 0.4); }
+    }
+  </style>
+  <path 
+    d="M35 30 L65 30 L65 70 L50 85 L35 70 Z" 
+    stroke="#00E5FF" 
+    stroke-width="6" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"
+  />
+  <path 
+    d="M50 30 L50 15 M40 15 L60 15" 
+    stroke="#00E5FF" 
+    stroke-width="6" 
+    stroke-linecap="round"
+  />
+  <path 
+    d="M50 85 L50 95" 
+    stroke="#00E5FF" 
+    stroke-width="4" 
+    stroke-linecap="round"
+  />
+  <circle 
+    cx="50" 
+    cy="85" 
+    r="6" 
+    fill="#00E5FF" 
+    class="heartbeat"
+  />
+  <line x1="42" y1="40" x2="50" y2="40" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" />
+  <line x1="42" y1="50" x2="50" y2="50" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" />
+  <line x1="42" y1="60" x2="50" y2="60" stroke="#00E5FF" stroke-width="2" stroke-linecap="round" />
+</svg>
