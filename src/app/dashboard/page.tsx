@@ -80,7 +80,6 @@ export default function DiscoveryDashboard() {
   const { data: profile } = useDoc(profileRef);
 
   const latestModulesQuery = useMemoFirebase(() => {
-    // Wait for auth to be fully ready before querying a collection group
     if (!db || isUserLoading || !user) return null;
     return query(collectionGroup(db, "modules"), orderBy("dateAdded", "desc"), limit(5));
   }, [db, user, isUserLoading]);

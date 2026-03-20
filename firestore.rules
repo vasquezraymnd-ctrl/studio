@@ -9,7 +9,7 @@ service cloud.firestore {
     }
 
     // Admins are identified by the string "admin" in their email.
-    // Removed email_verified requirement as requested.
+    // email_verified check removed to allow unrestricted access for all registrants.
     function isAdmin() {
       return isSignedIn() && 
              request.auth.token.email != null && 
@@ -17,23 +17,23 @@ service cloud.firestore {
     }
 
     // --- COLLECTION GROUP RULES (CRITICAL FOR GLOBAL LISTING) ---
-    // These rules handle queries that search across all subjects (e.g., global library).
-    // They must be matched explicitly for list operations to succeed.
+    // These must be at the root of documents to handle global collectionGroup queries.
     
     match /{path=**}/modules/{moduleId} {
+      // Authenticated users can browse the global library.
       allow list, read: if isSignedIn();
     }
     
     match /{path=**}/assessments/{assessmentId} {
+      // Authenticated users can list all test banks.
       allow list, read: if isSignedIn();
     }
 
     match /{path=**}/progress/{progressId} {
-      // Admins can list and read all student performance globally.
+      // Admins can see all student performance globally.
       // Students can list their own data (must filter by userId in the query).
-      allow list, read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
-      // Allow writing progress records
-      allow create, update: if isSignedIn() && request.auth.uid == request.resource.data.userId;
+      allow list: if isAdmin() || (isSignedIn() && request.query.limit <= 100 && resource.data.userId == request.auth.uid);
+      allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
     }
 
     // --- PATH-SPECIFIC RULES ---
@@ -57,7 +57,8 @@ service cloud.firestore {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
       
       match /progress/{progressId} {
-        allow read, write: if isSignedIn() && request.auth.uid == userId;
+        allow read: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
+        allow create, update: if isSignedIn() && request.auth.uid == userId;
       }
     }
 
